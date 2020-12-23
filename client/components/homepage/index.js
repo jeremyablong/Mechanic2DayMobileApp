@@ -10,6 +10,7 @@ import FillerContentMechanicsForHire from "./filler.js";
 import PromotionWide from "./promotion/promo.js";
 import DesignedBoxScroll from "./scrollviews/designedBoxScroll.js";
 import SlidingUpPanel from 'rn-sliding-up-panel';
+import HomepageInfoHelper from "./info/info.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -152,6 +153,8 @@ constructor(props) {
                             <ActiveClientsLookingHelper />
 
                             <PromotionWide />
+
+                            <HomepageInfoHelper />
 
                             <DesignedBoxScroll />
 

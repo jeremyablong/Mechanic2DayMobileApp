@@ -1,8 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text, Dimensions, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { Header, Left, Title, Button, Right, Text as NativeText } from 'native-base';
+import { Header, Left, Title, Button, Right, Text as NativeText, ListItem, Item, Label, Input } from 'native-base';
 import styles from './styles.js';
 import ReadMore from 'react-native-read-more-text';
+import RBSheet from "react-native-raw-bottom-sheet";
+import Gallery from 'react-native-image-gallery';
+import Config from 'react-native-config';
+import { connect } from "react-redux";
+import axios from "axios";
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import Dialog from "react-native-dialog";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -13,9 +22,49 @@ constructor (props) {
     super(props);
 
     this.state = {
-
+        ready: false,
+        images: [],
+        showDialog: false,
+        profilePicBase64: "",
+        uri: ""
     }
 }
+    componentDidMount() {
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+
+                const { user } = res.data;
+
+                const promiseee = new Promise((resolve, reject) => {
+                    for (let index = 0; index < user.profilePics.length; index++) {
+                        const obj = user.profilePics[index];
+                        
+                        this.setState({
+                            images: [{ source: { uri: obj.full_url } }, ...this.state.images]
+                        }, () => {
+                            if ((user.profilePics.length - 1) === index) {
+                                resolve(user);
+                            }
+                        })
+                    }
+                })
+
+                promiseee.then((dataaa) => {
+                    this.setState({
+                        ready: true,
+                        user: dataaa
+                    })
+                })
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     _renderTruncatedFooter = (handlePress) => {
         return (
             <Text style={{ fontSize: 20, color: "darkblue", marginTop: 5}} onPress={handlePress}>
@@ -33,9 +82,103 @@ constructor (props) {
     }
  
     _handleTextReady = () => {
-        
+        console.log("text ready");
+    }
+    renderSlideContent = () => {
+        if (this.state.ready === true) {
+            return (
+                <Fragment>
+                    <ScrollView showVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 75 }} style={{ flex: 1 }}>
+                        <Gallery
+                            style={{ flex: 1, backgroundColor: 'black', maxHeight: 250, minHeight: 250 }}
+                            images={this.state.images}
+                        />
+                        <View>
+                            <TouchableOpacity style={styles.topRight} onPress={() => {
+                                this.setState({
+                                    showDialog: true
+                                })
+                            }}>
+                                <Image source={require("../../../../../assets/icons/camera.png")} style={{ maxWidth: 40, maxHeight: 40 }} />
+                            </TouchableOpacity>
+                            <View style={{ margin: 20 }}>
+                                <Text style={[styles.h6, { fontSize: 20, fontWeight: "bold", marginBottom: 20 }]}>Edit About Me</Text>
+                                <Text style={styles.h6}>{description}</Text>
+                            </View>
+                            <View style={styles.hr} />
+                            <View style={{ margin: 20 }}>
+                                <Text style={styles.h3}>Optional Details</Text>
+                            </View>
+                            <ListItem style={styles.listItemSpecial}>
+                                <Item stackedLabel>
+                                    <Label>Location</Label>
+                                    <Input style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={"Eg... Paris, FR / Brooklyn, NY / Chicago, IL"} />
+                                </Item>
+                                
+                            </ListItem>
+                            <ListItem style={styles.listItemSpecial}>
+                                <Item stackedLabel>
+                                    <Label>Work</Label>
+                                    <Input style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={"Eg... Airbnb / Apple / Taco Stand"} />
+                                </Item>
+                                
+                            </ListItem>
+                            <ListItem style={styles.listItemSpecial}>
+                                <Text style={styles.smallerTextSub}>Languages {"\n"}<Text style={styles.biggerTextSub}>English</Text></Text>
+                                
+                            </ListItem>
+                        </View>
+                    </ScrollView>
+                </Fragment>
+            );
+        } else {
+            return (
+                <ScrollView>
+                    <SkeletonPlaceholder>
+                        <View style={styles.box} />
+                        <View style={styles.skelatonRow} />
+                        <View style={styles.skelatonRow} />
+                        <View style={styles.skelatonRow} />
+                        <View style={styles.skelatonRow} />
+                        <View style={styles.skelatonRow} />
+                        <View style={styles.skelatonRow} />
+                        <View style={styles.skelatonRow} />
+                    </SkeletonPlaceholder>
+                </ScrollView>
+            );
+        }
+    }
+    completed = (values) => {
+        console.log("values", values);
+    }
+    launchCameraHelper = () => {
+        console.log("launchCameraHelper clicked.")
+        launchCamera({
+            mediaType: "photo",
+            includeBase64: true,
+            saveToPhotos: true,
+            quality: 1
+        }, this.completed);
+    }
+    launchImageLibraryHelper = () => {
+        launchImageLibrary({
+            mediaType: "photo",
+            includeBase64: true,
+            quality: 1
+        }, this.completedTwo)
+    }
+    completedTwo = (values) => {
+        console.log("completedTwo values", values);
+
+        this.setState({
+            profilePicBase64: values.base64,
+            uri: values.uri,
+            images: [{ source: { uri: `data:${values.type};base64,${values.base64}` } }, ...this.state.images],
+            showDialog: false
+        })
     }
     render() {
+        console.log("this.state publicProfile", this.state);
         const review_count = Math.floor(Math.random() * 50) + 1;
         return (
             <Fragment>
@@ -50,7 +193,7 @@ constructor (props) {
                     </Left>
                     <Right style={styles.right}>
                         <Button onPress={() => {
-                            
+                            this.RBSheet.open();
                         }} transparent>
                             <Image source={require("../../../../../assets/icons/pen.png")} style={styles.rightIcon} />
                         </Button>
@@ -137,8 +280,57 @@ constructor (props) {
                         <Text style={styles.h3}>{review_count} Reviews</Text>
                     </View>
                 </ScrollView>
+                <RBSheet
+                    ref={ref => {
+                        this.RBSheet = ref;
+                    }}
+                    height={height}
+                    openDuration={250}
+                    customStyles={{
+                        container: {
+                        justifyContent: "center",
+                        alignItems: "center"
+                        }
+                    }}
+                >
+                    <View>
+                        <Dialog.Container onBackdropPress={() => {
+                            this.setState({
+                                showDialog: false
+                            })
+                        }} visible={this.state.showDialog}>
+                        <Dialog.Title>Take Picture</Dialog.Title>
+                        <Dialog.Description>
+                            Take a new photo or select one from your existing photo library.
+                        </Dialog.Description>
+                        <Dialog.Button onPress={this.launchImageLibraryHelper} label="GALLERY" />
+                        <Dialog.Button onPress={this.launchCameraHelper} label="CAMERA" />
+                        </Dialog.Container>
+                    </View>
+                    <View style={styles.innerContainer}>
+                        <Header style={{ width }}>
+                            <Left style={{ flexDirection: "row", flex: 1 }}>
+                                <Button onPress={() => {
+                                    this.RBSheet.close();
+                                }} transparent>
+                                    <Image source={require("../../../../../assets/icons/x.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
+                                </Button>
+                                <Title style={{ textAlign: "left", marginTop: 10 }}>Edit primary info</Title>
+                            </Left>
+                        </Header>
+                        <View style={{ flex: 1 }}>
+                            {this.renderSlideContent()}
+                        </View>
+                    </View>
+                </RBSheet>
+                
             </Fragment>
         )
     }
 }
-export default ViewPublicProfileHelper;
+const mapStateToProps = (state) => {
+    return {
+        unique_id: state.auth.authenticated.unique_id
+    };
+}
+export default connect(mapStateToProps, {  })(ViewPublicProfileHelper);

@@ -43,6 +43,7 @@ app.use("/edit/card/individual", require("./routes/account/payments/payments/cha
 app.use("/update/payment/primary", require("./routes/account/payments/payments/changes/makeCardPrimary.js"));
 app.use("/save/oauth/google/user", require("./routes/auth/googleRegister.js"));
 
+
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
 })

@@ -48,14 +48,52 @@ export default StyleSheet.create({
         marginRight: 20,
         marginTop: 10
     },
+    biggerTextSub: {
+        fontSize: 20
+    },
+    minWidthInput: {
+        minWidth: "100%"
+    },
     h3: {
-        fontSize: 24
+        fontSize: 20, 
+        fontWeight: "bold"
+    },
+    listItemSpecial: {
+        borderBottomColor: "lightgrey",
+        borderBottomWidth: 1
     },
     profilePicture: {
         maxWidth: 75,
         maxHeight: 75,
         borderRadius: 50,
         marginLeft: 30
+    },
+    skelatonRow: {
+        height: 30,
+        width: "90%",
+        marginTop: 10,
+        marginRight: 20,
+        marginLeft: 20
+    },
+    box: {
+        width: "90%",
+        margin: 20,
+        height: 250
+    },
+    topRight: {
+        position: "absolute",
+        right: 5,
+        maxWidth: 45,
+        top: 5
+    },
+    h6: {
+        fontSize: 16
+    },
+    innerContainer: {
+        height,
+        width,
+        backgroundColor: "white",
+        flex: 1
     },
     nextContainer: {
         flexDirection: "row"
