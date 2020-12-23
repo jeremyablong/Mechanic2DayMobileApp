@@ -1,0 +1,144 @@
+import React, { Component, Fragment } from 'react';
+import { View, Text, Dimensions, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { Header, Left, Title, Button, Right, Text as NativeText } from 'native-base';
+import styles from './styles.js';
+import ReadMore from 'react-native-read-more-text';
+
+const { width, height } = Dimensions.get("window");
+
+const description = "I'm a traveling Software Engineer from Charlotte, NC. I drove cross country for work and am working on getting settled in. I'm very respectful, kind, compassionate and laid back. I hope you are able to overlook my tattoos and talk to me to understand who I really am aside from the tattoos. I'm very clean, quiet and overall a good human being. I try to be the best person I can be everyday and strive for excellence.";
+
+class ViewPublicProfileHelper extends Component {
+constructor (props) {
+    super(props);
+
+    this.state = {
+
+    }
+}
+    _renderTruncatedFooter = (handlePress) => {
+        return (
+            <Text style={{ fontSize: 20, color: "darkblue", marginTop: 5}} onPress={handlePress}>
+                Read more
+            </Text>
+        );
+    }
+ 
+    _renderRevealedFooter = (handlePress) => {
+        return (
+        <Text style={{ fontSize: 20, color: "darkblue", marginTop: 5}} onPress={handlePress}>
+            Show less
+        </Text>
+        );
+    }
+ 
+    _handleTextReady = () => {
+        
+    }
+    render() {
+        const review_count = Math.floor(Math.random() * 50) + 1;
+        return (
+            <Fragment>
+                <Header style={{ width }}>
+                    <Left style={{ flexDirection: "row", flex: 1 }}>
+                        <Button onPress={() => {
+                            this.props.props.navigation.goBack();
+                        }} transparent>
+                            <Image source={require("../../../../../assets/icons/go-back.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
+                        </Button>
+                        <Title style={{ textAlign: "left", marginTop: 10 }}>Public Profile</Title>
+                    </Left>
+                    <Right style={styles.right}>
+                        <Button onPress={() => {
+                            
+                        }} transparent>
+                            <Image source={require("../../../../../assets/icons/pen.png")} style={styles.rightIcon} />
+                        </Button>
+                    </Right>
+                </Header>
+                <ScrollView contentContainerStyle={{ paddingBottom: 100, paddingTop: 25 }} style={styles.container}>
+                    <View style={styles.marginSpace}>
+                        <View style={{ flexDirection: "row", maxHeight: height * 0.16 }}>
+                            <View>
+                                <Text style={styles.innerTextOne}>Hi, I'm Jeremy</Text>
+                                <Text style={styles.secondText}>Joined in Feburary, 2019</Text>
+                            </View>
+                            <View>
+                                <Image source={require("../../../../../assets/images/me.jpg")} style={styles.profilePicture} />
+                            </View>
+                        </View>
+                        <View style={styles.nextContainer}>
+                            <Image source={require("../../../../../assets/icons/verified.png")} style={styles.verified} /><Text style={{ marginTop: 8, marginLeft: 10 }}>Identity Verified</Text>
+                        </View>
+                        <View style={[styles.nextContainer, { marginTop: 15 }]}>
+                            <Image source={require("../../../../../assets/icons/flying.png")} style={styles.verified} /><Text style={{ marginTop: 8, marginLeft: 10 }}>{review_count} Reviews</Text>
+                        </View>
+                    </View>
+                    <View style={styles.hr} />
+                    <View style={styles.marginSpace}>
+                        <Text style={styles.h3}>About</Text>
+                        <Image source={require("../../../../../assets/icons/quotes-small.png")} style={styles.quotesIcon} />
+                        <ReadMore
+                            numberOfLines={3}
+                            renderTruncatedFooter={this._renderTruncatedFooter}
+                            renderRevealedFooter={this._renderRevealedFooter}
+                            onReady={this._handleTextReady}
+                        >
+                            <Text style={styles.descriptionText}>{description}</Text>
+                        </ReadMore>
+                        <View style={styles.shortHr} />
+                        <View style={styles.customRow}>
+                            <Image source={require("../../../../../assets/icons/home.png")} style={styles.helperIcon} />
+                            <Text style={styles.iconTextHelper}>Lives in Los Angeles, CA</Text>
+                        </View>
+                        <View style={styles.customRow}>
+                            <Image source={require("../../../../../assets/icons/chat.png")} style={styles.helperIcon} />
+                            <Text style={styles.iconTextHelper}>Speaks English</Text>
+                        </View>
+                        <View style={styles.customRow}>
+                            <Image source={require("../../../../../assets/icons/suitcase.png")} style={styles.helperIcon} />
+                            <Text style={styles.iconTextHelper}>Works at Software Engineer</Text>
+                        </View>
+                    </View>
+                    <View style={styles.hr} />
+                    <View style={styles.marginSpace}>
+                        <Text style={styles.h3}>Jeremy Confirmed</Text>
+                        <View style={{ flexDirection: "row" }}>
+                            <View style={styles.column}>
+                                <View style={{ flexDirection: "row", marginTop: 8, marginBottom: 6 }}>
+                                    <Image source={require("../../../../../assets/icons/checked.png")} style={styles.helperIcon} />
+                                    <Text style={styles.spaceLeftText}>Identity</Text>
+                                </View>
+                                <View style={{ flexDirection: "row", marginTop: 8, marginBottom: 6 }}>
+                                    <Image source={require("../../../../../assets/icons/checked.png")} style={styles.helperIcon} />
+                                    <Text style={styles.spaceLeftText}>Phone Number</Text>
+                                </View>
+                            </View>
+                            <View style={styles.column}>
+                                <View style={{ flexDirection: "row", marginTop: 8, marginBottom: 6 }}>
+                                    <Image source={require("../../../../../assets/icons/checked.png")} style={styles.helperIcon} />
+                                    <Text style={styles.spaceLeftText}>Email Address</Text>
+                                </View>
+                                <View style={{ flexDirection: "row", marginTop: 8, marginBottom: 6 }}>
+                                    <Image source={require("../../../../../assets/icons/checked.png")} style={styles.helperIcon} />
+                                    <Text style={styles.spaceLeftText}>Payment Method</Text>
+                                </View>
+                            </View>
+                            
+                        </View>
+                        <View style={{ marginTop: 15 }}>
+                            <Text style={{ fontSize: 14 }}><Text onPress={() => {
+                                console.log("clicked!!!!");
+                            }} style={{ fontSize: 14, color: "darkblue" }}>Learn More</Text> about how confirming account info helps keep the (Company Name) community secure.</Text>
+                        </View>
+                    </View>
+                    <View style={styles.hr} />
+                    <View style={styles.marginSpace}>
+                        <Text style={styles.h3}>{review_count} Reviews</Text>
+                    </View>
+                </ScrollView>
+            </Fragment>
+        )
+    }
+}
+export default ViewPublicProfileHelper;
