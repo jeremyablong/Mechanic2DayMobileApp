@@ -117,6 +117,25 @@ export default StyleSheet.create({
         textAlign: "right",
         fontSize: 18,
         color: "blue"
+    },
+    columnColumn: {
+        maxHeight: 100,
+        width: width * 0.25,
+        flexDirection: "column"
+    },
+    columnColumnLeft: {
+        maxHeight: 100,
+        width: width * 0.75,
+        flexDirection: "column"
+    },
+    rowRow: {
+        flexDirection: "row"
+    },
+    map: {
+        flex: 1,
+        marginTop: 30,
+        minWidth: width * 0.85,
+        minHeight: 300
     }
 });
            
