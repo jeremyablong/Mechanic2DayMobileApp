@@ -24,6 +24,8 @@ import AddCardPage from "./pages/account/payments/create/addCard.js";
 import IndividualCreditDebitCardPage from "./pages/account/payments/paymentMethods/individual/index.js";
 import CreditsHomepagePage from "./pages/account/payments/credits/index.js";
 import ViewPublicProfilePage from "./pages/account/profile/public/profile/publicProfile.js";
+import MessagingConversationsPage from "./pages/messaging/conversations/index.js";
+import IndividualBrokenVehiclePage from "./pages/listings/vehicles/individual/index.js";
 
 const Stack = createStackNavigator();
 
@@ -41,7 +43,7 @@ constructor(props) {
       if (this.props.page) {
         switch (this.props.page) {
           case 1:
-            return "homepage";
+            return "homepage-main";
             break;
           case 2: 
             return "email-verifcation-code";
@@ -102,6 +104,8 @@ constructor(props) {
               <Stack.Screen name="view-individual-card-info" component={IndividualCreditDebitCardPage} />
               <Stack.Screen name="credits-coupons" component={CreditsHomepagePage} />
               <Stack.Screen name="view-public-profile-page" component={ViewPublicProfilePage} />
+              <Stack.Screen name="chat-conversations" component={MessagingConversationsPage} />
+              <Stack.Screen name="individual-broken-listing" component={IndividualBrokenVehiclePage} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

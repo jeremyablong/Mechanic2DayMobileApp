@@ -20,7 +20,7 @@ constructor(props) {
         this.props.finishedSignup(false);
 
         setTimeout(() => {
-            this.props.props.navigation.navigate("homepage");
+            this.props.props.navigation.navigate("homepage-main");
         },  500);
     }
     renderConditional = () => {

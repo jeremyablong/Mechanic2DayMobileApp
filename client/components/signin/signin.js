@@ -10,6 +10,13 @@ import {
 } from 'react-native';
 import styles from './styles.js';
 import Config from "react-native-config";
+import { Header, Left, Button as NativeBtn, Text as NativeText } from 'native-base';
+import FooterHelper from "../footer/footer.js";
+import axios from "axios";
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from "../toastConfig.js";
+import { connect } from "react-redux";
+import { authenticated, finishedSignup } from "../../actions/signup/auth.js";
 
 const SigninHelper = props => {
     const [account, setAccountType] = useState("");
@@ -23,10 +30,23 @@ const SigninHelper = props => {
             email_phone: account,
             password
         }).then((res) => {
-            if (res.data) {
+            if (res.data.message === "Successfully authenticated!") {
+                
+                props.authenticated(res.data.user);
 
+                props.finishedSignup(true);
+
+                setTimeout(() => {
+                    props.props.navigation.navigate("homepage-main");
+                },  500);
             } else {
-
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: "ERROR! 🚫",
+                    text2: "The credentials provided did not match any records in our system, please double check your credentials.",
+                    visibilityTime: 5000
+                })
             }
         }).catch((err) => {
             console.log(err);
@@ -34,8 +54,21 @@ const SigninHelper = props => {
     }
     return (
         <Fragment>
+            <Header>
+                <Left>
+                    <NativeBtn onPress={() => {
+                        props.props.navigation.goBack();
+                    }} transparent>
+                        <Image source={require("../../assets/icons/go-back.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
+                        <NativeText style={{ color: "black" }}>Go Back</NativeText>
+                    </NativeBtn>
+                    
+                </Left>
+            </Header>
+            <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
             <ImageBackground source={require("../../assets/images/car-4.jpg")} style={styles.container}>
-               
+                
+                <Text style={styles.signinText}>Sign in</Text>
                 <View style={styles.inputContainer}>
                 <TextInput style={styles.inputs}    
                     placeholderTextColor={"grey"}
@@ -83,7 +116,8 @@ const SigninHelper = props => {
                     <Text style={styles.btnText}>Register</Text>
                 </TouchableOpacity>
             </ImageBackground>
+            <FooterHelper props={props.props} />
         </Fragment>
     );   
 }
-export default SigninHelper;
+export default connect(null, { authenticated, finishedSignup })(SigninHelper);

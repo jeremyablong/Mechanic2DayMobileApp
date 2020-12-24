@@ -32,7 +32,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 register_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                 wholeAddress,
                 accountType,
-                unique_id: uuidv4()
+                unique_id: uuidv4(),
+                phoneNumberAuth: unformatted
             });   
 
             UserData.save((err, data) => {

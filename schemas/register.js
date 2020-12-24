@@ -31,6 +31,9 @@ const UserSchema =  new mongoose.Schema({
     profilePics: {
         type: Array
     },
+    phoneNumberAuth: {
+        type: String
+    },
     wholeAddress: {
         type: Object
     },

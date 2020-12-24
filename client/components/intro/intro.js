@@ -59,7 +59,7 @@ constructor(props) {
     })
 
     setTimeout(() => {
-      this.props.navigation.navigate("homepage");
+      this.props.navigation.navigate("homepage-main");
     }, 500);
   }
   render() {

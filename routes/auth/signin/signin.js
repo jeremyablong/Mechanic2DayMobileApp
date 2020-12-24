@@ -17,7 +17,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         console.log("Ran")
 
-        const database = db.db("live-streaming");
+        const database = db.db("<dbname>");
 
         const collection = database.collection("users");
 
@@ -25,13 +25,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         collection.findOne({ $or: [
             { email: trimmed },
-            { phoneNumber: trimmed }
-        ]}).then(async (user) => {
-
-            console.log("Found a user ! : ", user);
-            
+            { "phoneNumberAuth": trimmed }
+        ]}).then((user) => {
             if (user) {
-                if ((user.username === trimmed || user.email === trimmed) && user.password === password) {
+                if ((user.phoneNumberAuth === trimmed || user.email === trimmed) && user.password === password) {
 
                     res.json({
                         message: "Successfully authenticated!",

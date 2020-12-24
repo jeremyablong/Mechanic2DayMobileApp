@@ -16,7 +16,7 @@ class HomepageInfoHelper extends Component {
                     <View style={styles.hr} />
                     <View style={styles.innerContainer}>
                         <Image source={require("../../../assets/icons/boxing.png")} style={{ maxWidth: 50, maxHeight: 50 }} />
-                        <Text style={styles.bigger}>Endless Options</Text>
+                        <Text style={[styles.bigger, { color: "blue" }]}>Endless Options</Text>
                         <Text style={styles.smaller}>Choose from hundreds of mechanics you find anywhere else. Have them come to you or go to them - totally up to you.</Text>
                     </View>
                     <View style={styles.hr} />

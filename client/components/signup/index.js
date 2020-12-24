@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { View, Text, Image, Dimensions } from "react-native";
 import styles from "./styles.js";
-import { Container, Header, Button, Tab, Tabs, Item, Input, Label, Form } from 'native-base';
+import { Container, Header, Button, Tab, Tabs, Item, Input, Label, Form, Left, Right, Text as NativeText, Body, Title } from 'native-base';
 import PhoneInput from "react-native-phone-number-input";
 import { authenticated, finishedSignup } from "../../actions/signup/auth.js";
 import { connect } from "react-redux";
@@ -175,8 +175,20 @@ constructor(props) {
                             })
                         }}
                     />
-                    <Image source={require("../../assets/images/tools-1.jpg")} style={styles.mainIcon} />
+                    
+                    
                     <Container style={styles.tabContainer}>
+                        <Header>
+                            <Left>
+                                <Button onPress={() => {
+                                    this.props.props.navigation.goBack();
+                                }} transparent>
+                                    <Image source={require("../../assets/icons/go-back.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
+                                    <NativeText style={{ color: "black" }}>Go Back</NativeText>
+                                </Button>
+                               
+                            </Left>
+                        </Header>
                         <Header hasTabs />
                             <Tabs style={styles.tabs}>
                                 <Tab heading="Phone">

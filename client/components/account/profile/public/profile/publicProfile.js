@@ -39,16 +39,20 @@ constructor (props) {
                 const { user } = res.data;
 
                 const promiseee = new Promise((resolve, reject) => {
-                    for (let index = 0; index < user.profilePics.length; index++) {
-                        const obj = user.profilePics[index];
-                        
-                        this.setState({
-                            images: [{ source: { uri: obj.full_url } }, ...this.state.images]
-                        }, () => {
-                            if ((user.profilePics.length - 1) === index) {
-                                resolve(user);
-                            }
-                        })
+                    if (user.profilePics.length > 0) {
+                        for (let index = 0; index < user.profilePics.length; index++) {
+                            const obj = user.profilePics[index];
+                            
+                            this.setState({
+                                images: [{ source: { uri: obj.full_url } }, ...this.state.images]
+                            }, () => {
+                                if ((user.profilePics.length - 1) === index) {
+                                    resolve(user);
+                                }
+                            })
+                        }
+                    } else {
+                        resolve(user);
                     }
                 })
 

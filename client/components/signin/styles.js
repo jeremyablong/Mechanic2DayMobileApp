@@ -8,6 +8,7 @@ const resizeMode = 'center';
 export default StyleSheet.create({
     container: {
         flex: 1,
+        zIndex: -1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#DCDCDC',
@@ -63,6 +64,12 @@ export default StyleSheet.create({
         marginBottom:10,
         width:300,
         backgroundColor:'transparent'
+    },
+    signinText: {
+        color: "white", 
+        fontWeight: "bold", 
+        fontSize: 30,
+        marginBottom: 25
     },
     loginButton: {
         backgroundColor: "black",

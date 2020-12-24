@@ -86,7 +86,9 @@ constructor(props) {
                 <ImageBackground source={item.background} style={styles.backgroundSlider}>
                     <View style={styles.bottomView}>
                         <Text style={styles.desc}>{item.description}</Text>
-                        <Button style={styles.slideshowBtn}><NativeText style={{ color: "black" }}> {item.title} </NativeText></Button>
+                        <Button onPress={() => {
+                            this.props.props.navigation.navigate("individual-broken-listing");
+                        }} style={styles.slideshowBtn}><NativeText style={{ color: "black" }}> {item.title} </NativeText></Button>
                     </View>
                 </ImageBackground>
             </Fragment>
