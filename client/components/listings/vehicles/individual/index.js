@@ -1,12 +1,73 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions, ImageBackground } from "react-native";
 import styles from "./styles.js";
 import { Header, Left, Body, Right, Button, Title, Text as NativeText, Card, CardItem, Thumbnail, Content } from 'native-base';
 import Gallery from 'react-native-image-gallery';
 import ReadMore from 'react-native-read-more-text';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import Carousel from 'react-native-snap-carousel';
+
+
+const { width, height  } = Dimensions.get('window');
 
 const title = "Broken exhaust pipe on a 2016 honda civic touring";
+
+const dataaa = [{
+    title: "Engine Jobs",
+    description: "Anything related to the main engine functionality",
+    background: require("../../../../assets/images/car-11.jpg"),
+    index: 1
+}, { 
+    title: "Exhaust Jobs",
+    description: "Anything related to the exahust of the vehicle/bike",
+    background: require("../../../../assets/images/car-10.jpg"),
+    index: 2
+}, { 
+    title: "Maintenance",
+    description: "This category is strictly for general maintenance jobs",
+    background: require("../../../../assets/images/car-9.jpg"),
+    index: 3
+}, {
+    title: "Tire/Brakes",
+    description: "This is strictly for JUST tire and break jobs of all varieties",
+    background: require("../../../../assets/images/car-8.jpg"),
+    index: 4
+}, { 
+    title: "Interior Design",
+    description: "Design and re-design of the interior of a vehicle",
+    background: require("../../../../assets/images/car-7.jpg"),
+    index: 5
+}, {
+    title: "Oil Changes",
+    description: "Oil changes, we all need em!",
+    background: require("../../../../assets/images/car-6.jpg"),
+    index: 6
+}, { 
+    title: "Electrical Work",
+    description: "Fuses, lights, signals, and the main electrical components of any vehicle",
+    background: require("../../../../assets/images/car-5.jpg"),
+    index: 7
+}, {
+    title: "Speciality Repairs",
+    description: "Bmw, Infiniti, Etc... foreign vehicle repairs",
+    background: require("../../../../assets/images/car-4.jpg"),
+    index: 8
+}, { 
+    title: "Speciality Upgrades",
+    description: "This category is strictly for high-end vehicle upgrades...",
+    background: require("../../../../assets/images/car-1.jpg"),
+    index: 9
+}, {
+    title: "Transmission Repairs",
+    description: "Transmission repairs - anything tranny related!",
+    background: require("../../../../assets/images/car-2.jpg"),
+    index: 10
+}, { 
+    title: "Diagnostics",
+    description: "Find out what's wrong with your vehicle",
+    background: require("../../../../assets/images/car-3.jpg"),
+    index: 11
+}];
 
 class IndividualBrokenVehicleHelper extends Component {
 constructor(props) {
@@ -52,6 +113,20 @@ constructor(props) {
         }]
     }
 }
+    _renderItem = ({item, index}) => {
+        return (
+            <Fragment key={index}>
+                <ImageBackground source={item.background} style={styles.backgroundSlider}>
+                    <View style={styles.bottomView}>
+                        <Text style={styles.desc}>{item.description}</Text>
+                        <Button onPress={() => {
+                            this.props.props.navigation.navigate("individual-broken-listing");
+                        }} style={styles.slideshowBtn}><NativeText style={{ color: "black" }}> {item.title} </NativeText></Button>
+                    </View>
+                </ImageBackground>
+            </Fragment>
+        );
+    }
     _renderTruncatedFooter = (handlePress) => {
         return (
             <Text style={{ color: "blue", fontSize: 20, marginTop: 5}} onPress={handlePress}>
@@ -206,10 +281,10 @@ constructor(props) {
                                 <Text style={{ fontSize: 18, marginTop: 6 }}>4.3 ({Math.floor(Math.random() * 40) + 1} Reviews)</Text>
                             </View>
                             <View style={styles.noMargin}>
-                                {typeof reviews !== 'undefined' && reviews.length > 0 ? reviews.slice(0, 3).map((review, index) => {
+                                {typeof reviews !== 'undefined' && reviews.length > 0 ? reviews.slice(0, 2).map((review, index) => {
                                     return (
                                         <Fragment>
-                                            <Content padder>
+                                            <Content style={styles.contentContent} padder>
                                                 <Card>
                                                     <CardItem>
                                                     <Left>
@@ -248,7 +323,7 @@ constructor(props) {
                                 </View>
                                 
                             </View>
-                            <View style={styles.rowRow}>
+                            <View style={[styles.rowRow, { marginTop: -30 }]}>
                                 <Image source={require("../../../../assets/icons/small-star.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
                                 <Text style={{ margin: 5 }}>{Math.floor(Math.random() * 70) + 1} Reviews</Text>
                             </View>
@@ -271,6 +346,30 @@ constructor(props) {
                             <View style={[styles.margin, { marginTop: 20 }]}>
                                 <Text style={{ fontSize: 18 }}>Response Rate - 100%</Text>
                                 <Text style={{ fontSize: 18, marginTop: 10 }}>Response Time - Within one hour</Text>
+                            </View>
+                            <View style={styles.marginCentered}>
+                                <Button style={{ width: "100%", justifyContent: "center" }} bordered onPress={() => {
+
+                                }}>
+                                    <NativeText>Contact Mechanic</NativeText>
+                                </Button>
+                                
+                            </View>
+                            <View style={styles.margin}>
+                                <Text style={{ marginTop: 10, textAlign: "left" }}>To protect your payment, never transfer money or communicate outside the (Company Name) website or app.</Text>
+                            </View>
+                            <View style={{ marginTop: 25 }}>
+                                <Carousel 
+                                    layout={'stack'} 
+                                    layoutCardOffset={`70`}
+                                    ref={(c) => { 
+                                        this._carousel = c; 
+                                    }}
+                                    data={dataaa}
+                                    renderItem={this._renderItem}
+                                    sliderWidth={width}
+                                    itemWidth={width * 0.90}
+                                />
                             </View>
                         </View>
                     </View>

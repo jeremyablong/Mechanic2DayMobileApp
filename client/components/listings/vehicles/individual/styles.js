@@ -59,7 +59,7 @@ export default StyleSheet.create({
     },
     mildBoldText: {
         fontWeight: "bold",
-        fontSize: 18
+        fontSize: 24
     },
     containerTwo: {
         width,
@@ -123,6 +123,34 @@ export default StyleSheet.create({
         width: width * 0.25,
         flexDirection: "column"
     },
+    bottomView: {
+        position: "absolute",
+        bottom: 20
+    },
+    desc: {
+        fontSize: 28,
+        color: "white",
+        fontWeight: "bold",
+        padding: 20,
+        backgroundColor: "rgba(0, 0, 0, 0.3)",
+        marginBottom: 15
+    },
+    slideshowBtn: {
+        borderWidth: 2,
+        borderColor: "black",
+        marginLeft: 20,
+        backgroundColor: "white"
+    },
+    marginCentered: {
+        margin: 20,
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center"
+    },
+    backgroundSlider: {
+        minHeight: 350,
+        width: width * 0.65
+    },
     columnColumnLeft: {
         maxHeight: 100,
         width: width * 0.75,
@@ -131,6 +159,9 @@ export default StyleSheet.create({
     rowRow: {
         flexDirection: "row"
     },
+    contentContent: {
+        borderColor: "white"
+    },  
     map: {
         flex: 1,
         marginTop: 30,

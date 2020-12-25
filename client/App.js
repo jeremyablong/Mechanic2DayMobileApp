@@ -26,6 +26,9 @@ import CreditsHomepagePage from "./pages/account/payments/credits/index.js";
 import ViewPublicProfilePage from "./pages/account/profile/public/profile/publicProfile.js";
 import MessagingConversationsPage from "./pages/messaging/conversations/index.js";
 import IndividualBrokenVehiclePage from "./pages/listings/vehicles/individual/index.js";
+import MapViewAllListingsPage from "./pages/listings/main.js";
+import GetLocation from 'react-native-get-location';
+import { gatherLocationOnLoad } from "./actions/location/location.js";
 
 const Stack = createStackNavigator();
 
@@ -75,6 +78,21 @@ constructor(props) {
       }
     } 
   }
+  componentDidMount() {
+    GetLocation.getCurrentPosition({
+			enableHighAccuracy: true,
+			timeout: 15000,
+		})
+		.then(location => {
+			console.log("location :", location);
+
+			this.props.gatherLocationOnLoad(location);
+		})
+		.catch(error => {
+			const { code, message } = error;
+			console.warn(code, message);
+		})
+  }
   render () {
     return (
       <>
@@ -105,7 +123,8 @@ constructor(props) {
               <Stack.Screen name="credits-coupons" component={CreditsHomepagePage} />
               <Stack.Screen name="view-public-profile-page" component={ViewPublicProfilePage} />
               <Stack.Screen name="chat-conversations" component={MessagingConversationsPage} />
-              <Stack.Screen name="individual-broken-listing" component={IndividualBrokenVehiclePage} />
+              {/* <Stack.Screen name="individual-broken-listing" component={IndividualBrokenVehiclePage} /> */}
+              <Stack.Screen name="individual-broken-listing" component={MapViewAllListingsPage} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>
@@ -131,4 +150,4 @@ const mapStateToProps = state => {
     }
   }
 }
-export default connect(mapStateToProps, { })(App);
+export default connect(mapStateToProps, { gatherLocationOnLoad })(App);
