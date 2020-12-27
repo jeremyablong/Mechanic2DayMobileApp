@@ -33,7 +33,10 @@ constructor(props) {
         trims: [],
         selectedTrim: "",
         transmissions: [],
-        selectedTransmission: ""
+        selectedTransmission: "",
+        selectedEngine: "",
+        engines: [],
+        showAlernative: false
     }
 }
     onSuccess = e => {
@@ -54,7 +57,26 @@ constructor(props) {
             console.log("THE ERR MAGIC: ", err);
         })
     }
-    
+    handleGeneralInfoSubmission = () => {
+        const { selectedYear, selectedMake, selectedModel, selectedTrim, selectedTransmission, selectedEngine } = this.state;
+
+        this.setState({
+            selectedVehicle: {
+                make: selectedMake,
+                model: selectedModel,
+                year: selectedYear,
+                fuelType: "unknown",
+                body: "unknown",
+                trim: selectedTrim,
+                transmission: selectedTransmission,
+                vehicleType: "unknown",
+                selectedEngine: selectedEngine.length > 0 ? selectedEngine : "unknown",
+            },
+            vinAccepted: true
+        }, () => {
+            this.RBSheet.close();
+        })
+    }
     handleVinSubmission = () => {
         const configgg = {
             headers: {
@@ -76,7 +98,8 @@ constructor(props) {
                         fuelType: Results[0].FuelTypePrimary,
                         body: Results[0].BodyClass,
                         trim: Results[0].Trim,
-                        vehicleType: Results[0].VehicleType
+                        vehicleType: Results[0].VehicleType,
+                        transmission: "unknown"
                     }
                 }, () => {
                     this.RBSheet.close();
@@ -90,28 +113,45 @@ constructor(props) {
         console.log("proceedToNextPage");
     }
     renderSecondSetButtons = () => {
-        if (this.state.odemeter.length > 0) {
-            return (
-                <Fragment>
-                    <Button info style={[styles.submitBtnContinue, { marginTop: 30 }]} onPress={() => {
-                        this.proceedToNextPage()
-                    }}>
-                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Next</NativeText>
-                    </Button>
-                </Fragment>
-            );
+        const { showAlernative, selectedTrim, odemeter } = this.state;
+
+        if (showAlernative === false) {
+            if (odemeter.length > 0) {
+                return (
+                    <Fragment>
+                        <Button info style={[styles.submitBtnContinue, { marginTop: 30 }]} onPress={() => {
+                            this.proceedToNextPage()
+                        }}>
+                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Next</NativeText>
+                        </Button>
+                    </Fragment>
+                );
+            } 
         } else {
-            return (
-                <Fragment>
-                    <Button info style={[styles.greyButton, { marginTop: 30 }]} onPress={() => {}}>
-                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Next</NativeText>
-                    </Button>
-                </Fragment>
-            );
+
+            if (typeof selectedTrim !== "undefined" && selectedTrim.length > 0) {
+                return (
+                    <Fragment>
+                        <Button info style={[styles.submitBtnContinue, { marginTop: 30, marginBottom: 20 }]} onPress={() => {
+                            
+                        }}>
+                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Next</NativeText>
+                        </Button>
+                    </Fragment>
+                );
+            } else {
+                return (
+                    <Fragment>
+                        <Button info style={[styles.greyButton, { marginTop: 30 }]} onPress={() => {}}>
+                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Next</NativeText>
+                        </Button>
+                    </Fragment>
+                );
+            }
         }
     }
     renderInfo = () => {
-        const { vin, vinAccepted, selectedVehicle, olderThan1981 } = this.state;
+        const { vin, vinAccepted, selectedVehicle, olderThan1981, selectedTransmission, selectedEngine } = this.state;
 
         if (vinAccepted === true && selectedVehicle !== null) {
             return (
@@ -155,11 +195,12 @@ constructor(props) {
                         <View style={styles.itemItemTwo} stackedLabel>
                             <Text>Style: {this.state.selectedVehicle.body}</Text>
                         </View>
-                        <View style={styles.submitBtnContainerView}>
-                            <View style={styles.submitBtnContainerView}>
-                                {this.renderSecondSetButtons()}
-                            </View>
-                        </View>
+                        {typeof selectedTransmission !== 'undefined' && selectedTransmission !== null && selectedTransmission.length > 0 ? <View style={styles.itemItemTwo} stackedLabel>
+                            <Text>Transmission: {this.state.selectedVehicle.transmission}</Text>
+                        </View> : null}
+                        {typeof selectedEngine !== 'undefined' && selectedEngine !== null && selectedEngine.length > 0 ? <View style={styles.itemItemTwo} stackedLabel>
+                            <Text>Engine: {this.state.selectedVehicle.selectedEngine}</Text>
+                        </View> : null}
                     </View>
                 </Fragment>
             );
@@ -231,12 +272,39 @@ constructor(props) {
             console.log("THE ERR MAGIC: ", err);
         })
     }
+    calculateEngines = () => {
+        console.log("calculateEngines");
+
+        const { selectedYear, selectedMake, selectedModel, selectedTrim, selectedTransmission } = this.state;
+
+        axios.get(`https://carmakemodeldb.com/api/v1/car-lists/get/car/engines/${selectedYear}/${selectedMake}/${selectedModel}/${selectedTrim}/${selectedTransmission}?api_token=${Config.carmakemodeldb_api_token}`).then((res) => {
+            if (res.data) {
+                console.log("ENGINES: ", res.data);
+
+                this.setState({
+                    engines: res.data
+                })
+            }
+        }).catch((err) => {
+            console.log("THE ERR MAGIC: ", err);
+        })
+    }
     renderConditionalSwitch = () => {
-        const { years, makes, models, trims, transmissions } = this.state;
+        const { years, makes, models, trims, transmissions, engines } = this.state;
         
         if (this.state.showCustomization === true) {
             return (
                 <ScrollView>
+                <View style={{ marginLeft: 20, marginTop: 15 }}>
+                    <TouchableOpacity onPress={() => {
+                        this.setState({
+                            showAlernative: false,
+                            showCustomization: false
+                        })
+                    }}>
+                        <Text style={{ fontSize: 18, color: "blue" }}>I found my VIN</Text>
+                    </TouchableOpacity>
+                </View>
                     <View style={{ marginTop: 40, marginLeft: 20, marginRight: 20 }}>
                         <Text style={{ fontSize: 18, fontWeight: "bold" }}>Enter your vehicle details manually</Text>
                         
@@ -244,7 +312,16 @@ constructor(props) {
                             selectedValue={this.state.selectedYear}
                             onValueChange={(itemValue) =>
                                 this.setState({
-                                    selectedYear: itemValue
+                                    selectedYear: itemValue,
+                                    selectedModel: "",
+                                    selectedTrim: "",
+                                    selectedTransmission: "",
+                                    models: [],
+                                    trims: [],
+                                    transmissions: [],
+                                    selectedEngine: "",
+                                    engines: [],
+                                    makes: []
                                 }, () => {
                                     this.calculateMakes();
                                 })
@@ -263,7 +340,15 @@ constructor(props) {
                                 selectedValue={this.state.selectedMake}
                                 onValueChange={(itemValue) =>
                                     this.setState({
-                                        selectedMake: itemValue
+                                        selectedMake: itemValue,
+                                        selectedModel: "",
+                                        selectedTrim: "",
+                                        selectedTransmission: "",
+                                        models: [],
+                                        trims: [],
+                                        transmissions: [],
+                                        selectedEngine: "",
+                                        engines: []
                                     }, () => {
                                         this.calculateModels();
                                     })
@@ -282,7 +367,13 @@ constructor(props) {
                                 selectedValue={this.state.selectedModel}
                                 onValueChange={(itemValue) =>
                                     this.setState({
-                                        selectedModel: itemValue
+                                        selectedModel: itemValue,
+                                        selectedTrim: "",
+                                        selectedTransmission: "",
+                                        trims: [],
+                                        transmissions: [],
+                                        selectedEngine: "",
+                                        engines: []
                                     }, () => {
                                         this.calculateTrims();
                                     })
@@ -301,7 +392,11 @@ constructor(props) {
                                 selectedValue={this.state.selectedTrim}
                                 onValueChange={(itemValue) =>
                                     this.setState({
-                                        selectedTrim: itemValue
+                                        selectedTrim: itemValue,
+                                        selectedTransmission: "",
+                                        transmissions: [],
+                                        selectedEngine: "",
+                                        engines: []
                                     }, () => {
                                         this.calculateTransmissions();
                                     })
@@ -320,9 +415,11 @@ constructor(props) {
                                 selectedValue={this.state.selectedTransmission}
                                 onValueChange={(itemValue) =>
                                     this.setState({
-                                        selectedTransmission: itemValue
+                                        selectedTransmission: itemValue,
+                                        selectedEngine: "",
+                                        engines: []
                                     }, () => {
-                                        this.calculateTransmissions();
+                                        this.calculateEngines();
                                     })
                                 }
                                 style={styles.pickerPicker}
@@ -334,6 +431,24 @@ constructor(props) {
                                 })} 
                             </Picker> : null}
                         </View>
+                        <View style={{ marginTop: 20 }}>
+                            {typeof engines !== "undefined" && engines.length > 0 ? <Picker 
+                                selectedValue={this.state.selectedEngine}
+                                onValueChange={(itemValue) =>
+                                    this.setState({
+                                        selectedEngine: itemValue
+                                    })
+                                }
+                                style={styles.pickerPicker}
+                                placeholder={"Select the ENGINE of your vehicle..."}
+                                placeholderTextColor={"grey"}
+                            >
+                                {engines.map((engine, index) => {
+                                    return <Picker.Item label={engine.engine} value={engine.engine} />;
+                                })} 
+                            </Picker> : null}
+                        </View>
+                        
                     </View>
                 </ScrollView>
             );
@@ -362,11 +477,52 @@ constructor(props) {
                         <TouchableOpacity onPress={() => {
                         
                             this.setState({
-                                showCustomization: true
+                                showCustomization: true,
+                                showAlernative: true,
+                                vin: ""
                             })
                         }}>
                             <Text style={{ fontSize: 18, color: "#6441a5" }}>I can't find my VIN number?</Text>
                         </TouchableOpacity>
+                    </View>
+                </Fragment>
+            );
+        }
+    }
+    renderbottomButton = () => {
+        const { selectedYear, selectedModel, selectedMake, selectedTrim } = this.state;
+        
+        if (typeof this.state.vin !== "undefined" && this.state.vin.length === 17 || (typeof selectedYear !== undefined && selectedYear.length > 0 && typeof selectedModel !== undefined && selectedModel.length > 0 && typeof selectedMake !== "undefined" && selectedMake.length > 0 && typeof selectedTrim !== undefined && selectedTrim.length > 0)) {
+            if (typeof this.state.vin !== "undefined" && this.state.vin.length === 17) {
+                console.log("handlevinsubmission");
+                return (
+                    <Fragment>
+                        <View style={styles.bottomPosition}>
+                            <View style={styles.justify}>
+                                <Button onPress={this.handleVinSubmission} style={styles.greenButton} success><NativeText>Submit</NativeText></Button>
+                            </View>
+                        </View>
+                    </Fragment>
+                );
+            } else {
+                console.log("handleGeneralInfoSubmission");
+                return (
+                    <Fragment>
+                        <View style={styles.bottomPosition}>
+                            <View style={styles.justify}>
+                                <Button onPress={this.handleGeneralInfoSubmission} style={styles.greenButton} success><NativeText>Submit</NativeText></Button>
+                            </View>
+                        </View>
+                    </Fragment>
+                );
+            }
+        } else {
+            return (
+                 <Fragment>
+                    <View style={styles.bottomPosition}>
+                        <View style={styles.justify}>
+                            <Button style={styles.greyButton}><NativeText>Submit</NativeText></Button>
+                        </View>
                     </View>
                 </Fragment>
             );
@@ -562,11 +718,12 @@ constructor(props) {
                             />
                         </View>
                         {this.renderConditionalSwitch()}
-                        <View style={styles.bottomPosition}>
-                            <View style={styles.justify}>
-                                {typeof this.state.vin !== "undefined" && this.state.vin.length === 17 ? <Button onPress={this.handleVinSubmission} style={styles.greenButton} success><NativeText>Submit</NativeText></Button> : <Button style={styles.greyButton}><NativeText>Submit</NativeText></Button>}
+                        {/* <View style={styles.submitBtnContainerView}>
+                            <View style={styles.submitBtnContainerView}>
+                                {this.renderSecondSetButtons()}
                             </View>
-                        </View>
+                        </View> */}
+                        {this.renderbottomButton()}
                     </View>
                 </RBSheet>
             </Fragment>
