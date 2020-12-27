@@ -5,6 +5,10 @@ import { Container, Content, List, Left, Right, ListItem, Text as NativeText } f
 import FooterHelper from "../../footer/footer.js";
 import { authenticated, finishedSignup } from "../../../actions/signup/auth.js";
 import { connect } from "react-redux";
+import { switchAccountType } from "../../../actions/accountType/type.js";
+import axios from "axios";
+import { Config } from "react-native-config";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 
 class ProfileMainHelper extends Component {
@@ -12,7 +16,8 @@ constructor(props) {
     super(props);
     
     this.state = {
-        mechanic: true
+        mechanic: true,
+        user: null
     }
 }
     deauthenticate = () => {
@@ -20,8 +25,46 @@ constructor(props) {
         this.props.finishedSignup(false);
 
         setTimeout(() => {
-            this.props.props.navigation.navigate("homepage-main");
+            this.props.props.navigation.push("homepage-main");
         },  500);
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            axios.post(`${Config.ngrok_url}/gather/general/info`, {
+                id: this.props.unique_id
+            }).then((res) => {
+                if (res.data.message === "Found user!") {
+                    console.log(res.data);
+    
+                    const { user } = res.data;
+    
+                    this.setState({
+                        user
+                    })
+                } else {
+                    console.log("Err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        }, 400);
+    }   
+    changeAccountType = () => {
+        console.log("changeAccountType clicked.");
+
+        if (this.props.accountType === "PROVIDER") {
+            this.props.switchAccountType({
+                type: "CLIENT"
+            })
+        } else {
+            this.props.switchAccountType({
+                type: "PROVIDER"
+            })
+        }
+
+        // setTimeout(() => {
+        //     this.props.props.navigation.push("homepage-main");
+        // },  500);
     }
     renderConditional = () => {
         if (this.state.mechanic) {
@@ -51,8 +94,10 @@ constructor(props) {
                             <ListItem style={styles.divider} itemDivider>
                             <Left><NativeText>ACCOUNT TYPE (CURRENT TYPE - CLIENT)</NativeText></Left> 
                             </ListItem>  
-                            <ListItem style={styles.listItem}>
-                            <Left><NativeText>Switch to "provider" account</NativeText></Left><Right><Image source={require("../../../assets/icons/profile-two.png")} style={styles.inlineIcon} /></Right>
+                            <ListItem button onPress={() => {
+                                this.changeAccountType();
+                            }} style={styles.listItem}>
+                            <Left><NativeText>{this.props.accountType === "PROVIDER" ? `Switch to "client" account` : `Switch to "provider" account`}</NativeText></Left><Right><Image source={require("../../../assets/icons/profile-two.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             <ListItem style={styles.listItem}>
                             <Left><NativeText>Create a listing (need help/repair)</NativeText></Left><Right><Image source={require("../../../assets/icons/create.png")} style={styles.inlineIcon} /></Right>
@@ -104,13 +149,33 @@ constructor(props) {
             
         }
     }
+    renderProfilePic = () => {
+        const { user } = this.state;
+
+        if (user !== null && typeof user.profilePics !== 'undefined' && user.profilePics.length > 0) {
+            return (
+                <Fragment>
+                    <Image source={{ uri: user.profilePics[user.profilePics.length - 1].full_url }} style={styles.profilePic} />
+                </Fragment>
+            );
+        } else {
+            return (
+                <Fragment>
+                    <SkeletonPlaceholder>
+                    <View style={styles.profilePic} />
+                    </SkeletonPlaceholder>
+                </Fragment>
+            );
+        }
+    }
     render() {
         const firstName = "Jeremy";
+
         return (
             <Fragment>
                 <View style={styles.topContainer}>
                     <View>
-                        <Image source={require("../../../assets/images/me.jpg")} style={styles.profilePic} />
+                        {this.renderProfilePic()}
                     </View>
                     <View style={styles.nameContainer}>
                         <Text style={styles.name}>{firstName}</Text>
@@ -129,4 +194,17 @@ constructor(props) {
         )
     }
 }
-export default connect(null, { authenticated, finishedSignup })(ProfileMainHelper);
+const mapStateToProps = (state) => {
+    if (state.accountType.type) {
+        return {
+            accountType: state.accountType.type.type,
+            unique_id: state.auth.authenticated.unique_id
+        };
+    } else {
+        return {
+            accountType: null,
+            unique_id: state.auth.authenticated.unique_id
+        };
+    }
+}
+export default connect(mapStateToProps, { authenticated, finishedSignup, switchAccountType })(ProfileMainHelper);

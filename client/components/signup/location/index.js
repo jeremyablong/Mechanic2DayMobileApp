@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, Image } from "react-native";
+import { View, Text, ImageBackground, TouchableOpacity, Keyboard } from "react-native";
 import styles from "./styles.js";
 import Config from "react-native-config";
 import Autocomplete from "react-native-autocomplete-input";
@@ -101,6 +101,8 @@ constructor(props) {
                                                 selected: item.address.freeformAddress,
                                                 hideOrNot: true,
                                                 full: item
+                                            }, () => {
+                                                Keyboard.dismiss();
                                             })
                                         }}>
                                             <Text style={{ color: "black", fontWeight: "bold" }}>{item.address.freeformAddress}</Text>

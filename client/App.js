@@ -29,6 +29,10 @@ import IndividualBrokenVehiclePage from "./pages/listings/vehicles/individual/in
 import MapViewAllListingsPage from "./pages/listings/main.js";
 import GetLocation from 'react-native-get-location';
 import { gatherLocationOnLoad } from "./actions/location/location.js";
+import MechanicListingPage from "./pages/listings/mechanics/mechanicListing.js";
+import HomepageListingsCreatePage from "./pages/listings/create/clients/create/main/index.js";
+import PreviewStepsBrokenVehicleListingPage from "./pages/listings/create/clients/create/preview/index.js";
+import PageOneVehicleFormPage from "./pages/listings/create/clients/create/one/index.js";
 
 const Stack = createStackNavigator();
 
@@ -123,8 +127,12 @@ constructor(props) {
               <Stack.Screen name="credits-coupons" component={CreditsHomepagePage} />
               <Stack.Screen name="view-public-profile-page" component={ViewPublicProfilePage} />
               <Stack.Screen name="chat-conversations" component={MessagingConversationsPage} />
-              {/* <Stack.Screen name="individual-broken-listing" component={IndividualBrokenVehiclePage} /> */}
-              <Stack.Screen name="individual-broken-listing" component={MapViewAllListingsPage} />
+              <Stack.Screen name="individual-broken-listing" component={IndividualBrokenVehiclePage} />
+              <Stack.Screen name="broken-vehicles-map" component={MapViewAllListingsPage} />
+              <Stack.Screen name="mechanic-for-hire-individual" component={MechanicListingPage} />
+              <Stack.Screen name="providers-listing-homepage" component={HomepageListingsCreatePage} />
+              <Stack.Screen name="list-vehicle-start" component={PreviewStepsBrokenVehicleListingPage} />
+              <Stack.Screen name="create-vehicle-listing-one" component={PageOneVehicleFormPage} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

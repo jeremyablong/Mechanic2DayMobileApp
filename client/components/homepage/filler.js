@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import styles from "./styles.js";
-import { Image, View, Text, FlatList } from "react-native";
+import { Image, View, Text, FlatList, TouchableOpacity } from "react-native";
 import { AirbnbRating } from 'react-native-ratings';
 
 
@@ -113,7 +113,9 @@ const FillerContentMechanicsForHire = (props) => {
                 data={data}
                 renderItem={({ item }) => {
                     return (
-                        <View style={styles.flatlistItem}>
+                        <TouchableOpacity onPress={() => {
+                            props.props.navigation.navigate("mechanic-for-hire-individual");
+                        }} style={styles.flatlistItem}>
                             <Image source={{ uri: item.background }} style={styles.specialImage} />
                             <View style={styles.specialRow}>
                                 <View style={styles.left}>
@@ -139,7 +141,7 @@ const FillerContentMechanicsForHire = (props) => {
                             <View style={styles.specialRow}>
                                 <Text style={styles.pricePrice}>Min Rate: ${item.budget.toString()}</Text>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     );
                 }}
                 keyExtractor={item => item.id}

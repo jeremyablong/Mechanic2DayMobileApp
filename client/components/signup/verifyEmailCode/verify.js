@@ -90,7 +90,6 @@ const VerifyCodeEmailHelper = (props) => {
                                 }}
                                 cellCount={CELL_COUNT}
                                 rootStyle={styles.codeFieldRoot}
-                                keyboardType="number-pad"
                                 textContentType="oneTimeCode"
                                 renderCell={({index, symbol, isFocused}) => (
                                     <Text

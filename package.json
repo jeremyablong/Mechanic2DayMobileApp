@@ -27,6 +27,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
+    "random-email": "^1.0.3",
     "twilio": "^3.54.0",
     "uuid": "^8.3.2"
   },

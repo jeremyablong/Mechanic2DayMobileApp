@@ -11,7 +11,12 @@ target 'client' do
   pod 'react-native-google-maps', :path => rn_maps_path
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
-
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera/Permission-Camera.podspec"
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  
   target 'clientTests' do
     inherit! :complete
     # Pods for testing

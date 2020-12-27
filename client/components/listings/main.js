@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Dimensions, Image, Animated, TouchableOpacity, ScrollView, PanResponder, ImageBackground } from 'react-native';
+import { View, Text, Dimensions, Image, Animated, TouchableOpacity, ScrollView, PanResponder, ImageBackground, Keyboard } from 'react-native';
 import MapView from 'react-native-maps';
 import styles from './styles.js';
 import SlidingUpPanel from 'rn-sliding-up-panel';
@@ -192,7 +192,7 @@ constructor(props) {
         })
     }
     render() {
-        console.log("this.state main.js", this.state);
+        // console.log("this.state main.js", this.state);
 
         const { results, listings } = this.state;
         return (
@@ -235,7 +235,7 @@ constructor(props) {
                         <View style={styles.topContainer}>
                             <View style={styles.justifyCentered}>
                                 <Image source={require("../../assets/icons/dotted.png")} style={{ maxHeight: 20, maxWdith: 100 }} />
-                                {this.state.show === true ? <Text style={{ marginTop: 5, fontSize: 20 }}>1-16 of 300+ Mechanics</Text> : <Text style={{ marginTop: 5, fontSize: 25 }}>300+ Mechanics</Text>}
+                                {this.state.show === true ? <Text style={{ marginTop: 5, fontSize: 20 }}>1-16 of 300+ Broken Vehicles</Text> : <Text style={{ marginTop: 5, fontSize: 25 }}>300+ Broken Vehicles</Text>}
                             </View>
                             
                         </View>
@@ -244,7 +244,9 @@ constructor(props) {
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
                                 {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
                                     return (
-                                        <View style={styles.listingItem}>
+                                        <TouchableOpacity onPress={() => {
+                                            this.props.props.navigation.navigate("individual-broken-listing");
+                                        }} style={styles.listingItem}>
                                             <ImageBackground source={listing.image} style={styles.wideImage}>
                                                 <View style={styles.label}>
                                                     <Text>SuperMechanic</Text>
@@ -260,7 +262,63 @@ constructor(props) {
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={styles.biggerP}><Text style={{ fontWeight: "bold" }}>${listing.price}</Text> Maximum Budget</Text>
                                             </View>
-                                        </View>
+                                        </TouchableOpacity>
+                                    );
+                                }) : null} 
+                            </ScrollView>
+                        </View>
+                        <View style={styles.nextContainer}>
+                            <Text style={styles.h3}>Mechanics in Big Bear Lake</Text>
+                            <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
+                                {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
+                                    return (
+                                        <TouchableOpacity onPress={() => {
+                                            this.props.props.navigation.navigate("individual-broken-listing");
+                                        }} style={styles.listingItem}>
+                                            <ImageBackground source={listing.image} style={styles.wideImage}>
+                                                <View style={styles.label}>
+                                                    <Text>SuperMechanic</Text>
+                                                </View>
+                                            </ImageBackground>
+                                            <View style={styles.rowCustom}>
+                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWdith: 25, width: 25, height: 25 }} />
+                                                <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
+                                            </View>
+                                            <View style={[styles.rowCustom, { marginTop: -4 }]}>
+                                                <Text style={styles.biggerP}>{listing.title}</Text>
+                                            </View>
+                                            <View style={[styles.rowCustom, { marginTop: -4 }]}>
+                                                <Text style={styles.biggerP}><Text style={{ fontWeight: "bold" }}>${listing.price}</Text> Maximum Budget</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    );
+                                }) : null} 
+                            </ScrollView>
+                        </View>
+                        <View style={styles.nextContainer}>
+                            <Text style={styles.h3}>Mechanics in Big Bear Lake</Text>
+                            <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
+                                {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
+                                    return (
+                                        <TouchableOpacity onPress={() => {
+                                            this.props.props.navigation.navigate("individual-broken-listing");
+                                        }} style={styles.listingItem}>
+                                            <ImageBackground source={listing.image} style={styles.wideImage}>
+                                                <View style={styles.label}>
+                                                    <Text>SuperMechanic</Text>
+                                                </View>
+                                            </ImageBackground>
+                                            <View style={styles.rowCustom}>
+                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWdith: 25, width: 25, height: 25 }} />
+                                                <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
+                                            </View>
+                                            <View style={[styles.rowCustom, { marginTop: -4 }]}>
+                                                <Text style={styles.biggerP}>{listing.title}</Text>
+                                            </View>
+                                            <View style={[styles.rowCustom, { marginTop: -4 }]}>
+                                                <Text style={styles.biggerP}><Text style={{ fontWeight: "bold" }}>${listing.price}</Text> Maximum Budget</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     );
                                 }) : null} 
                             </ScrollView>
@@ -286,7 +344,7 @@ constructor(props) {
                     </View>
                     <View style={styles.results}>
                         {typeof results !== 'undefined' && results.length > 0 ? results.map((item, index) => {
-                            console.log("itemmmmmmmm........:", item);
+                            {/* console.log("itemmmmmmmm........:", item); */}
                             if (item.type === "Point Address" || item.type === "Geography") {
                                     return (
                                         <TouchableOpacity style={styles.listItemTwo} onPress={() => {
@@ -300,6 +358,8 @@ constructor(props) {
                                                 }
                                             }, () => {
                                                 this._panel_two.hide();
+
+                                                this.refs.searchBar.unFocus();
                                             })
                                         }}>
                                             <Text style={styles.specialText}>{item.address.freeformAddress}</Text>

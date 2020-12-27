@@ -192,7 +192,7 @@ constructor(props) {
                         <Header hasTabs />
                             <Tabs style={styles.tabs}>
                                 <Tab heading="Phone">
-                            
+                                    
                                     <PhoneInput 
                                         ref={this.phoneInput}
                                         containerStyle={styles.inputPhone}

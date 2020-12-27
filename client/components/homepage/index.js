@@ -87,7 +87,7 @@ constructor(props) {
                     <View style={styles.bottomView}>
                         <Text style={styles.desc}>{item.description}</Text>
                         <Button onPress={() => {
-                            this.props.props.navigation.navigate("individual-broken-listing");
+                            this.props.props.navigation.navigate("broken-vehicles-map");
                         }} style={styles.slideshowBtn}><NativeText style={{ color: "black" }}> {item.title} </NativeText></Button>
                     </View>
                 </ImageBackground>
@@ -105,7 +105,7 @@ constructor(props) {
                     contentContainerStyle={styles.containerStyle}
                     renderBackground={() => {
                         return (
-                            <Image source={require("../../assets/images/tools-1.jpg")} style={styles.background} />
+                            <Image source={require("../../assets/images/car-7.jpg")} style={styles.background} />
                         );
                     }}
                     renderForeground={() => (
@@ -125,12 +125,15 @@ constructor(props) {
                                 <Button style={[styles.btnBtn, { marginTop: 50 }]} bordered dark>
                                     <NativeText>Hire a mechanic</NativeText>
                                 </Button>
-                                <Button style={styles.btnBtn} bordered>
-                                    <NativeText>Fix a vehicle</NativeText>
+                                <Button onPress={() => {
+                                    this.props.props.navigation.navigate("start-quote-proccess");
+                                }} style={styles.btnBtn} bordered>
+                                    <NativeText>Browse Broken Vehicles</NativeText>
                                 </Button>
                             </View>
                         </View>
                         <View style={styles.mainContent}>
+                           
                             <View>
                                 <Text style={styles.repairText}>Repair Categories</Text>
                                 <Text style={styles.descriptionSmaller}>Browse different vehicle repair categories to find which area fits your needs best!</Text>
@@ -152,15 +155,15 @@ constructor(props) {
                             </View>
                             <View style={styles.hr} />
 
-                            <ActiveClientsLookingHelper />
+                            <ActiveClientsLookingHelper props={this.props.props} />
 
-                            <PromotionWide />
+                            <PromotionWide props={this.props.props} />
 
-                            <HomepageInfoHelper />
+                            <HomepageInfoHelper props={this.props.props} />
 
-                            <DesignedBoxScroll />
+                            <DesignedBoxScroll props={this.props.props} />
 
-                            <FillerContentMechanicsForHire />
+                            <FillerContentMechanicsForHire props={this.props.props} />
                             
                         </View>
                     </View>

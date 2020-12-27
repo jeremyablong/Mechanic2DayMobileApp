@@ -39,6 +39,8 @@ export default StyleSheet.create({
         maxHeight: 65,
         borderRadius: 40,
         marginTop: 30,
+        minWidth: 65,
+        minHeight: 65,
         marginLeft: 20
     },
     nameContainer: {
@@ -46,7 +48,7 @@ export default StyleSheet.create({
         marginLeft: 20
     },
     divider: {
-        backgroundColor: "#e3e1e1",
+        backgroundColor: "#f2f2f2",
         maxHeight: 100
     }
 })

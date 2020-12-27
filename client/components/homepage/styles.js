@@ -58,6 +58,12 @@ export default StyleSheet.create({
         fontWeight: "bold",
         marginLeft: 20
     },
+    midSection: {
+        marginBottom: 50,
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center"
+    },
     slideshowBtn: {
         borderWidth: 2,
         borderColor: "black",

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Dimensions, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, Image, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { Header, Left, Title, Button, Right, Text as NativeText, ListItem, Item, Label, Input } from 'native-base';
 import styles from './styles.js';
 import ReadMore from 'react-native-read-more-text';
@@ -11,11 +11,12 @@ import axios from "axios";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Dialog from "react-native-dialog";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from "../../../../toastConfig.js";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
 const { width, height } = Dimensions.get("window");
-
-const description = "I'm a traveling Software Engineer from Charlotte, NC. I drove cross country for work and am working on getting settled in. I'm very respectful, kind, compassionate and laid back. I hope you are able to overlook my tattoos and talk to me to understand who I really am aside from the tattoos. I'm very clean, quiet and overall a good human being. I try to be the best person I can be everyday and strive for excellence.";
 
 class ViewPublicProfileHelper extends Component {
 constructor (props) {
@@ -24,9 +25,13 @@ constructor (props) {
     this.state = {
         ready: false,
         images: [],
+        workName: "",
+        location: "",
         showDialog: false,
         profilePicBase64: "",
-        uri: ""
+        visible: false,
+        uri: "",
+        description: ""
     }
 }
     componentDidMount() {
@@ -89,9 +94,19 @@ constructor (props) {
         console.log("text ready");
     }
     renderSlideContent = () => {
+        const { user } = this.state;
+
         if (this.state.ready === true) {
             return (
                 <Fragment>
+                <Spinner
+                visible={this.state.visible}
+                textContent={'Loading...'} 
+                color={"white"} 
+                overlayColor={"rgba(0, 0, 0, 0.60)"} 
+                textStyle={{ color: "white", margin: 20, textAlign: "center" }} 
+                textContent={"We are processing your changes, please wait..."}
+                />
                     <ScrollView showVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 75 }} style={{ flex: 1 }}>
                         <Gallery
                             style={{ flex: 1, backgroundColor: 'black', maxHeight: 250, minHeight: 250 }}
@@ -107,7 +122,11 @@ constructor (props) {
                             </TouchableOpacity>
                             <View style={{ margin: 20 }}>
                                 <Text style={[styles.h6, { fontSize: 20, fontWeight: "bold", marginBottom: 20 }]}>Edit About Me</Text>
-                                <Text style={styles.h6}>{description}</Text>
+                                <TextInput multiline={true} numberOfLines={5} onChangeText={(value) => {
+                                    this.setState({
+                                        description: value
+                                    })
+                                }} value={this.state.description} style={{ fontSize: 18 }} placeholder={"Enter anything you'd like people to know about yourself!"} />
                             </View>
                             <View style={styles.hr} />
                             <View style={{ margin: 20 }}>
@@ -116,14 +135,22 @@ constructor (props) {
                             <ListItem style={styles.listItemSpecial}>
                                 <Item stackedLabel>
                                     <Label>Location</Label>
-                                    <Input style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={"Eg... Paris, FR / Brooklyn, NY / Chicago, IL"} />
+                                    <Input onChangeText={(value) => {
+                                        this.setState({
+                                            location: value
+                                        })
+                                    }} style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={user !== null && user.general_information ? user.general_information.location : "Eg... Paris, FR / Brooklyn, NY / Chicago, IL"} />
                                 </Item>
                                 
                             </ListItem>
                             <ListItem style={styles.listItemSpecial}>
                                 <Item stackedLabel>
                                     <Label>Work</Label>
-                                    <Input style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={"Eg... Airbnb / Apple / Taco Stand"} />
+                                    <Input onChangeText={(value) => {
+                                        this.setState({
+                                            workName: value
+                                        })
+                                    }} style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={user !== null && user.general_information ? user.general_information.work : "Eg... Airbnb / Apple / Taco Stand"} />
                                 </Item>
                                 
                             </ListItem>
@@ -154,6 +181,13 @@ constructor (props) {
     }
     completed = (values) => {
         console.log("values", values);
+
+        this.setState({
+            profilePicBase64: values.base64,
+            uri: values.uri,
+            images: [{ source: { uri: `data:${values.type};base64,${values.base64}` } }, ...this.state.images],
+            showDialog: false
+        })
     }
     launchCameraHelper = () => {
         console.log("launchCameraHelper clicked.")
@@ -181,11 +215,76 @@ constructor (props) {
             showDialog: false
         })
     }
+    saveAllDetails = () => {
+        console.log("saveAllDetails clicked.");
+        
+        const { profilePicBase64, description, workName, location } = this.state;
+
+        this.setState({
+            visible: true
+        }, () => {
+            axios.post(`${Config.ngrok_url}/save/details/personal/info/editted`, {
+                profilePicBase64: typeof profilePicBase64 !== 'undefined' && profilePicBase64.length > 0 ? profilePicBase64 : null,
+                id: this.props.unique_id,
+                location: location.length > 0 ? location : null,
+                description,
+                work_name: workName.length > 0 ? workName : null
+            }).then((res) => {
+                if (res.data.message === "Successfully saved the changed data!") {
+                    console.log(res.data);
+    
+                    this.setState({
+                        visible: false
+                    }, () => {
+                        this.RBSheet.close();
+    
+                        Toast.show({
+                            type: "success",
+                            position: "top",
+                            text1: "SUCCESS!",
+                            text2: "Successfully updated your information! 👌",
+                            visibilityTime: 4500
+                        })    
+                    })            
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        });
+
+        setTimeout(() => {
+            this.setState({
+                visible: false
+            })
+        }, 15000);
+    }
+    renderProfilePic = () => {
+        const { user, ready } = this.state;
+
+        if (ready === true && user !== null && typeof user.profilePics !== 'undefined' && user.profilePics.length > 0) {
+            return (
+                <Fragment>
+                    <Image source={{ uri: user.profilePics[user.profilePics.length - 1].full_url }} style={styles.profilePicture} />
+                </Fragment>
+            );
+        } else {
+            return (
+                <Fragment>
+                    <SkeletonPlaceholder>
+                        <View style={styles.profilePicture} />
+                    </SkeletonPlaceholder>
+                </Fragment>
+            );
+        }
+    }
     render() {
         console.log("this.state publicProfile", this.state);
         const review_count = Math.floor(Math.random() * 50) + 1;
         return (
             <Fragment>
+                <Toast style={{ zIndex: 9999999999999999999999999 }} config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <Header style={{ width }}>
                     <Left style={{ flexDirection: "row", flex: 1 }}>
                         <Button onPress={() => {
@@ -204,6 +303,7 @@ constructor (props) {
                     </Right>
                 </Header>
                 <ScrollView contentContainerStyle={{ paddingBottom: 100, paddingTop: 25 }} style={styles.container}>
+                    
                     <View style={styles.marginSpace}>
                         <View style={{ flexDirection: "row", maxHeight: height * 0.16 }}>
                             <View>
@@ -211,7 +311,7 @@ constructor (props) {
                                 <Text style={styles.secondText}>Joined in Feburary, 2019</Text>
                             </View>
                             <View>
-                                <Image source={require("../../../../../assets/images/me.jpg")} style={styles.profilePicture} />
+                                {this.renderProfilePic()}
                             </View>
                         </View>
                         <View style={styles.nextContainer}>
@@ -231,7 +331,7 @@ constructor (props) {
                             renderRevealedFooter={this._renderRevealedFooter}
                             onReady={this._handleTextReady}
                         >
-                            <Text style={styles.descriptionText}>{description}</Text>
+                            <Text style={styles.descriptionText}>{this.state.description}</Text>
                         </ReadMore>
                         <View style={styles.shortHr} />
                         <View style={styles.customRow}>
@@ -321,6 +421,13 @@ constructor (props) {
                                 </Button>
                                 <Title style={{ textAlign: "left", marginTop: 10 }}>Edit primary info</Title>
                             </Left>
+                            <Right>
+                                <Button transparent onPress={() => {
+                                    this.saveAllDetails();
+                                }}>
+                                    <NativeText style={{ color: "blue" }}>Save</NativeText>
+                                </Button>
+                            </Right>
                         </Header>
                         <View style={{ flex: 1 }}>
                             {this.renderSlideContent()}

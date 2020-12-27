@@ -315,7 +315,7 @@ constructor(props) {
                             </View>
                             <View style={styles.rowMargin}>
                                 <View style={styles.columnColumnLeft}>
-                                    <Text style={styles.mildBoldText}>Hosted by Jeremy</Text>
+                                    <Text style={styles.mildBoldText}>Posted by Jeremy</Text>
                                     <Text style={{ marginTop: 10 }}>Joined in May 2017</Text>
                                 </View>
                                 <View style={styles.columnColumn}>
@@ -333,15 +333,15 @@ constructor(props) {
                             </View>
                             <View style={[styles.rowRow, { marginTop: 10 }]}>
                                 <Image source={require("../../../../assets/icons/medal.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
-                                <Text style={{ margin: 5 }}>SuperMechanic</Text>
+                                <Text style={{ margin: 5 }}>SuperGuest</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
                                 <Text style={{ fontSize: 18, fontWeight: "bold"}}>During your stay</Text>
                                 <Text>If you need anything you can contact me at 213-248-8623</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
-                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>Jeremy is a SuperMechanic</Text>
-                                <Text>SuperMechanic's are experienced, highly rated hosts who are committed to providing great experiences for guests.</Text>
+                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>Jeremy is a SuperGuest</Text>
+                                <Text>SuperGuest's are experienced, highly rated customers who are committed to providing fluent and consistent experiences for all vehicle repairs.</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
                                 <Text style={{ fontSize: 18 }}>Response Rate - 100%</Text>

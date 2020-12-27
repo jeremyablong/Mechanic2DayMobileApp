@@ -113,6 +113,7 @@ export default StyleSheet.create({
     },
     cell: {
         width: 40,
+        margin: 3,
         height: 40,
         lineHeight: 38,
         fontSize: 30,

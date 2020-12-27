@@ -64,6 +64,8 @@ export default StyleSheet.create({
     },
     profilePicture: {
         maxWidth: 75,
+        minWidth: 75,
+        minHeight: 75,
         maxHeight: 75,
         borderRadius: 50,
         marginLeft: 30

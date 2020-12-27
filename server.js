@@ -42,6 +42,7 @@ app.use("/gather/credit/debit/cards", require("./routes/account/payments/payment
 app.use("/edit/card/individual", require("./routes/account/payments/payments/changes/deleteCard.js"));
 app.use("/update/payment/primary", require("./routes/account/payments/payments/changes/makeCardPrimary.js"));
 app.use("/save/oauth/google/user", require("./routes/auth/googleRegister.js"));
+app.use("/save/details/personal/info/editted", require("./routes/account/personalInfo/general/aboutMeDetails.js"));
 
 
 app.get('*', function(req, res) {

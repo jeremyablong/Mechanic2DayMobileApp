@@ -1,8 +1,10 @@
 {
-    "mongoURI": "mongodb+srv://jeremyablong:Jer$8246355abc123@cluster0.jr3ko.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    "mongoURI": "mongodb+srv://jeremyablong:Jer$8246355@cluster0.biwad.mongodb.net/<dbname>?retryWrites=true&w=majority",
     "sendgridAPIKey": "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",
     "TWILIO_ACCOUNT_SID": "AC7589b1acd813be6bb62ab2191286065b",
     "TWILIO_AUTH_TOKEN": "1b769ddc093d95ed15a135bc98c2ce47",
     "TWILIO_VERIFY_API": "VA50f91a70d1c910ba214ad80ca8cba61f",
-    "authyKey": "ccre696IZQrx3y6B0cPZ8dMEEj6G81yq"
+    "authyKey": "ccre696IZQrx3y6B0cPZ8dMEEj6G81yq",
+    "wasabiAccessKey": "J4FR4IVQL0CV0DFTMYBJ",
+    "wasabiSecretAccessKey": "wuUJoRXlWkSpVfPusz5XEf3ijhgvRtbwXc4oFofP"
 }

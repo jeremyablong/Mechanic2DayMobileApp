@@ -26,6 +26,34 @@ export default StyleSheet.create({
         paddingBottom: 20,
         width
     },
+    root: {
+        flex: 1, 
+        padding: 20
+    },
+    title: {
+        textAlign: 'center', 
+        fontSize: 30
+    },
+    codeFieldRoot: {
+        marginTop: 20
+    },
+    cell: {
+        width: 40,
+        height: 40,
+        margin: 4,
+        lineHeight: 38,
+        fontSize: 24,
+        borderWidth: 2,
+        borderColor: '#00000030',
+        textAlign: 'center',
+    },
+    innerInner: {
+        flex: 1,
+        marginBottom: 100
+    },
+    focusCell: {
+        borderColor: '#000',
+    },
     inputContainer: {
           borderBottomColor: '#F5FCFF',
           backgroundColor: '#FFFFFF',

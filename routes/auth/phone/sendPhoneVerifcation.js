@@ -8,7 +8,7 @@ const cors = require('cors');
 const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
 const authy = require('authy')(config.get("authyKey"));
-
+const randomEmail = require('random-email');
 
 // need to fix how many times res.json is sent - can't send multiple headers
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
@@ -16,7 +16,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const { phoneNumber, callingCode } = req.body;
 
-        authy.register_user(null, phoneNumber, callingCode, (err, response) => {
+        authy.register_user(randomEmail(), phoneNumber, callingCode, (err, response) => {
             if(err) {
                 if (response && response.json) {
                     response.json(err);
