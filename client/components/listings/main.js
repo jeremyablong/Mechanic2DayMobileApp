@@ -344,7 +344,6 @@ constructor(props) {
                     </View>
                     <View style={styles.results}>
                         {typeof results !== 'undefined' && results.length > 0 ? results.map((item, index) => {
-                            {/* console.log("itemmmmmmmm........:", item); */}
                             if (item.type === "Point Address" || item.type === "Geography") {
                                     return (
                                         <TouchableOpacity style={styles.listItemTwo} onPress={() => {

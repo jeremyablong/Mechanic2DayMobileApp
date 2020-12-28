@@ -43,7 +43,10 @@ app.use("/edit/card/individual", require("./routes/account/payments/payments/cha
 app.use("/update/payment/primary", require("./routes/account/payments/payments/changes/makeCardPrimary.js"));
 app.use("/save/oauth/google/user", require("./routes/auth/googleRegister.js"));
 app.use("/save/details/personal/info/editted", require("./routes/account/personalInfo/general/aboutMeDetails.js"));
-
+app.use("/add/new/information/vehicle/listing/page/one", require("./routes/clients/postNew/initial/postNewVehicle.js"));
+app.use("/gather/listing/specific/vehicle/listing", require("./routes/clients/gather/gatherSpecificListingVehicle.js"));
+app.use("/add/new/data/vehicle/listing/two", require("./routes/clients/postNew/locationDetails/locationAndDesc.js"));
+app.use("/post/pictures/listing/vehicle/signup", require("./routes/clients/postNew/photos/uploadPhotosBrokenVehicle.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

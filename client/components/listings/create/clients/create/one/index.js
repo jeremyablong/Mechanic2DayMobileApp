@@ -11,6 +11,9 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import axios from "axios";
 import Modal from 'react-native-modal';
 import { Config } from "react-native-config";
+import { connect } from "react-redux";
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from "../../../../../../components/toastConfig.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -89,21 +92,49 @@ constructor(props) {
 
                 const { Results } = res.data;
 
-                this.setState({
-                    vinAccepted: true,
-                    selectedVehicle: {
-                        make: Results[0].Make,
-                        model: Results[0].Model,
-                        year: Results[0].ModelYear,
-                        fuelType: Results[0].FuelTypePrimary,
-                        body: Results[0].BodyClass,
-                        trim: Results[0].Trim,
-                        vehicleType: Results[0].VehicleType,
-                        transmission: "unknown"
-                    }
-                }, () => {
-                    this.RBSheet.close();
-                })
+                if (Results[0].ErrorText !== "0 - VIN decoded clean. Check Digit (9th position) is correct") {
+                    this.setState({
+                        vinAccepted: true,
+                        selectedVehicle: {
+                            make: Results[0].Make,
+                            model: Results[0].Model,
+                            year: Results[0].ModelYear,
+                            fuelType: Results[0].FuelTypePrimary,
+                            body: Results[0].BodyClass,
+                            trim: Results[0].Trim,
+                            vehicleType: Results[0].VehicleType,
+                            transmission: "unknown",
+                            selectedEngine: "unknown"
+                        }
+                    }, () => {
+                        this.RBSheet.close();
+
+                        Toast.show({
+                            text1: "ERROR! 🚫",
+                            position: "top",
+                            type: "error",
+                            text2: "VIN did not match any results - INVALID VIN NUMBER.",
+                            visibilityTime: 5000
+                        })
+                    })   
+                } else {
+                    this.setState({
+                        vinAccepted: true,
+                        selectedVehicle: {
+                            make: Results[0].Make,
+                            model: Results[0].Model,
+                            year: Results[0].ModelYear,
+                            fuelType: Results[0].FuelTypePrimary,
+                            body: Results[0].BodyClass,
+                            trim: Results[0].Trim,
+                            vehicleType: Results[0].VehicleType,
+                            transmission: "unknown",
+                            selectedEngine: "unknown"
+                        }
+                    }, () => {
+                        this.RBSheet.close();
+                    })
+                }
             }
         }).catch((err) => {
             console.log("THE ERR MAGIC: ", err);
@@ -128,7 +159,7 @@ constructor(props) {
                 );
             } 
         } else {
-
+            
             if (typeof selectedTrim !== "undefined" && selectedTrim.length > 0) {
                 return (
                     <Fragment>
@@ -151,7 +182,7 @@ constructor(props) {
         }
     }
     renderInfo = () => {
-        const { vin, vinAccepted, selectedVehicle, olderThan1981, selectedTransmission, selectedEngine } = this.state;
+        const { vin, vinAccepted, selectedVehicle, olderThan1981, selectedTransmission, selectedEngine, odemeter } = this.state;
 
         if (vinAccepted === true && selectedVehicle !== null) {
             return (
@@ -189,12 +220,12 @@ constructor(props) {
                                 })
                             }} />
                         </Item>
-                        <View style={styles.itemItemTwo} stackedLabel>
+                        {typeof this.state.selectedVehicle.trim !== 'undefined' && this.state.selectedVehicle.trim !== null && this.state.selectedVehicle.trim.length > 0 ? <View style={styles.itemItemTwo} stackedLabel>
                             <Text>Trim: {this.state.selectedVehicle.trim}</Text>
-                        </View>
-                        <View style={styles.itemItemTwo} stackedLabel>
+                        </View> : null}
+                        {typeof this.state.selectedVehicle.body !== 'undefined' && this.state.selectedVehicle.body !== null && this.state.selectedVehicle.body.length > 0 ? <View style={styles.itemItemTwo} stackedLabel>
                             <Text>Style: {this.state.selectedVehicle.body}</Text>
-                        </View>
+                        </View> : null}
                         {typeof selectedTransmission !== 'undefined' && selectedTransmission !== null && selectedTransmission.length > 0 ? <View style={styles.itemItemTwo} stackedLabel>
                             <Text>Transmission: {this.state.selectedVehicle.transmission}</Text>
                         </View> : null}
@@ -202,9 +233,38 @@ constructor(props) {
                             <Text>Engine: {this.state.selectedVehicle.selectedEngine}</Text>
                         </View> : null}
                     </View>
+
+                    {typeof odemeter !== "undefined" && odemeter.length >= 3 ? <Button info style={[styles.submitBtnContinue, { marginTop: 20, marginBottom: 20 }]} onPress={() => {
+                        this.handleFinalSubmissionToDB();
+                    }}>
+                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Next</NativeText>
+                    </Button> : null}
                 </Fragment>
             );
         }
+    }
+    handleFinalSubmissionToDB = () => {
+        const { selectedVehicle, vin, olderThan1981, odemeter} = this.state;
+
+        axios.post(`${Config.ngrok_url}/add/new/information/vehicle/listing/page/one`, {
+            olderThan81: olderThan1981,
+            selectedVehicle,
+            vin,
+            id: this.props.unique_id,
+            odemeter
+        }).then((res) => {
+            if (res.data.message === "Successfully posted new information to DB!") {
+
+                console.log(res.data);
+
+                this.props.props.navigation.replace("create-vehicle-listing-two", { listing: res.data.listing });
+                
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
     calculateMakes = () => {
         console.log("calculateMakes");
@@ -534,6 +594,7 @@ constructor(props) {
         console.log("this.state ONE INDEX.JS", this.state);
         return (
             <Fragment>
+                
                 <ParallaxScrollView
                     backgroundColor="black"
                     contentBackgroundColor="white"
@@ -551,6 +612,7 @@ constructor(props) {
                             </ImageBackground>
                         </Fragment>
                     )}>
+                    
                     <View style={{ height: "100%" }}>
                         <View style={styles.container}>
                                 <View style={{ margin: 20 }}>
@@ -678,6 +740,7 @@ constructor(props) {
                         </View>
                     </View>
                 </SlidingUpPanel>
+                <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <RBSheet
                     ref={ref => {
                         this.RBSheet = ref;
@@ -730,4 +793,9 @@ constructor(props) {
         )
     }
 }
-export default PageOneVehicleFormHelper;
+const mapStateToProps = (state) => {
+    return {
+        unique_id: state.auth.authenticated.unique_id
+    };
+}
+export default connect(mapStateToProps, { })(PageOneVehicleFormHelper);

@@ -33,6 +33,9 @@ import MechanicListingPage from "./pages/listings/mechanics/mechanicListing.js";
 import HomepageListingsCreatePage from "./pages/listings/create/clients/create/main/index.js";
 import PreviewStepsBrokenVehicleListingPage from "./pages/listings/create/clients/create/preview/index.js";
 import PageOneVehicleFormPage from "./pages/listings/create/clients/create/one/index.js";
+import LocationDetailsListVehiclePage from "./pages/listings/create/clients/create/location/index.js";
+import UploadPhotosVehicleListingPage from "./pages/listings/create/clients/create/photos/index.js";
+import AvailablityCreationPage from "./pages/listings/create/clients/create/avaliability/index.js";
 
 const Stack = createStackNavigator();
 
@@ -133,6 +136,9 @@ constructor(props) {
               <Stack.Screen name="providers-listing-homepage" component={HomepageListingsCreatePage} />
               <Stack.Screen name="list-vehicle-start" component={PreviewStepsBrokenVehicleListingPage} />
               <Stack.Screen name="create-vehicle-listing-one" component={PageOneVehicleFormPage} />
+              <Stack.Screen name="create-vehicle-listing-two" component={LocationDetailsListVehiclePage} />
+              <Stack.Screen name="create-vehicle-listing-three" component={UploadPhotosVehicleListingPage} />
+              <Stack.Screen name="create-vehicle-listing-four" component={AvailablityCreationPage} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>
