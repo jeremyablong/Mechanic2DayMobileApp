@@ -35,7 +35,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     transmission: transmission !== null && typeof transmission !== "undefined" && transmission.length > 0 ? transmission : "unknown", 
                     vehicleType, 
                     selectedEngine,
-                    page: 2
+                    page: 2,
+                    live: false
                 };
 
                 if (user.broken_vehicles_listings) {

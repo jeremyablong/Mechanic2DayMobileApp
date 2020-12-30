@@ -31,7 +31,8 @@ constructor(props) {
         photos: [],
         currentIndex: 0,
         selected: null,
-        spinner: false
+        spinner: false,
+        listing: null
     }
 
     this._panResponder = PanResponder.create({
@@ -109,9 +110,11 @@ constructor(props) {
     completedLaunch = (data) => {
         console.log("completedLaunch", data);
 
-        this.setState({
-            photos: [...this.state.photos, { source: { uri: `data:${data.type};base64,${data.base64}` } }]     
-        })
+        if (data.didCancel !== true) {
+            this.setState({
+                photos: [...this.state.photos, { source: { uri: `data:${data.type};base64,${data.base64}` } }]     
+            })
+        }
     }
     handleChangeCustom = (value) => {
         console.log("value", value);

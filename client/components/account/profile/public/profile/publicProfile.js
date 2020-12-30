@@ -14,7 +14,8 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../../toastConfig.js";
 import Spinner from 'react-native-loading-spinner-overlay';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import _ from "lodash";
 
 const { width, height } = Dimensions.get("window");
 
@@ -112,53 +113,55 @@ constructor (props) {
                             style={{ flex: 1, backgroundColor: 'black', maxHeight: 250, minHeight: 250 }}
                             images={this.state.images}
                         />
-                        <View>
-                            <TouchableOpacity style={styles.topRight} onPress={() => {
-                                this.setState({
-                                    showDialog: true
-                                })
-                            }}>
-                                <Image source={require("../../../../../assets/icons/camera.png")} style={{ maxWidth: 40, maxHeight: 40 }} />
-                            </TouchableOpacity>
-                            <View style={{ margin: 20 }}>
-                                <Text style={[styles.h6, { fontSize: 20, fontWeight: "bold", marginBottom: 20 }]}>Edit About Me</Text>
-                                <TextInput multiline={true} numberOfLines={5} onChangeText={(value) => {
+                        <KeyboardAwareScrollView>
+                            <View>
+                                <TouchableOpacity style={styles.topRight} onPress={() => {
                                     this.setState({
-                                        description: value
+                                        showDialog: true
                                     })
-                                }} value={this.state.description} style={{ fontSize: 18 }} placeholder={"Enter anything you'd like people to know about yourself!"} />
-                            </View>
-                            <View style={styles.hr} />
-                            <View style={{ margin: 20 }}>
-                                <Text style={styles.h3}>Optional Details</Text>
-                            </View>
-                            <ListItem style={styles.listItemSpecial}>
-                                <Item stackedLabel>
-                                    <Label>Location</Label>
-                                    <Input onChangeText={(value) => {
+                                }}>
+                                    <Image source={require("../../../../../assets/icons/camera.png")} style={{ maxWidth: 40, maxHeight: 40 }} />
+                                </TouchableOpacity>
+                                <View style={{ margin: 20 }}>
+                                    <Text style={[styles.h6, { fontSize: 20, fontWeight: "bold", marginBottom: 20 }]}>Edit About Me</Text>
+                                    <TextInput multiline={true} numberOfLines={5} onChangeText={(value) => {
                                         this.setState({
-                                            location: value
+                                            description: value
                                         })
-                                    }} style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={user !== null && user.general_information ? user.general_information.location : "Eg... Paris, FR / Brooklyn, NY / Chicago, IL"} />
-                                </Item>
-                                
-                            </ListItem>
-                            <ListItem style={styles.listItemSpecial}>
-                                <Item stackedLabel>
-                                    <Label>Work</Label>
-                                    <Input onChangeText={(value) => {
-                                        this.setState({
-                                            workName: value
-                                        })
-                                    }} style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={user !== null && user.general_information ? user.general_information.work : "Eg... Airbnb / Apple / Taco Stand"} />
-                                </Item>
-                                
-                            </ListItem>
-                            <ListItem style={styles.listItemSpecial}>
-                                <Text style={styles.smallerTextSub}>Languages {"\n"}<Text style={styles.biggerTextSub}>English</Text></Text>
-                                
-                            </ListItem>
-                        </View>
+                                    }} value={this.state.description} style={{ fontSize: 18 }} placeholder={"Enter anything you'd like people to know about yourself!"} />
+                                </View>
+                                <View style={styles.hr} />
+                                <View style={{ margin: 20 }}>
+                                    <Text style={styles.h3}>Optional Details</Text>
+                                </View>
+                                <ListItem style={styles.listItemSpecial}>
+                                    <Item stackedLabel>
+                                        <Label>Location</Label>
+                                        <Input onChangeText={(value) => {
+                                            this.setState({
+                                                location: value
+                                            })
+                                        }} style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={user !== null && user.general_information ? user.general_information.location : "Eg... Paris, FR / Brooklyn, NY / Chicago, IL"} />
+                                    </Item>
+                                    
+                                </ListItem>
+                                <ListItem style={styles.listItemSpecial}>
+                                    <Item stackedLabel>
+                                        <Label>Work</Label>
+                                        <Input onChangeText={(value) => {
+                                            this.setState({
+                                                workName: value
+                                            })
+                                        }} style={styles.minWidthInput} placeholderTextColor={"grey"} placeholder={user !== null && user.general_information ? user.general_information.work : "Eg... Airbnb / Apple / Taco Stand"} />
+                                    </Item>
+                                    
+                                </ListItem>
+                                <ListItem style={styles.listItemSpecial}>
+                                    <Text style={styles.smallerTextSub}>Languages {"\n"}<Text style={styles.biggerTextSub}>English</Text></Text>
+                                    
+                                </ListItem>
+                            </View>
+                        </KeyboardAwareScrollView>
                     </ScrollView>
                 </Fragment>
             );
@@ -182,12 +185,18 @@ constructor (props) {
     completed = (values) => {
         console.log("values", values);
 
-        this.setState({
-            profilePicBase64: values.base64,
-            uri: values.uri,
-            images: [{ source: { uri: `data:${values.type};base64,${values.base64}` } }, ...this.state.images],
-            showDialog: false
-        })
+        if (values.didCancel !== true) {
+            this.setState({
+                profilePicBase64: values.base64,
+                uri: values.uri,
+                images: [{ source: { uri: `data:${values.type};base64,${values.base64}` } }, ...this.state.images],
+                showDialog: false
+            })
+        } else {
+            this.setState({
+                showDialog: false
+            })
+        }
     }
     launchCameraHelper = () => {
         console.log("launchCameraHelper clicked.")
@@ -208,12 +217,18 @@ constructor (props) {
     completedTwo = (values) => {
         console.log("completedTwo values", values);
 
-        this.setState({
-            profilePicBase64: values.base64,
-            uri: values.uri,
-            images: [{ source: { uri: `data:${values.type};base64,${values.base64}` } }, ...this.state.images],
-            showDialog: false
-        })
+        if (values.didCancel !== true) {
+            this.setState({
+                profilePicBase64: values.base64,
+                uri: values.uri,
+                images: [{ source: { uri: `data:${values.type};base64,${values.base64}` } }, ...this.state.images],
+                showDialog: false
+            })
+        } else {
+            this.setState({
+                showDialog: false
+            })
+        }
     }
     saveAllDetails = () => {
         console.log("saveAllDetails clicked.");
@@ -282,13 +297,15 @@ constructor (props) {
     render() {
         console.log("this.state publicProfile", this.state);
         const review_count = Math.floor(Math.random() * 50) + 1;
+
+        const { user } = this.state;
         return (
             <Fragment>
                 <Toast style={{ zIndex: 9999999999999999999999999 }} config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <Header style={{ width }}>
                     <Left style={{ flexDirection: "row", flex: 1 }}>
                         <Button onPress={() => {
-                            this.props.props.navigation.goBack();
+                            this.props.props.navigation.push("profile-main");
                         }} transparent>
                             <Image source={require("../../../../../assets/icons/go-back.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
                         </Button>
@@ -331,12 +348,12 @@ constructor (props) {
                             renderRevealedFooter={this._renderRevealedFooter}
                             onReady={this._handleTextReady}
                         >
-                            <Text style={styles.descriptionText}>{this.state.description}</Text>
+                            <Text style={styles.descriptionText}>{user !== null && _.has(user, "general_information") ? user.general_information.about_me : "---------"}</Text>
                         </ReadMore>
                         <View style={styles.shortHr} />
                         <View style={styles.customRow}>
                             <Image source={require("../../../../../assets/icons/home.png")} style={styles.helperIcon} />
-                            <Text style={styles.iconTextHelper}>Lives in Los Angeles, CA</Text>
+                            <Text style={styles.iconTextHelper}>Lives in {user !== null && _.has(user, "general_information") ? user.general_information.location : "---------"}</Text>
                         </View>
                         <View style={styles.customRow}>
                             <Image source={require("../../../../../assets/icons/chat.png")} style={styles.helperIcon} />
@@ -344,7 +361,7 @@ constructor (props) {
                         </View>
                         <View style={styles.customRow}>
                             <Image source={require("../../../../../assets/icons/suitcase.png")} style={styles.helperIcon} />
-                            <Text style={styles.iconTextHelper}>Works at Software Engineer</Text>
+                            <Text style={styles.iconTextHelper}>Works at {user !== null && _.has(user, "general_information") ? user.general_information.work : "---------"}</Text>
                         </View>
                     </View>
                     <View style={styles.hr} />

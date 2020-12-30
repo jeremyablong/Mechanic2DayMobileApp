@@ -26,6 +26,12 @@ export default StyleSheet.create({
     },
     fontMedium: {
         fontSize: 18
+    },
+    customBtnnn: {
+        width: width * 0.80,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
     }
 });
     

@@ -10,7 +10,6 @@ import axios from "axios";
 import { Config } from "react-native-config";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
-
 class ProfileMainHelper extends Component {
 constructor(props) {
     super(props);
@@ -23,6 +22,10 @@ constructor(props) {
     deauthenticate = () => {
         this.props.authenticated({});
         this.props.finishedSignup(false);
+        this.props.switchAccountType({
+            type: "CLIENT"
+        })
+
 
         setTimeout(() => {
             this.props.props.navigation.push("homepage-main");
@@ -85,7 +88,9 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Payments and payouts</NativeText></Left><Right><Image source={require("../../../assets/icons/payment.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
-                            <ListItem style={styles.listItem}>
+                            <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("notifications");
+                            }} style={styles.listItem}>
                             <Left><NativeText>Notifications</NativeText></Left><Right><Image source={require("../../../assets/icons/bell.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             <ListItem style={styles.listItem}>
@@ -180,7 +185,7 @@ constructor(props) {
                     <View style={styles.nameContainer}>
                         <Text style={styles.name}>{firstName}</Text>
                         <TouchableOpacity onPress={() => {
-                            this.props.props.navigation.navigate("view-public-profile-page");
+                            this.props.props.navigation.push("view-public-profile-page");
                         }}>
                             <Text style={styles.subText}>View Profile</Text>
                         </TouchableOpacity>

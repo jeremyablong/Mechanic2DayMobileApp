@@ -48,6 +48,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             const bufferImage = new Buffer(photo.source.uri.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
+                            photo_array.push(`https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`);
+
                             s3.putObject({
                                 Body: bufferImage,
                                 Bucket: "mechanic-mobile-app",
@@ -58,8 +60,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     console.log(errorr);
                                 }
                                 console.log(dataaa);
-
-                                photo_array.push(`https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`);
             
                                 if ((photos.length - 1) === index) {
 

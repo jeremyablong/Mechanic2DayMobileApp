@@ -19,7 +19,7 @@ const FooterHelper = (props) => {
                         <Text>Calendar</Text>
                         </Button>
                         <Button onPress={() => {
-                            props.props.navigation.navigate("providers-listing-homepage");
+                            props.props.navigation.push("providers-listing-homepage");
                         }} badge vertical>
                       
                             <Image source={require("../../assets/icons/3d.png")} style={styles.menuIcon} />

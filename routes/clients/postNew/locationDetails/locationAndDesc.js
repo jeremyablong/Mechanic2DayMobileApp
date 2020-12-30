@@ -13,7 +13,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { id, title, description, listing, location } = req.body;
+        const { id, title, description, listing, location, manual_entry } = req.body;
 
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
@@ -28,6 +28,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             vehicle_listing["description"] = description;
                             vehicle_listing["location"] = location;
                             vehicle_listing.page = 3;
+                            vehicle_listing["location_manual_entry"] = manual_entry;
 
                             console.log("vehicle_listing", vehicle_listing);
 

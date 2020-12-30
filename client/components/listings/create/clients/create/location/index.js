@@ -7,6 +7,9 @@ import axios from "axios";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GetLocation from 'react-native-get-location';
 import { connect } from "react-redux";
+import CountryPicker from 'react-native-country-picker-modal';
+
+
 
 class LocationDetailsListVehicleHelper extends Component {
 constructor(props) {
@@ -17,7 +20,8 @@ constructor(props) {
         nextPage: false,
         title: "",
         description: "",
-        listing: null
+        listing: null,
+        country: null
     }
 }
     componentDidMount() {
@@ -65,7 +69,7 @@ constructor(props) {
     continueAndSubmit = () => {
         console.log("continueAndSubmit");
 
-        const { title, description, listing, location } = this.state;
+        const { title, description, listing, location, country, street, extension, state, zipCode, city } = this.state;
 
         const listing_backup = this.props.props.route.params.listing;
 
@@ -74,7 +78,15 @@ constructor(props) {
             title,
             description,
             listing: listing || listing_backup,
-            location
+            location: location !== null ? location : {
+                country,
+                street,
+                extension,
+                state,
+                zipCode, 
+                city
+            },
+            manual_entry: location !== null ? false : true
         }).then((res) => {
             if (res.data.message === "Successfully added new data to your post!") {
                 console.log(res.data);
@@ -89,8 +101,48 @@ constructor(props) {
             console.log(err);
         })
     }
+    renderWhenReady = () => {
+        const { country, street, extension, state, zipCode, city } = this.state;
+
+        if (country !== null && (typeof street !== "undefined" && street.length > 0) && (typeof extension !== "undefined" && extension.length > 0) && (typeof state !== "undefined" && state.length > 0) && (typeof zipCode !== "undefined" && zipCode.length > 0) && (typeof city !== "undefined" && city.length > 0)) {
+            return (
+                <Fragment>
+                    <View style={[styles.centered, { margin: 20 }]}>
+                        <View style={styles.centered}>
+                            <Button style={[styles.customBtnnn, {  }]} onPress={() => {
+                                this.setState({
+                                    nextPage: true
+                                })
+                            }}>
+                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Submit & Continue</NativeText>
+                            </Button>
+                        </View>
+                    </View>
+                </Fragment>
+            );
+        } else {
+            return (
+                <Fragment>
+                    <View style={[styles.centered, { margin: 20 }]}>
+                        <View style={styles.centered}>
+                            <Button style={[styles.customBtnnn, { backgroundColor: "lightgrey" }]}>
+                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Submit & Continue</NativeText>
+                            </Button>
+                        </View>
+                    </View>
+                </Fragment>
+            );
+        }
+    }
+    handleCountrySelection = (country) => {
+        console.log("handleCountrySelection country --- :", country);
+
+        this.setState({
+            country: country.name
+        })
+    }
     renderContent = () => {
-        const { nextPage } = this.state;
+        const { nextPage, country } = this.state;
 
         if (nextPage === false) {
             return (
@@ -110,16 +162,16 @@ constructor(props) {
                         </View>
                         <Text style={{ marginTop: 30 }}>Or enter your address</Text>
                     </View>
+                    {this.renderWhenReady()}
                     <View style={{ margin: 20 }}>
                         <Form>
-                            <Item floatingLabel>
-                                <Label>Country/Region</Label>
-                                <Input value={this.state.country} placeholder={"United States"} placeholderTextColor={"grey"} onChangeText={(value) => {
-                                    this.setState({
-                                        country: value
-                                    })
-                                }} />
-                            </Item>
+               
+                     
+                            <View style={{ marginLeft: 15 }}>
+                                <CountryPicker preferredCountries={["US"]} withAlphaFilter={false} withCurrency={true} withCallingCode={true} onSelect={this.handleCountrySelection} />
+                                {country !== null ? <View style={{ marginTop: 10 }}><Text style={{ fontSize: 18 }}>{country}</Text></View> : null}
+                            </View>
+                            
                             <Item floatingLabel>
                                 <Label>Street</Label>
                                 <Input value={this.state.street} placeholder={"e.g. 123 Main St."} placeholderTextColor={"grey"} onChangeText={(value) => {

@@ -1,12 +1,18 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions, ImageBackground } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions, ImageBackground, RefreshControl } from "react-native";
 import styles from "./styles.js";
 import { Header, Left, Body, Right, Button, Title, Text as NativeText, Card, CardItem, Thumbnail, Content } from 'native-base';
 import Gallery from 'react-native-image-gallery';
 import ReadMore from 'react-native-read-more-text';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Carousel from 'react-native-snap-carousel';
+import axios from 'axios';
+import { Config } from "react-native-config";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Geocoder from 'react-native-geocoding';
+import _ from 'lodash';
 
+Geocoder.init("AIzaSyDAAobUDbCGbHNz4GNzlWZtn-aQ4Y8udXw");
 
 const { width, height  } = Dimensions.get('window');
 
@@ -110,7 +116,12 @@ constructor(props) {
             memberSince: "January 2016",
             review: "Fusce nulla enim, efficitur vel velit non, volutpat ornare magna. Phasellus et velit est. Nulla maximus maximus dapibus. Aliquam vel sapien non magna consequat ornare vel ac felis. Ut commodo enim aliquet venenatis finibus. Integer pellentesque, tellus vitae bibendum molestie, leo massa accumsan purus, convallis volutpat felis libero vel neque. Integer ac malesuada elit. Sed non odio in lectus volutpat tristique non porta nisi.",
             index: 6
-        }]
+        }],
+        listing: null,
+        refreshing: false,
+        gallery: [],
+        latLng: null,
+        location: null
     }
 }
     _renderItem = ({item, index}) => {
@@ -142,41 +153,167 @@ constructor(props) {
             </Text>
         );
     }
-    render() {
-        const { reviews } = this.state;
-        return (
-            <ScrollView style={{ height: "100%", flex: 1, backgroundColor: "white", minHeight: "100%" }} contentContainerStyle={{ paddingBottom: 300 }}>
-                <Header>
-                    <Left style={{ flexDirection: "row" }}>
-                        <Button onPress={() => {
-                            this.props.props.navigation.goBack();
-                        }} transparent>
-                            <Image source={require("../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
-                        </Button>
-                    </Left>
-                    <Right>
-                        <Button style={styles.heartButton} onPress={() => {
-                           
-                        }} transparent>
-                            <Image source={require("../../../../assets/icons/heart.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
-                        </Button>
-                    </Right>
-                </Header>
-                <View style={styles.container}>
+    componentDidMount() {
+        axios.post(`${Config.ngrok_url}/gather/specific/listing/vehicle/posting`, {
+            listing: this.props.props.route.params.listing
+        }).then((res) => {
+            if (res.data.message === "Successfully gathered listing!") {
+                console.log("MAGIC ONE: ", res.data);
+
+                const { listing } = res.data;
+                
+                const new_picture_array = [];
+
+                const promiseee = new Promise((resolve, reject) => {
+                    if (listing.photos) {
+                        for (let index = 0; index < listing.photos.length; index++) {
+                            const photo = listing.photos[index];
+                            
+                            new_picture_array.push({
+                                source: {
+                                    uri: photo
+                                }
+                            })
+    
+                            if ((listing.photos.length - 1) === index) {
+                                resolve(new_picture_array);
+                            }
+                        }
+                    } else {
+                        resolve([{ source: { uri: 'http://i.imgur.com/XP2BE7q.jpg' } }]);
+                    }
+                })
+                promiseee.then((passedData) => {
+
+                    console.log("passedData", passedData);
+
+                    console.log("Config.mapquest_api_key", Config.mapquest_api_key);
+
+                    if (_.has(listing.location, "country")) {
+                        const headers = {
+                            params: {
+                                key: Config.mapquest_api_key,
+                                location: listing.location.street
+                            }
+                        };
+    
+                        axios.get("http://www.mapquestapi.com/geocoding/v1/address", headers).then((res) => {
+                            console.log(res.data);
+
+                            if (res.data.results) {
+                                this.setState({
+                                    latLng: {
+                                        latitude: res.data.results[0].locations[0].latLng.lat,
+                                        longitude: res.data.results[0].locations[0].latLng.lng,
+                                        latitudeDelta: 0.015,
+                                        longitudeDelta: 0.0121,
+                                    },
+                                    location: `${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    } else {
+                        console.log("do nothing.");
+
+                        this.setState({
+                            latLng: {
+                                latitude: listing.location.latitude,
+                                longitude: listing.location.longitude,
+                                latitudeDelta: 0.015,
+                                longitudeDelta: 0.0121,
+                            }
+                        }, () => {
+                            const headers = {
+                                params: {
+                                    key: Config.mapquest_api_key,
+                                    location: `${listing.location.latitude},${listing.location.longitude}`
+                                }
+                            };
+        
+                            axios.get("http://www.mapquestapi.com/geocoding/v1/reverse", headers).then((res) => {
+                                console.log(res.data);
+    
+                                if (res.data) {
+                                    this.setState({
+                                        location: `${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`
+                                    })
+                                }
+                            }).catch((err) => {
+                                console.log(err);
+                            })
+                        })
+                    }
+                    
+                    this.setState({
+                        gallery: passedData,
+                        listing
+                    })
+                })
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    calculateCategory = (listing) => {
+        switch (listing.type_of_repair) {
+            case "engine":
+                return "Engine Repair";
+                break;
+            case "transmission":
+                return "Transmission Repair";
+                break;
+            case "exhaust":
+                return "Exhaust Repair";
+                break;
+            case "maintenance":
+                return "General Maintenance";
+                break;
+            case "tire-breaks-wheels":
+                return "Tire/Breaks & Wheel Related Repair";
+                break;
+            case "interior-repair-design":
+                return "Interior Repair/Design";
+                break;
+            case "electronics/electrical":
+                return "Electrical Repair";
+                break;
+            case "tuning-sports-upgrades":
+                return "Tuning/Sports Upgrades";
+                break;
+            case "speciality-repairs":
+                return "Speciality Repairs (BMW, Audi, Etc..)";
+                break;
+            case "deisel":
+                return "Deisel Repairs";
+                break;
+            case "body-work":
+                return "Body Work";
+                break;
+            case "motorcycle/motorbike":
+                return "Motorcycle/Motorbike Repairs";
+                break;      
+            default:
+                break;
+        }
+    }
+    renderConditional = () => {
+        const { listing, gallery, latLng, location } = this.state;
+        if (listing !== null) {
+            return (
+                <Fragment>
                     <View style={{ maxHeight: 250, flex: 1 }}>
                         <Gallery
                             style={{ maxHeight: 250, minHeight: 250, top: 0, position: 'absolute', backgroundColor: 'black' }}
-                            images={[
-                                { source: { uri: 'http://i.imgur.com/XP2BE7q.jpg' } },
-                                { source: { uri: 'http://i.imgur.com/5nltiUd.jpg' } },
-                                { source: { uri: 'http://i.imgur.com/6vOahbP.jpg' } },
-                                { source: { uri: 'http://i.imgur.com/kj5VXtG.jpg' } }
-                            ]}
+                            images={gallery}
                         />
                     </View>
                     <View style={{ top: 175 }}>
                         <View style={{ marginLeft: 20, marginRight: 20 }}>
-                            <Text style={styles.title}>{title}</Text>
+                            <Text style={styles.title}>{listing.title}</Text>
                             <View style={styles.row}>
                                 <Image source={require("../../../../assets/icons/small-star.png")} style={{ maxWidth: 15, maxHeight: 15 }} />
                                 <Text>4.3 ({Math.floor(Math.random() * 40) + 1})</Text>
@@ -184,12 +321,12 @@ constructor(props) {
                                 <Text>SuperMechanic</Text>
                             </View>
                             <View style={[styles.row, { marginTop: 5 }]}>
-                                <Text style={styles.location}>Monterey Park, California, United States</Text>
+                                <Text style={styles.location}>{"Monterey Park, California, United States"}</Text>
                             </View>
                             <View style={styles.hr} />
                         </View>
                         <View style={styles.containerTwo}>
-                            <Text style={styles.category}>Transmission Work</Text>
+                            <Text style={styles.category}>{this.calculateCategory(listing)}</Text>
                             <Text style={{ fontSize: 16 }}>hosted by Jeremy</Text>
                         </View>
                         {/* <View style={styles.rowMargin}>
@@ -203,7 +340,7 @@ constructor(props) {
                                     <Image source={require("../../../../assets/icons/world.png")} style={{ maxWidth: 60, maxHeight: 60 }} />
                                 </View>
                                 <View style={{ margin: 10, marginTop: 20 }}>
-                                    <Text> Los Angeles, CA 90015 {"\n"}<Text> Free "Come to you" service or drop it off</Text></Text>
+                                    <Text> {location !== null ? location : "---------"} {"\n"}<Text> Free "Come to you" service or drop it off</Text></Text>
                                     <TouchableOpacity onPress={() => {}}><Text style={styles.customTextThree}>See on map</Text></TouchableOpacity>
                                 </View>
                             </View>
@@ -236,7 +373,7 @@ constructor(props) {
                                 renderRevealedFooter={this._renderRevealedFooter}
                                 onReady={this._handleTextReady}>
                                 <Text style={styles.p}>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lorem turpis, tempus nec est sagittis, sodales cursus leo. Vestibulum placerat eget lorem nec lobortis. Morbi eu libero et nisi feugiat dictum. Duis sed lorem quis tellus iaculis mollis. Nunc vitae libero tempus, consectetur mi quis, sollicitudin magna. Praesent enim eros, sodales quis dictum et, lacinia quis arcu. Vivamus fringilla sem eu suscipit tempus. Curabitur volutpat elit magna, porttitor aliquam turpis placerat sit amet. Quisque pulvinar elementum dolor eget porttitor. Integer in mauris id quam eleifend fringilla. Maecenas non faucibus dui, rhoncus egestas velit.
+                                    {listing.description}
                                 </Text>
                             </ReadMore>
                             
@@ -262,18 +399,19 @@ constructor(props) {
                         <View style={styles.hrFour} />
                         <View style={styles.marginMargin}>
                             <Text style={styles.descriptionTitle}>Location</Text>
-                            <Text style={{ fontSize: 18 }}>Monterey Park, California, United States</Text>
-                            <MapView
+                            <Text style={{ fontSize: 18 }}>{location !== null ? location : "-------------------"}</Text>
+                            {latLng !== null ? <MapView
                                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                                 style={styles.map}
-                                region={{
-                                    latitude: 37.78825,
-                                    longitude: -122.4324,
-                                    latitudeDelta: 0.015,
-                                    longitudeDelta: 0.0121,
-                                }}
+                                region={latLng}
                             >
-                            </MapView>
+                                <Marker 
+                                    image={require('../../../../assets/icons/circle.png')}
+                                    coordinate={latLng}
+                                    title={"Approximate (NOT exact) location"}
+                                    description={"We will reveal the true location upon booking..."}
+                                />
+                            </MapView> : null}
                         </View>
                         <View style={styles.marginMargin}>
                             <View style={styles.row}>
@@ -373,6 +511,185 @@ constructor(props) {
                             </View>
                         </View>
                     </View>
+                </Fragment>
+            );
+        } else {
+            return (
+                <SkeletonPlaceholder>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <View style={{ width, height: 250 }} />
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+              
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+           
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                      
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                      
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                      
+                        <View style={{ marginLeft: 20 }}>
+                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                        <View
+                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                        />
+                        </View>
+                    </View>
+                </SkeletonPlaceholder>
+            );
+        }
+    }
+    onRefresh = () => {
+        this.setState({
+            refreshing: true
+        }, () => {
+            axios.post(`${Config.ngrok_url}/gather/specific/listing/vehicle/posting`, {
+                listing: this.props.props.route.params.listing
+            }).then((res) => {
+                if (res.data.message === "Successfully gathered listing!") {
+                    console.log("MAGIC ONE: ", res.data);
+    
+                    const { listing } = res.data;
+                
+                    const new_picture_array = [];
+    
+                    const promiseee = new Promise((resolve, reject) => {
+                        if (listing.photos) {
+                            for (let index = 0; index < listing.photos.length; index++) {
+                                const photo = listing.photos[index];
+                                
+                                new_picture_array.push({
+                                    source: {
+                                        uri: photo
+                                    }
+                                })
+        
+                                if ((listing.photos.length - 1) === index) {
+                                    resolve(new_picture_array);
+                                }
+                            }
+                        } else {
+                            resolve([{ source: { uri: 'http://i.imgur.com/XP2BE7q.jpg' } }]);
+                        }
+                    })
+                    promiseee.then((passedData) => {
+                        this.setState({
+                            gallery: passedData,
+                            listing
+                        })
+                    })
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        })
+
+        setTimeout(() => {
+            this.setState({
+                refreshing: false
+            })
+        },  5000);
+    }
+    render() {
+        const { reviews } = this.state;
+        return (
+            <ScrollView refreshControl={
+                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+              } style={{ height: "100%", flex: 1, backgroundColor: "white", minHeight: "100%" }} contentContainerStyle={{ paddingBottom: 300 }}>
+                <Header>
+                    <Left style={{ flexDirection: "row" }}>
+                        <Button onPress={() => {
+                            this.props.props.navigation.goBack();
+                        }} transparent>
+                            <Image source={require("../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
+                        </Button>
+                    </Left>
+                    <Right>
+                        <Button style={styles.heartButton} onPress={() => {
+                           
+                        }} transparent>
+                            <Image source={require("../../../../assets/icons/heart.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
+                        </Button>
+                    </Right>
+                </Header>
+                <View style={styles.container}>
+                    {this.renderConditional()}
                 </View>
                 
             </ScrollView>

@@ -8,50 +8,19 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import SearchBar from 'react-native-search-bar';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { Config } from 'react-native-config';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+
 
 const { width, height } = Dimensions.get("window");
+
 
 class MapViewAllListingsHelper extends Component {
 constructor(props) {
     super(props);
 
     this.state = {
-        listings: [{
-            image: require("../../assets/images/tools-1.jpg"),
-            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-            index: 1,
-            price: "149.99"
-        }, {
-            image: require("../../assets/images/broken-1.jpg"),
-            title: "Nunc faucibus eleifend tellus eu fringilla",
-            index: 2,
-            price: "39.99"
-        }, {
-            image: require("../../assets/images/broken-2.jpg"),
-            title: "Integer nec malesuada nunc. Proin imperdiet",
-            index: 3,
-            price: "99.99"
-        }, {
-            image: require("../../assets/images/broken-3.jpg"),
-            title: "Orci varius natoque penatibus et magnis dis parturient montes",
-            index: 4,
-            price: "105.99"
-        }, {
-            image: require("../../assets/images/broken-4.jpg"),
-            title: "Fusce euismod nisi sed tellus consequat",
-            index: 5,
-            price: "90.85"
-        }, {
-            image: require("../../assets/images/broken-5.jpg"),
-            title: "Nunc faucibus eleifend tellus eu fringilla",
-            index: 6,
-            price: "356.99"
-        }, {
-            image: require("../../assets/images/broken-6.jpg"),
-            title: "Fusce euismod nisi sed tellus consequat",
-            index: 7,
-            price: "679.99"
-        }],
+        listings: [],
         region: {
             latitude: this.props.location !== null ? this.props.location.latitude : 37.78825,
             longitude: this.props.location !== null ? this.props.location.longitude : -122.4324,
@@ -81,7 +50,23 @@ constructor(props) {
     });
 }
     componentDidMount() {
-        this._panel.show(this.state.draggableRange.middle)
+        this._panel.show(this.state.draggableRange.middle);
+
+        axios.post(`${Config.ngrok_url}/gather/live/listings/vehicles`).then((res) => {
+            if (res.data.message === "Successfully gathered the desired listings!") {
+                console.log(res.data);
+
+                const { listings } = res.data;
+
+                this.setState({
+                    listings
+                })
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
     onRegionChange = (region) => {
         this.setState({ region });
@@ -192,7 +177,7 @@ constructor(props) {
         })
     }
     render() {
-        // console.log("this.state main.js", this.state);
+        console.log("this.state main.js", this.state);
 
         const { results, listings } = this.state;
         return (
@@ -243,11 +228,12 @@ constructor(props) {
                             <Text style={styles.h3}>Mechanics in Big Bear Lake</Text>
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
                                 {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
+                                    console.log("listing", listing);
                                     return (
                                         <TouchableOpacity onPress={() => {
-                                            this.props.props.navigation.navigate("individual-broken-listing");
+                                            this.props.props.navigation.navigate("individual-broken-listing", { listing });
                                         }} style={styles.listingItem}>
-                                            <ImageBackground source={listing.image} style={styles.wideImage}>
+                                            <ImageBackground source={{ uri: listing.photos[0] }} style={styles.wideImage}>
                                                 <View style={styles.label}>
                                                     <Text>SuperMechanic</Text>
                                                 </View>
@@ -257,14 +243,30 @@ constructor(props) {
                                                 <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
+                                                <Text style={[styles.biggerP, { fontWeight: "bold", color: "blue" }]}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim !== "unknown" ? listing.trim : ""}`}</Text>
+                                            </View>
+                                            <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={styles.biggerP}>{listing.title}</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
-                                                <Text style={styles.biggerP}><Text style={{ fontWeight: "bold" }}>${listing.price}</Text> Maximum Budget</Text>
+                                                <Text style={styles.biggerP}><Text style={{ fontWeight: "bold" }}>${listing.budget.translation}</Text> Maximum Budget</Text>
                                             </View>
                                         </TouchableOpacity>
                                     );
-                                }) : null} 
+                                }) : <SkeletonPlaceholder>
+                                        <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                        </SkeletonPlaceholder.Item>
+                                    </SkeletonPlaceholder>} 
                             </ScrollView>
                         </View>
                         <View style={styles.nextContainer}>
@@ -273,16 +275,20 @@ constructor(props) {
                                 {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
                                     return (
                                         <TouchableOpacity onPress={() => {
-                                            this.props.props.navigation.navigate("individual-broken-listing");
+                                            this.props.props.navigation.navigate("individual-broken-listing", { listing });
                                         }} style={styles.listingItem}>
-                                            <ImageBackground source={listing.image} style={styles.wideImage}>
+                                            <ImageBackground source={{ uri: listing.photos[0] }} style={styles.wideImage}>
                                                 <View style={styles.label}>
                                                     <Text>SuperMechanic</Text>
                                                 </View>
                                             </ImageBackground>
+                                           
                                             <View style={styles.rowCustom}>
                                                 <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWdith: 25, width: 25, height: 25 }} />
                                                 <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
+                                            </View>
+                                            <View style={[styles.rowCustom, { marginTop: -4 }]}>
+                                                <Text style={[styles.biggerP, { fontWeight: "bold", color: "blue" }]}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim !== "unknown" ? listing.trim : ""}`}</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={styles.biggerP}>{listing.title}</Text>
@@ -290,9 +296,23 @@ constructor(props) {
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={styles.biggerP}><Text style={{ fontWeight: "bold" }}>${listing.price}</Text> Maximum Budget</Text>
                                             </View>
+                                        
                                         </TouchableOpacity>
                                     );
-                                }) : null} 
+                                }) : <SkeletonPlaceholder>
+                                        <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                        </SkeletonPlaceholder.Item>
+                                    </SkeletonPlaceholder>} 
                             </ScrollView>
                         </View>
                         <View style={styles.nextContainer}>
@@ -301,9 +321,9 @@ constructor(props) {
                                 {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
                                     return (
                                         <TouchableOpacity onPress={() => {
-                                            this.props.props.navigation.navigate("individual-broken-listing");
+                                            this.props.props.navigation.navigate("individual-broken-listing", { listing });
                                         }} style={styles.listingItem}>
-                                            <ImageBackground source={listing.image} style={styles.wideImage}>
+                                            <ImageBackground source={{ uri: listing.photos[0] }} style={styles.wideImage}>
                                                 <View style={styles.label}>
                                                     <Text>SuperMechanic</Text>
                                                 </View>
@@ -313,6 +333,9 @@ constructor(props) {
                                                 <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
+                                                <Text style={[styles.biggerP, { fontWeight: "bold", color: "blue" }]}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim !== "unknown" ? listing.trim : ""}`}</Text>
+                                            </View>
+                                            <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={styles.biggerP}>{listing.title}</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
@@ -320,7 +343,20 @@ constructor(props) {
                                             </View>
                                         </TouchableOpacity>
                                     );
-                                }) : null} 
+                                }) : <SkeletonPlaceholder>
+                                        <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                            <SkeletonPlaceholder.Item width={width * 0.75} height={250} borderRadius={50} />
+                                            <View style={{ marginRight: 30 }} />
+                                        </SkeletonPlaceholder.Item>
+                                    </SkeletonPlaceholder>} 
                             </ScrollView>
                         </View>
                     </ScrollView>
@@ -338,7 +374,7 @@ constructor(props) {
                                     this.handleSearchAddresses();
                                 })
                             }}
-                            onSearchButtonPress={this.handleSearchLocationChange}
+                            onSearchButtonPress={this.handleSearchAddresses}
                             onCancelButtonPress={this.handleLocationCancel}
                         />
                     </View>

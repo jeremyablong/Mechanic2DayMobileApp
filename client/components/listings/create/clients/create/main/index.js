@@ -9,6 +9,7 @@ import axios from "axios";
 import { Config } from "react-native-config";
 import _ from "lodash";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Dialog from "react-native-dialog";
 
 
 class HomepageListingsCreateHelper extends Component {
@@ -17,7 +18,9 @@ constructor(props) {
 
     this.state = {
         searchValue: "",
-        user: null
+        user: null,
+        isVisible: false,
+        listing: null
     }
 }
     handleSearch = () => {
@@ -58,6 +61,9 @@ constructor(props) {
             case 4:     
                 this.props.props.navigation.navigate("create-vehicle-listing-four", { listing });
                 break;
+            case 5:     
+                this.props.props.navigation.navigate("create-vehicle-listing-five", { listing });
+                break;
             default:
                 break;
         }
@@ -65,35 +71,66 @@ constructor(props) {
     renderProgressBarEach = (listing) => {
         switch (listing.page) {
             case 1:
-                return <Progress.Bar progress={0.2} width={300} />;
+                return <Progress.Bar progress={0.15} width={300} />;
                 break;
             case 2:
-                return <Progress.Bar progress={0.4} width={300} />;
+                return <Progress.Bar progress={0.3} width={300} />;
                 break;
             case 3:
-                return <Progress.Bar progress={0.6} width={300} />;
+                return <Progress.Bar progress={0.45} width={300} />;
                 break;
             case 4:
-                return <Progress.Bar progress={0.8} width={300} />;
+                return <Progress.Bar progress={0.6} width={300} />;
+                break;
+            case 5:
+                return <Progress.Bar progress={0.85} width={300} />;
                 break;
             default:
                 break;
         }
     }
+    handleDeletion = () => {
+        const { listing } = this.state;
+
+        console.log("handleDeletion");
+
+        axios.post(`${Config.ngrok_url}/delete/listing/broken/vehicle`, {
+            listing,
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Successfully deleted listing!") {
+                console.log(res.data);
+
+                const { user } = res.data;
+
+                this.setState({
+                    user,
+                    isVisible: false
+                })
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     renderPercentage = (listing) => {
         switch (listing.page) {
             case 1:
-                return "20%";
+                return "15%";
                 break;
             case 2:
-                return "40%";
+                return "30%";
                 break;
             case 3:
-                return "60%";
+                return "45%";
                 break;
             case 4:
-                return "80%";
+                return "60%";
                 break;
+            case 5: 
+                return "85%";
+                break;  
             default:
                 break;
         }
@@ -140,7 +177,71 @@ constructor(props) {
                             </Button>
                         </View>
                     </View>
-                    
+                    <Content style={{ padding: 20 }}>
+                        <View style={{ margin: 20 }}>
+                            <Text style={styles.activeListingText}>Active Listings</Text>
+                            <Text>These listings are live and visible by other members on this app.</Text>
+                        </View>
+                        {user !== null && _.has(user, "broken_vehicles_listings") ? user.broken_vehicles_listings.map((listing, index) => {
+                            console.log("listing", listing);
+                            if (listing.live === true) {
+                                return (
+                                    <View>
+                                        <Card style={styles.cardCustom}>
+                                            <CardItem>
+                                            <Left>
+                                                <Body>
+                                                <Text style={{ fontSize: 18, color: "blue", fontWeight: "bold" }}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim}`}</Text>
+                                                </Body>
+                                            </Left>
+                                            </CardItem>
+                                            <CardItem>
+                                                <Body>
+                                                    <Image source={{ uri: listing.photos[0] }} style={{ width: "97.5%", height: 225 }} />
+                                                    <View style={styles.centered}>
+                                                        <Button danger style={[styles.minButton, { marginTop: 15 }]} onPress={() => {
+                                                            this.setState({
+                                                                listing,
+                                                                isVisible: true
+                                                            })
+                                                        }}>
+                                                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Delete</NativeText>
+                                                        </Button>
+                                                    </View>
+                                                </Body>
+                                            </CardItem>
+                                        </Card>
+                                    </View>
+                                );
+                            }
+                        }) : <SkeletonPlaceholder>
+                            <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+                                <SkeletonPlaceholder.Item width={60} height={60} borderRadius={50} />
+                                <SkeletonPlaceholder.Item marginLeft={20}>
+                                <SkeletonPlaceholder.Item width={250} height={20} borderRadius={4} />
+                                <SkeletonPlaceholder.Item
+                                    marginTop={6}
+                                    width={80}
+                                    height={20}
+                                    borderRadius={4}
+                                />
+                                </SkeletonPlaceholder.Item>
+                            </SkeletonPlaceholder.Item>
+                            <View style={{ marginTop: 20 }} />
+                            <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+                                <SkeletonPlaceholder.Item width={60} height={60} borderRadius={50} />
+                                <SkeletonPlaceholder.Item marginLeft={20}>
+                                <SkeletonPlaceholder.Item width={250} height={20} borderRadius={4} />
+                                <SkeletonPlaceholder.Item
+                                    marginTop={6}
+                                    width={80}
+                                    height={20}
+                                    borderRadius={4}
+                                />
+                                </SkeletonPlaceholder.Item>
+                            </SkeletonPlaceholder.Item>
+                            </SkeletonPlaceholder>}
+                    </Content>
                     <Content style={{ padding: 20 }}>
                         <View style={{ margin: 20 }}>
                             <Text style={styles.activeListingText}>In progress</Text>
@@ -148,41 +249,43 @@ constructor(props) {
                         </View>
                             {user !== null && _.has(user, "broken_vehicles_listings") ? user.broken_vehicles_listings.map((listing, index) => {
                                 console.log("listing", listing);
-                                return (
-                                    <TouchableOpacity onPress={() => {
-                                        this.handleComplexRedirect(listing)
-                                    }}>
-                                        <Card style={styles.cardCustom}>
-                                            <CardItem>
-                                            <Left>
-                                                <Thumbnail style={{ minWidth: 75, minHeight: 75 }} source={require("../../../../../../assets/images/placeholder.png")} />
+                                if (listing.live === false) {
+                                    return (
+                                        <TouchableOpacity onPress={() => {
+                                            this.handleComplexRedirect(listing)
+                                        }}>
+                                            <Card style={styles.cardCustom}>
+                                                <CardItem>
+                                                <Left>
+                                                    <Thumbnail style={{ minWidth: 75, minHeight: 75 }} source={require("../../../../../../assets/images/placeholder.png")} />
+                                                    <Body>
+                                                    <Text style={{ fontSize: 18, color: "blue", fontWeight: "bold" }}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim}`}</Text>
+                                                    </Body>
+                                                </Left>
+                                                </CardItem>
+                                                <CardItem>
                                                 <Body>
-                                                <Text style={{ fontSize: 18, color: "blue", fontWeight: "bold" }}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim}`}</Text>
+                                                    {_.has(listing, "photos") ? <Image source={{ uri: listing.photos[0] }} style={{ width: "95%", height: 250 }} /> : null}
+                                                    <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>Finish your listing</Text>
+                                                    <Text>You're {this.renderPercentage(listing)} of the way there!</Text>
+                                                    <View style={{ marginTop: 15 }}>
+                                                        {this.renderProgressBarEach(listing)}
+                                                    </View>
                                                 </Body>
-                                            </Left>
-                                            </CardItem>
-                                            <CardItem>
-                                            <Body>
+                                                </CardItem>
+                                                <CardItem>
                                                 
-                                                <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>Finish your listing</Text>
-                                                <Text>You're {this.renderPercentage(listing)} of the way there!</Text>
-                                                <View style={{ marginTop: 15 }}>
-                                                    {this.renderProgressBarEach(listing)}
-                                                </View>
-                                            </Body>
-                                            </CardItem>
-                                            <CardItem>
-                                            
-                                            <Right>
-                                                <Button transparent textStyle={{color: '#87838B'}}>
-                                            
-                                                <Text>Pick up where you left off</Text>
-                                                </Button>
-                                            </Right>
-                                            </CardItem>
-                                        </Card>
-                                    </TouchableOpacity>
-                                );
+                                                <Right>
+                                                    <Button transparent textStyle={{color: '#87838B'}}>
+                                                
+                                                    <Text>Pick up where you left off</Text>
+                                                    </Button>
+                                                </Right>
+                                                </CardItem>
+                                            </Card>
+                                        </TouchableOpacity>
+                                    );
+                                }
                             }) : <SkeletonPlaceholder>
                                 <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
                                     <SkeletonPlaceholder.Item width={60} height={60} borderRadius={50} />
@@ -196,7 +299,7 @@ constructor(props) {
                                     />
                                     </SkeletonPlaceholder.Item>
                                 </SkeletonPlaceholder.Item>
-                                <View style={{ marginTop: 10 }} />
+                                <View style={{ marginTop: 20 }} />
                                 <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
                                     <SkeletonPlaceholder.Item width={60} height={60} borderRadius={50} />
                                     <SkeletonPlaceholder.Item marginLeft={20}>
@@ -213,8 +316,50 @@ constructor(props) {
                             <View style={{ margin: 20 }}>
                                 <Text style={styles.activeListingText}>Innactive Listings</Text>
                                 <Text>Inactive listings are listings that are old, removed or deleted.</Text>
+                                <View style={{ marginTop: 15 }} />
+                                <SkeletonPlaceholder>
+                                    <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+                                        <SkeletonPlaceholder.Item width={60} height={60} borderRadius={50} />
+                                        <SkeletonPlaceholder.Item marginLeft={20}>
+                                        <SkeletonPlaceholder.Item width={250} height={20} borderRadius={4} />
+                                        <SkeletonPlaceholder.Item
+                                            marginTop={6}
+                                            width={80}
+                                            height={20}
+                                            borderRadius={4}
+                                        />
+                                        </SkeletonPlaceholder.Item>
+                                    </SkeletonPlaceholder.Item>
+                                    <View style={{ marginTop: 20 }} />
+                                    <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+                                        <SkeletonPlaceholder.Item width={60} height={60} borderRadius={50} />
+                                        <SkeletonPlaceholder.Item marginLeft={20}>
+                                        <SkeletonPlaceholder.Item width={250} height={20} borderRadius={4} />
+                                        <SkeletonPlaceholder.Item
+                                            marginTop={6}
+                                            width={80}
+                                            height={20}
+                                            borderRadius={4}
+                                        />
+                                        </SkeletonPlaceholder.Item>
+                                    </SkeletonPlaceholder.Item>
+                                </SkeletonPlaceholder>
                             </View>
                         </Content>
+                        <View>
+                            <Dialog.Container visible={this.state.isVisible}>
+                            <Dialog.Title>Delete Listing</Dialog.Title>
+                            <Dialog.Description>
+                                Do you want to delete this listing? You cannot undo this action.
+                            </Dialog.Description>
+                            <Dialog.Button onPress={() => {
+                                this.setState({
+                                    isVisible: false
+                                })
+                            }} label="Cancel" />
+                            <Dialog.Button onPress={this.handleDeletion} label="Delete" />
+                            </Dialog.Container>
+                        </View>
                 </ScrollView>
             </Fragment>
         )

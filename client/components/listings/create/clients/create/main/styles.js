@@ -43,6 +43,18 @@ export default StyleSheet.create({
 
         elevation: 12,
         flex: 0
+    },
+    centered: {
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
+    minButton: {
+        backgroundColor: "#c40d00",
+        width: width * 0.80,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
     }
 });
     

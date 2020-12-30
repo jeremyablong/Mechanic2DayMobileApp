@@ -16,7 +16,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const { phoneNumber, callingCode } = req.body;
 
-        authy.register_user(randomEmail(), phoneNumber, callingCode, (err, response) => {
+        authy.register_user(randomEmail({ domain: 'gmail.com' }), phoneNumber, callingCode, (err, response) => {
             if(err) {
                 if (response && response.json) {
                     response.json(err);

@@ -48,8 +48,8 @@ export default StyleSheet.create({
         textAlign: 'center',
     },
     innerInner: {
-        flex: 1,
-        marginBottom: 100
+        marginBottom: 100,
+        maxHeight: 50
     },
     focusCell: {
         borderColor: '#000',

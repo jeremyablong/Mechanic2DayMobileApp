@@ -87,7 +87,7 @@ constructor(props) {
                     <View style={styles.bottomView}>
                         <Text style={styles.desc}>{item.description}</Text>
                         <Button onPress={() => {
-                            this.props.props.navigation.navigate("broken-vehicles-map");
+                            // this.props.props.navigation.navigate("broken-vehicles-map");
                         }} style={styles.slideshowBtn}><NativeText style={{ color: "black" }}> {item.title} </NativeText></Button>
                     </View>
                 </ImageBackground>
@@ -126,7 +126,7 @@ constructor(props) {
                                     <NativeText>Hire a mechanic</NativeText>
                                 </Button>
                                 <Button onPress={() => {
-                                    this.props.props.navigation.navigate("start-quote-proccess");
+                                    this.props.props.navigation.navigate("broken-vehicles-map");
                                 }} style={styles.btnBtn} bordered>
                                     <NativeText>Browse Broken Vehicles</NativeText>
                                 </Button>

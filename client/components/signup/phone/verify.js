@@ -26,8 +26,8 @@ const CELL_COUNT = 7;
 
 const VerfiyPhoneNumberHelper = (props) => {
     const [code, setCode] = useState("");
+    const [value, setValue] = useState("");
     const [showAlert, setAlert] = useState(false);
-    const [value, setValue] = useState('');
     const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
     const [propsss, getCellOnLayoutHandler] = useClearByFocusCell({
         value,
@@ -40,7 +40,7 @@ const VerfiyPhoneNumberHelper = (props) => {
         const { authyID } = props;
 
         axios.post(`${Config.ngrok_url}/validate/phone/number/code`, {
-            code,
+            code: value,
             authyID
         }).then((res) => {
             if (res.data.message === "Successfully authenticated!") {
@@ -102,7 +102,7 @@ const VerfiyPhoneNumberHelper = (props) => {
                                 {...propsss}
                                 value={value}
                                 onChangeText={(value) => {
-                                    setCode(value);
+                                    setValue(value);
                                 }}
                                 cellCount={CELL_COUNT}
                                 rootStyle={styles.codeFieldRoot}
