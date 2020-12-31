@@ -6,5 +6,7 @@
     "TWILIO_VERIFY_API": "VA50f91a70d1c910ba214ad80ca8cba61f",
     "authyKey": "ccre696IZQrx3y6B0cPZ8dMEEj6G81yq",
     "wasabiAccessKey": "J4FR4IVQL0CV0DFTMYBJ",
-    "wasabiSecretAccessKey": "wuUJoRXlWkSpVfPusz5XEf3ijhgvRtbwXc4oFofP"
+    "wasabiSecretAccessKey": "wuUJoRXlWkSpVfPusz5XEf3ijhgvRtbwXc4oFofP",
+    "sendbird_app_id": "59615BD6-4F78-4B10-BF4A-587E1403BBD9",
+    "sendbird_api_token": "90ec4b9775a8bf3974c04888632fe7cc9d585400"
 }

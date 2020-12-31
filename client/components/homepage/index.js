@@ -24,70 +24,86 @@ constructor(props) {
             title: "Engine Jobs",
             description: "Anything related to the main engine functionality",
             background: require("../../assets/images/car-3.jpg"),
+            data: "engine",
             index: 1
         }, { 
-            title: "Exhaust Jobs",
+            title: "Transmission Jobs",
             description: "Anything related to the exahust of the vehicle/bike",
             background: require("../../assets/images/car-2.jpg"),
+            data: "transmission",
             index: 2
         }, { 
             title: "Maintenance",
-            description: "This category is strictly for general maintenance jobs",
+            description: "Anything related to the maintenance of a vehicle/bike",
             background: require("../../assets/images/car-1.jpg"),
-            index: 3
+            index: 3,
+            data: "maintenance"
         }, {
-            title: "Tire/Brakes",
-            description: "This is strictly for JUST tire and break jobs of all varieties",
+            title: "Exhaust Jobs",
+            description: "Anything related to the main engine exhuast",
             background: require("../../assets/images/car-4.jpg"),
-            index: 4
+            index: 4,
+            data: "exhaust"
         }, { 
-            title: "Interior Design",
-            description: "Design and re-design of the interior of a vehicle",
+            title: "Tire/Breaks Repair",
+            description: "Anything related to the wheels/tires of a vehicle/bike",
             background: require("../../assets/images/car-5.jpg"),
-            index: 5
+            index: 5,
+            data: "tire-breaks-wheels"
         }, {
-            title: "Oil Changes",
-            description: "Oil changes, we all need em!",
+            title: "Interior Design/Repair",
+            description: "Anything related to the interior of a vehicle",
             background: require("../../assets/images/car-6.jpg"),
-            index: 6
+            index: 6,
+            data: "interior-repair-design"
         }, { 
             title: "Electrical Work",
             description: "Fuses, lights, signals, and the main electrical components of any vehicle",
             background: require("../../assets/images/car-7.jpg"),
-            index: 7
+            index: 7,
+            data: "electronics/electrical"
         }, {
-            title: "Speciality Repairs",
-            description: "Bmw, Infiniti, Etc... foreign vehicle repairs",
+            title: "Tuning/Sports Upgrades",
+            description: "High-end vehicle upgrades and alternations",
             background: require("../../assets/images/car-8.jpg"),
-            index: 8
+            index: 8,
+            data: "tuning-sports-upgrades"
         }, { 
-            title: "Speciality Upgrades",
-            description: "This category is strictly for high-end vehicle upgrades...",
+            title: "Speciality Repairs",
+            description: "Speciality vehicle repairs done by qualified professionals -  (BMW, Audi, Etc..)",
             background: require("../../assets/images/car-9.jpg"),
-            index: 9
+            index: 9,
+            data: "speciality-repairs"
         }, {
-            title: "Transmission Repairs",
-            description: "Transmission repairs - anything tranny related!",
+            title: "Deisel Repairs",
+            description: "Heavy machinery and deisel mechanics",
             background: require("../../assets/images/car-11.jpg"),
-            index: 10
+            index: 10,
+            data: "deisel"
         }, { 
-            title: "Diagnostics",
-            description: "Find out what's wrong with your vehicle",
+            title: "Motorcycle & Motorbike",
+            description: "Designated specifically for motorbikes & motorcycles repairs and maintenance",
             background: require("../../assets/images/car-12.jpg"),
-            index: 11
+            index: 11,
+            data: "motorcycle/motorbike"
+        }, { 
+            title: "Body Work & Alterations",
+            description: "Anything body work related from dings to dents to collision repairs",
+            background: require("../../assets/images/car-12.jpg"),
+            index: 12,
+            data: "body-work"
         }],
         searchValuePane: ""
     }
 }
-
     _renderItem = ({item, index}) => {
         return (
-            <Fragment key={index}>
+            <Fragment>
                 <ImageBackground source={item.background} style={styles.backgroundSlider}>
                     <View style={styles.bottomView}>
                         <Text style={styles.desc}>{item.description}</Text>
                         <Button onPress={() => {
-                            // this.props.props.navigation.navigate("broken-vehicles-map");
+                            this.props.props.navigation.navigate("categories-main", { type: item.data });
                         }} style={styles.slideshowBtn}><NativeText style={{ color: "black" }}> {item.title} </NativeText></Button>
                     </View>
                 </ImageBackground>

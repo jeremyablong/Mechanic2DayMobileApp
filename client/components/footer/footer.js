@@ -11,7 +11,6 @@ const FooterHelper = (props) => {
             <Fragment>
                 <Footer>
                     <FooterTab>
-                        
                         <Button onPress={() => {
                             // props.props.navigation.navigate("profile-main");
                         }} vertical>

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text } from 'react-native';
-import { Header, Left, Body, Right, Button, Icon, Title, Text as NativeText, Subtitle } from 'native-base';
+import { Header, Left, Body, Right, Button, Icon, Title, Text as NativeText } from 'native-base';
 
 
 class NotificationsHelper extends Component {

@@ -17,6 +17,7 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../toastConfig.js";
 import { connect } from "react-redux";
 import { authenticated, finishedSignup } from "../../actions/signup/auth.js";
+import { sendbirdLogin } from "../../actions/sendbird/user.js";
 
 const SigninHelper = props => {
     const [account, setAccountType] = useState("");
@@ -31,8 +32,12 @@ const SigninHelper = props => {
             password
         }).then((res) => {
             if (res.data.message === "Successfully authenticated!") {
-                
-                props.authenticated(res.data.user);
+
+                const { user } = res.data;
+
+                props.sendbirdLogin({ userId: user.unique_id, nickname: user.fullName});
+
+                props.authenticated(user);
 
                 props.finishedSignup(true);
 
@@ -120,4 +125,4 @@ const SigninHelper = props => {
         </Fragment>
     );   
 }
-export default connect(null, { authenticated, finishedSignup })(SigninHelper);
+export default connect(null, { authenticated, finishedSignup, sendbirdLogin })(SigninHelper);

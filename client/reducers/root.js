@@ -3,10 +3,12 @@ import auth from "./signup/auth.js";
 import location from "./location/location.js";
 import accountType from "./accountType/type.js";
 import diagnostics from "./diagnostics/index.js";
+import sendbird_login from "./sendbird/login.js";
 
 export default combineReducers({
 	auth,
 	location,
 	accountType,
-	diagnostics
+	diagnostics,
+	sendbird_login
 });

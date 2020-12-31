@@ -70,6 +70,7 @@
     "redux-promise": "^0.6.0",
     "redux-thunk": "^2.3.0",
     "rn-sliding-up-panel": "^2.4.4",
+    "sendbird": "^3.0.141",
     "thunk": "0.0.1"
   },
   "resolutions": {

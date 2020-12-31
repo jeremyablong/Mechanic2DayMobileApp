@@ -38,6 +38,7 @@ import UploadPhotosVehicleListingPage from "./pages/listings/create/clients/crea
 import AvailablityCreationPage from "./pages/listings/create/clients/create/avaliability/index.js";
 import PricingAdjustmentPage from "./pages/listings/create/clients/create/pricing/index.js";
 import NotificationsPage from "./pages/notifications/index.js";
+import CategoriesMainPage from "./pages/categories/index.js";
 
 const Stack = createStackNavigator();
 
@@ -143,6 +144,7 @@ constructor(props) {
               <Stack.Screen name="create-vehicle-listing-four" component={AvailablityCreationPage} />
               <Stack.Screen name="create-vehicle-listing-five" component={PricingAdjustmentPage} />
               <Stack.Screen name="notifications" component={NotificationsPage} />
+              <Stack.Screen name="categories-main" component={CategoriesMainPage} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

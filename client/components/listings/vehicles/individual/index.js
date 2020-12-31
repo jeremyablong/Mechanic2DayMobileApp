@@ -11,7 +11,7 @@ import { Config } from "react-native-config";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import _ from 'lodash';
 import moment from "moment";
-
+import { connect } from "react-redux";
 
 const { width, height  } = Dimensions.get('window');
 
@@ -504,14 +504,14 @@ constructor(props) {
                                 <Text style={{ fontSize: 18 }}>Response Rate - 100%</Text>
                                 <Text style={{ fontSize: 18, marginTop: 10 }}>Response Time - Within one hour</Text>
                             </View>
-                            <View style={styles.marginCentered}>
+                            {this.props.authenticated === true ? <View style={styles.marginCentered}>
                                 <Button style={{ width: "100%", justifyContent: "center" }} bordered onPress={() => {
 
                                 }}>
                                     <NativeText>Contact Mechanic</NativeText>
                                 </Button>
                                 
-                            </View>
+                            </View> : null}
                             <View style={styles.margin}>
                                 <Text style={{ marginTop: 10, textAlign: "left" }}>To protect your payment, never transfer money or communicate outside the (Company Name) website or app.</Text>
                             </View>
@@ -792,4 +792,15 @@ constructor(props) {
         )
     }
 }
-export default IndividualBrokenVehicleHelper;
+const mapStateToProps = (state) => {
+    if (Object.keys(state.auth.authenticated).length > 0) {
+        return {
+            authenticated: true
+        };
+    } else {
+        return {
+            authenticated: false
+        }
+    }
+} 
+export default connect(mapStateToProps, {})(IndividualBrokenVehicleHelper);
