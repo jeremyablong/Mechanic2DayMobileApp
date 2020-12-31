@@ -37,8 +37,8 @@ export default StyleSheet.create({
         borderRadius: 20
     },
     innerContainerTwo: {
-        height: 200,
-        minHeight: 200,
+        height: 350,
+        minHeight: 350,
         width: 300,
         padding: 10,
         margin: 10,
@@ -58,7 +58,7 @@ export default StyleSheet.create({
     scrollViewTwo: {
         flex: 1,
         zIndex: 999,
-        top: -150
+        top: -250
     },
     contentContainerTwo: {
        

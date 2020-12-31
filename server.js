@@ -52,6 +52,7 @@ app.use("/finale/post/broken/vehicle/make/live", require("./routes/clients/postN
 app.use("/delete/listing/broken/vehicle", require("./routes/clients/delete/deleteVehicleListing.js"));
 app.use("/gather/live/listings/vehicles", require("./routes/clients/gather/gatherVehicles.js"));
 app.use("/gather/specific/listing/vehicle/posting", require("./routes/clients/gather/getVehicleListing.js"));
+app.use("/gather/listing/by/poster/id", require("./routes/clients/gather/gatherUserById.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

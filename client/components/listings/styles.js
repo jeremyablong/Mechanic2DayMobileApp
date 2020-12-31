@@ -48,8 +48,21 @@ export default StyleSheet.create({
         maxWidth: width * 0.75,
         marginRight: 30
     },
+    innerPicture: {
+        height: 200, 
+        minHeight: 200, 
+        minWidth: "100%", 
+        width: "100%"
+    },
     horizontalScroller: {
         marginTop: 30
+    },
+    callout: {
+        minWidth: width * 0.75, 
+        maxWidth: width * 0.75, 
+        maxHeight: height * 0.60, 
+        minHeight: 200, 
+        backgroundColor: "white"
     },
     label: {
         backgroundColor: "white",

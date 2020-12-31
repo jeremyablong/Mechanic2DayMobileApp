@@ -9,10 +9,9 @@ import Carousel from 'react-native-snap-carousel';
 import axios from 'axios';
 import { Config } from "react-native-config";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import Geocoder from 'react-native-geocoding';
 import _ from 'lodash';
+import moment from "moment";
 
-Geocoder.init("AIzaSyDAAobUDbCGbHNz4GNzlWZtn-aQ4Y8udXw");
 
 const { width, height  } = Dimensions.get('window');
 
@@ -121,7 +120,8 @@ constructor(props) {
         refreshing: false,
         gallery: [],
         latLng: null,
-        location: null
+        location: null,
+        user: null
     }
 }
     _renderItem = ({item, index}) => {
@@ -184,11 +184,6 @@ constructor(props) {
                     }
                 })
                 promiseee.then((passedData) => {
-
-                    console.log("passedData", passedData);
-
-                    console.log("Config.mapquest_api_key", Config.mapquest_api_key);
-
                     if (_.has(listing.location, "country")) {
                         const headers = {
                             params: {
@@ -257,6 +252,25 @@ constructor(props) {
         }).catch((err) => {
             console.log(err);
         })
+
+
+        axios.post(`${Config.ngrok_url}/gather/listing/by/poster/id`, {
+            poster_id: this.props.props.route.params.listing.poster
+        }).then((res) => {
+            if (res.data.message === "Gathered user!") {
+                console.log("We got a response :", res.data);
+
+                const { user } = res.data;
+
+                this.setState({
+                    user
+                })
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
     calculateCategory = (listing) => {
         switch (listing.type_of_repair) {
@@ -297,11 +311,11 @@ constructor(props) {
                 return "Motorcycle/Motorbike Repairs";
                 break;      
             default:
-                break;
+                break; 
         }
     }
     renderConditional = () => {
-        const { listing, gallery, latLng, location } = this.state;
+        const { listing, gallery, latLng, location, user } = this.state;
         if (listing !== null) {
             return (
                 <Fragment>
@@ -311,7 +325,7 @@ constructor(props) {
                             images={gallery}
                         />
                     </View>
-                    <View style={{ top: 175 }}>
+                    <ScrollView style={{ top: 175 }}>
                         <View style={{ marginLeft: 20, marginRight: 20 }}>
                             <Text style={styles.title}>{listing.title}</Text>
                             <View style={styles.row}>
@@ -321,13 +335,13 @@ constructor(props) {
                                 <Text>SuperMechanic</Text>
                             </View>
                             <View style={[styles.row, { marginTop: 5 }]}>
-                                <Text style={styles.location}>{"Monterey Park, California, United States"}</Text>
+                                <Text style={styles.location}>{location !== null ? location : "---------"}</Text>
                             </View>
                             <View style={styles.hr} />
                         </View>
                         <View style={styles.containerTwo}>
                             <Text style={styles.category}>{this.calculateCategory(listing)}</Text>
-                            <Text style={{ fontSize: 16 }}>hosted by Jeremy</Text>
+                            <Text style={{ fontSize: 16 }}>hosted by {user !== null ? user.fullName : "Unknown"}</Text>
                         </View>
                         {/* <View style={styles.rowMargin}>
                             <Text style={{ fontSize: 20 }}>2016 Nissan Sentra Sedan 4-door 145,000 miles</Text>
@@ -348,21 +362,26 @@ constructor(props) {
                         <View style={styles.hrTwo} />
                         <View style={styles.rowMargin}>
                             <View style={styles.column}>
-                                <Image source={require("../../../../assets/icons/seat.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
-                                <Text style={styles.centeredText}>5 Seats</Text>
+                                <Image source={require("../../../../assets/icons/make.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
+                                <Text style={{ fontWeight: "bold" }}>Make</Text>
+                                <Text style={styles.centeredText}>{listing.make}</Text>
                             </View>
                             <View style={styles.column}>
                                 <Image source={require("../../../../assets/icons/door.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
-                                <Text style={styles.centeredText}>4 Doors</Text>
+                                <Text style={{ fontWeight: "bold" }}>Model</Text>
+                                <Text style={styles.centeredText}>{listing.model}</Text>
                             </View>
                             <View style={styles.column}>
-                                <Image source={require("../../../../assets/icons/gas.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
-                                <Text style={styles.centeredText}>Gas (Premium)</Text>
+                                <Image source={require("../../../../assets/icons/year.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
+                                <Text style={{ fontWeight: "bold" }}>Year</Text>
+                                <Text style={styles.centeredText}>{listing.year}</Text>
                             </View>
                             <View style={styles.column}>
-                                <Image source={require("../../../../assets/icons/gas-tank.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
-                                <Text style={styles.centeredText}>20 MPG</Text>
+                                <Image source={require("../../../../assets/icons/odo.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
+                                <Text style={{ fontWeight: "bold" }}>Odometer</Text>
+                                <Text style={styles.centeredText}>{listing.odemeter}</Text>
                             </View>
+                            
                         </View>
                         <View style={styles.hrThree} />
                         <View style={styles.marginMargin}>
@@ -453,15 +472,15 @@ constructor(props) {
                             </View>
                             <View style={styles.rowMargin}>
                                 <View style={styles.columnColumnLeft}>
-                                    <Text style={styles.mildBoldText}>Posted by Jeremy</Text>
-                                    <Text style={{ marginTop: 10 }}>Joined in May 2017</Text>
+                                    <Text style={styles.mildBoldText}>Posted by {user !== null ? user.fullName : "Unknown"}</Text>
+                                    <Text style={{ marginTop: 10 }}>Joined in {user !== null ? moment(user.register_system_date).format("MMMM YYYY") : "-----"}</Text>
                                 </View>
                                 <View style={styles.columnColumn}>
                                     <Image source={require("../../../../assets/images/me.jpg")} style={{ maxWidth: 30, maxHeight: 30 }} />
                                 </View>
                                 
                             </View>
-                            <View style={[styles.rowRow, { marginTop: -30 }]}>
+                            <View style={[styles.rowRow, { marginTop: 0 }]}>
                                 <Image source={require("../../../../assets/icons/small-star.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
                                 <Text style={{ margin: 5 }}>{Math.floor(Math.random() * 70) + 1} Reviews</Text>
                             </View>
@@ -478,7 +497,7 @@ constructor(props) {
                                 <Text>If you need anything you can contact me at 213-248-8623</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
-                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>Jeremy is a SuperGuest</Text>
+                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>{user !== null ? user.fullName : "Unknown"} is a SuperGuest</Text>
                                 <Text>SuperGuest's are experienced, highly rated customers who are committed to providing fluent and consistent experiences for all vehicle repairs.</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
@@ -510,7 +529,7 @@ constructor(props) {
                                 />
                             </View>
                         </View>
-                    </View>
+                    </ScrollView>
                 </Fragment>
             );
         } else {
@@ -624,7 +643,7 @@ constructor(props) {
                     console.log("MAGIC ONE: ", res.data);
     
                     const { listing } = res.data;
-                
+                    
                     const new_picture_array = [];
     
                     const promiseee = new Promise((resolve, reject) => {
@@ -647,10 +666,87 @@ constructor(props) {
                         }
                     })
                     promiseee.then((passedData) => {
+                        if (_.has(listing.location, "country")) {
+                            const headers = {
+                                params: {
+                                    key: Config.mapquest_api_key,
+                                    location: listing.location.street
+                                }
+                            };
+        
+                            axios.get("http://www.mapquestapi.com/geocoding/v1/address", headers).then((res) => {
+                                console.log(res.data);
+    
+                                if (res.data.results) {
+                                    this.setState({
+                                        latLng: {
+                                            latitude: res.data.results[0].locations[0].latLng.lat,
+                                            longitude: res.data.results[0].locations[0].latLng.lng,
+                                            latitudeDelta: 0.015,
+                                            longitudeDelta: 0.0121,
+                                        },
+                                        location: `${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`
+                                    })
+                                }
+                            }).catch((err) => {
+                                console.log(err);
+                            })
+                        } else {
+                            console.log("do nothing.");
+    
+                            this.setState({
+                                latLng: {
+                                    latitude: listing.location.latitude,
+                                    longitude: listing.location.longitude,
+                                    latitudeDelta: 0.015,
+                                    longitudeDelta: 0.0121,
+                                }
+                            }, () => {
+                                const headers = {
+                                    params: {
+                                        key: Config.mapquest_api_key,
+                                        location: `${listing.location.latitude},${listing.location.longitude}`
+                                    }
+                                };
+            
+                                axios.get("http://www.mapquestapi.com/geocoding/v1/reverse", headers).then((res) => {
+                                    console.log(res.data);
+        
+                                    if (res.data) {
+                                        this.setState({
+                                            location: `${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`
+                                        })
+                                    }
+                                }).catch((err) => {
+                                    console.log(err);
+                                })
+                            })
+                        }
+                        
                         this.setState({
                             gallery: passedData,
-                            listing
+                            listing, 
+                            refreshing: false
                         })
+                    })
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+    
+    
+            axios.post(`${Config.ngrok_url}/gather/listing/by/poster/id`, {
+                poster_id: this.props.props.route.params.listing.poster
+            }).then((res) => {
+                if (res.data.message === "Gathered user!") {
+                    console.log("We got a response :", res.data);
+    
+                    const { user } = res.data;
+    
+                    this.setState({
+                        user
                     })
                 } else {
                     console.log("err", res.data);

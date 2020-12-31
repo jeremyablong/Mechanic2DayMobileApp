@@ -1,16 +1,15 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Dimensions, Image, Animated, TouchableOpacity, ScrollView, PanResponder, ImageBackground, Keyboard } from 'react-native';
-import MapView from 'react-native-maps';
+import { View, Text, Dimensions, Image, Animated, TouchableOpacity, ScrollView, PanResponder, ImageBackground } from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps';
 import styles from './styles.js';
 import SlidingUpPanel from 'rn-sliding-up-panel';
-import { Button, Text as NativeText } from "native-base";
-import RBSheet from "react-native-raw-bottom-sheet";
+import { Card, CardItem, Thumbnail, Text as NativeText, Left, Body, Button } from 'native-base';
 import SearchBar from 'react-native-search-bar';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Config } from 'react-native-config';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-
+import _ from 'lodash';
 
 const { width, height } = Dimensions.get("window");
 
@@ -38,7 +37,8 @@ constructor(props) {
         },
         results: [],
         selected: null,
-        dragPanel: true
+        dragPanel: true,
+        latLng: {}
     }
     this.animatedValue = new Animated.Value(0);
     this.animatedValueTwo = new Animated.Value(0);
@@ -58,8 +58,58 @@ constructor(props) {
 
                 const { listings } = res.data;
 
-                this.setState({
-                    listings
+                const sliced_listings = listings.slice(0, 20);
+
+                const promiseee = new Promise((resolve, reject) => {
+                    for (let index = 0; index < sliced_listings.length; index++) {
+                        const element = sliced_listings[index];
+
+                        console.log("element", element);
+                        
+                        if (_.has(element.location, "country")) {
+                            const headers = {
+                                params: {
+                                    key: Config.mapquest_api_key,
+                                    location: element.location.street
+                                }
+                            };
+        
+                            axios.get("http://www.mapquestapi.com/geocoding/v1/address", headers).then((res) => {
+                                console.log(res.data);
+    
+                                if (res.data.results) {
+                                    element.location = {
+                                        latitude: res.data.results[0].locations[0].latLng.lat,
+                                        longitude: res.data.results[0].locations[0].latLng.lng,
+                                        latitudeDelta: 0.015,
+                                        longitudeDelta: 0.0121,
+                                    };
+    
+                                    if ((sliced_listings.length - 1) === index) {
+                                        resolve(sliced_listings);
+                                    }
+                                } else {
+                                    if ((sliced_listings.length - 1) === index) {
+                                        resolve(sliced_listings);
+                                    }
+                                }
+                            }).catch((err) => {
+                                console.log(err);
+                            })
+                        } else {
+                            if ((sliced_listings.length - 1) === index) {
+                                resolve(sliced_listings);
+                            }
+                        }
+                    }
+                })
+
+                promiseee.then((passedData) => {
+                    console.log("passedData sliced_listings", passedData);
+
+                    this.setState({
+                        listings: passedData
+                    })
                 })
             } else {
                 console.log("err", res.data);
@@ -185,14 +235,57 @@ constructor(props) {
                 <MapView
                     style={styles.mapCustom}
                     region={this.state.region}
-                    onRegionChange={this.onRegionChange}
-                />
+                    onRegionChangeComplete={this.onRegionChange}
+                >
+                    {typeof listings !== "undefined" && listings.length > 0 ? listings.map((marker, index) => {
+                        return (
+                            <Fragment>
+                                <Marker 
+                                    coordinate={marker.location} 
+                                    title={`${marker.year} ${marker.make} ${marker.model}`} 
+                                    description={marker.description.slice(0, 40)} 
+                                    image={require('../../assets/icons/car-marker.png')} 
+                                    onCalloutPress={() => {
+                                        console.log("callout pressed.");
+
+                                        this.props.props.navigation.navigate("individual-broken-listing", { listing: marker });
+                                    }}
+                                >
+                                    <Callout>
+                                        <View style={styles.callout}>
+                                            <Card style={{ flex: 0 }}>
+                                                <CardItem>
+                                                <Left>
+                                                    <Thumbnail source={{uri: marker.photos[0] }} />
+                                                    <Body>
+                                                        <NativeText>{`${marker.year} ${marker.make} ${marker.model}`}</NativeText>
+                                                        <NativeText note>{marker.title.slice(0, 60)}{typeof marker.title !== "undefined" && marker.title.length > 60 ? "..." : ""}</NativeText>
+                                                    </Body>
+                                                </Left>
+                                                </CardItem>
+                                                <CardItem>
+                                                <Body>
+                                                    <Image source={{uri: marker.photos[0] }} style={styles.innerPicture}/>
+                                                    <NativeText>
+                                                        {marker.description.slice(0, 120)}{typeof marker.description !== "undefined" && marker.description.length > 120 ? "..." : ""}
+                                                    </NativeText>
+                                                </Body>
+                                                </CardItem>
+                                              
+                                            </Card>
+                                        </View>
+                                    </Callout>
+                                </Marker>
+                            </Fragment>
+                        );
+                    }) : null}
+                </MapView>
                 <View style={styles.topper}>
                     <View style={styles.circledView}>
                         <TouchableOpacity style={{ flexDirection: "column", maxHeight: 45 }} onPress={() => {
                             this.props.props.navigation.goBack();
                         }}>
-                            <Image source={require("../../assets/icons/backk.png")} style={{ maxHeight: 45, marginLeft: 5, maxWdith: 45, width: 45 }} />
+                            <Image source={require("../../assets/icons/backk.png")} style={{ maxHeight: 45, marginLeft: 5, maxWidth: 45, width: 45 }} />
                         </TouchableOpacity>
                         <TouchableOpacity style={{ flexDirection: "column", maxHeight: 45 }} onPress={() => {
 
@@ -219,7 +312,7 @@ constructor(props) {
                     <ScrollView onScrollBeginDrag={this._onGrant} onScrollEndDrag={this._onRelease} contentContainerStyle={{ paddingBottom: 150 }} style={styles.container}>
                         <View style={styles.topContainer}>
                             <View style={styles.justifyCentered}>
-                                <Image source={require("../../assets/icons/dotted.png")} style={{ maxHeight: 20, maxWdith: 100 }} />
+                                <Image source={require("../../assets/icons/dotted.png")} style={{ maxHeight: 20, maxWidth: 100 }} />
                                 {this.state.show === true ? <Text style={{ marginTop: 5, fontSize: 20 }}>1-16 of 300+ Broken Vehicles</Text> : <Text style={{ marginTop: 5, fontSize: 25 }}>300+ Broken Vehicles</Text>}
                             </View>
                             
@@ -239,7 +332,7 @@ constructor(props) {
                                                 </View>
                                             </ImageBackground>
                                             <View style={styles.rowCustom}>
-                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWdith: 25, width: 25, height: 25 }} />
+                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWidth: 25, width: 25, height: 25 }} />
                                                 <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
@@ -284,7 +377,7 @@ constructor(props) {
                                             </ImageBackground>
                                            
                                             <View style={styles.rowCustom}>
-                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWdith: 25, width: 25, height: 25 }} />
+                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWidth: 25, width: 25, height: 25 }} />
                                                 <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
@@ -329,7 +422,7 @@ constructor(props) {
                                                 </View>
                                             </ImageBackground>
                                             <View style={styles.rowCustom}>
-                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWdith: 25, width: 25, height: 25 }} />
+                                                <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWidth: 25, width: 25, height: 25 }} />
                                                 <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>

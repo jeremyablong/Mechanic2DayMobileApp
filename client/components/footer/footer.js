@@ -33,7 +33,7 @@ const FooterHelper = (props) => {
                         <Text>Chat</Text>
                         </Button>
                         <Button onPress={() => {
-                           props.props.navigation.navigate("profile-main");
+                           props.props.navigation.push("profile-main");
                         }} vertical>
                             <Image source={require("../../assets/icons/account.png")} style={styles.menuIcon} />
                         <Text>Account</Text>

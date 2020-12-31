@@ -6,16 +6,18 @@ const { height, width } = Dimensions.get("window");
 
 export default StyleSheet.create({
     slide: {
-        width,
         maxWidth: width,
-        height
+        height,
+        width: "100%",
+        resizeMode: "stretch",
+        flex: 1
     },
     container: {
-        backgroundColor: "rgba(255, 255, 255, 0.7)",
+        backgroundColor: "rgba(255, 255, 255, 0.3)",
         borderWidth: 2,
         borderColor: "black",
         position: "absolute",
-        bottom: 70,
+        top: 10,
         margin: 15,
         shadowColor: "black",
         padding: 20,
@@ -31,6 +33,10 @@ export default StyleSheet.create({
     },
     wrapper: {
         flex: 1
+    },
+    hr: {
+        borderBottomColor: "lightgrey",
+        borderBottomWidth: 2
     },
     title: {
         fontSize: 30,
