@@ -84,6 +84,19 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         });
                     } else {
                         console.log("no picture provided");
+
+                        user.general_information = {
+                            about_me: description !== user.general_information.description ? description : user.general_information.description,
+                            location: location !== null ? location : user.general_information.location,
+                            work: work_name !== null ? work_name : user.general_information.work_name
+                        }
+
+                        collection.save(user);
+        
+                        res.json({
+                            message: "Successfully saved the changed data!",
+                            user
+                        })
                     }
                 } else {
                     user["general_information"] = {

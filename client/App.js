@@ -39,6 +39,8 @@ import AvailablityCreationPage from "./pages/listings/create/clients/create/aval
 import PricingAdjustmentPage from "./pages/listings/create/clients/create/pricing/index.js";
 import NotificationsPage from "./pages/notifications/index.js";
 import CategoriesMainPage from "./pages/categories/index.js";
+import IndividualMessagingPage from "./pages/messaging/individual/individual.js";
+import PreviewListingViewPage from "./pages/listings/create/preview/preview.js";
 
 const Stack = createStackNavigator();
 
@@ -145,6 +147,8 @@ constructor(props) {
               <Stack.Screen name="create-vehicle-listing-five" component={PricingAdjustmentPage} />
               <Stack.Screen name="notifications" component={NotificationsPage} />
               <Stack.Screen name="categories-main" component={CategoriesMainPage} />
+              <Stack.Screen name="messages-individual" component={IndividualMessagingPage} />
+              <Stack.Screen name="view-preview-listing-vehicle" component={PreviewListingViewPage} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

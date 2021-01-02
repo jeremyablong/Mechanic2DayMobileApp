@@ -247,9 +247,12 @@ constructor (props) {
             }).then((res) => {
                 if (res.data.message === "Successfully saved the changed data!") {
                     console.log(res.data);
+
+                    const { user } = res.data;
     
                     this.setState({
-                        visible: false
+                        visible: false,
+                        user
                     }, () => {
                         this.RBSheet.close();
     

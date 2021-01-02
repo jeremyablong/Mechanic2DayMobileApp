@@ -4,6 +4,9 @@ import styles from './styles.js';
 import { Header, Left, Body, Right, Button, Icon, Title, Card, CardItem, Thumbnail, Text as NativeText } from 'native-base';
 import FooterHelper from "../../components/footer/footer.js";
 import ReadMore from 'react-native-read-more-text';
+import axios from "axios";
+import { Config } from 'react-native-config';
+import Gallery from 'react-native-image-gallery';
 
 
 class CategoriesMainHelper extends Component {
@@ -11,49 +14,31 @@ constructor(props) {
     super(props);
 
     this.state = {
-        data: [{
-            title: "This is the title one",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut consequat lorem. Duis at quam quis nisl feugiat laoreet nec quis orci. Quisque consequat feugiat dui, non laoreet ligula consequat vitae. In hac habitasse platea dictumst. Pellentesque sodales nisl nibh, nec molestie arcu finibus vitae. ",
-            image: require("../../assets/images/broken-1.jpg")
-        }, {
-            title: "This is the title two",
-            description: "Mauris congue, neque et laoreet dignissim, arcu ipsum viverra sem, nec sollicitudin diam dolor id mi. Mauris eros erat, efficitur euismod arcu vel, luctus congue odio. Quisque et faucibus velit. Nunc tempus tortor at orci convallis mattis. Quisque pellentesque nunc urna, ut auctor nisl sollicitudin ac. Duis non tellus eu elit posuere aliquet. Nulla porttitor eros pellentesque venenatis viverra. Aliquam dictum nisi ut congue egestas. Morbi pharetra libero ac eros mollis volutpat.",
-            image: require("../../assets/images/broken-2.jpg")
-        }, {
-            title: "This is the title three",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut consequat lorem. Duis at quam quis nisl feugiat laoreet nec quis orci. Quisque consequat feugiat dui, non laoreet ligula consequat vitae. In hac habitasse platea dictumst. Pellentesque sodales nisl nibh, nec molestie arcu finibus vitae. ",
-            image: require("../../assets/images/broken-3.jpg")
-        }, {
-            title: "This is the title four",
-            description: "Mauris congue, neque et laoreet dignissim, arcu ipsum viverra sem, nec sollicitudin diam dolor id mi. Mauris eros erat, efficitur euismod arcu vel, luctus congue odio. Quisque et faucibus velit. Nunc tempus tortor at orci convallis mattis. Quisque pellentesque nunc urna, ut auctor nisl sollicitudin ac. Duis non tellus eu elit posuere aliquet. Nulla porttitor eros pellentesque venenatis viverra. Aliquam dictum nisi ut congue egestas. Morbi pharetra libero ac eros mollis volutpat.",
-            image: require("../../assets/images/broken-4.jpg")
-        }, {
-            title: "This is the title five",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut consequat lorem. Duis at quam quis nisl feugiat laoreet nec quis orci. Quisque consequat feugiat dui, non laoreet ligula consequat vitae. In hac habitasse platea dictumst. Pellentesque sodales nisl nibh, nec molestie arcu finibus vitae. ",
-            image: require("../../assets/images/broken-5.jpg")
-        }, {
-            title: "This is the title six",
-            description: "Mauris congue, neque et laoreet dignissim, arcu ipsum viverra sem, nec sollicitudin diam dolor id mi. Mauris eros erat, efficitur euismod arcu vel, luctus congue odio. Quisque et faucibus velit. Nunc tempus tortor at orci convallis mattis. Quisque pellentesque nunc urna, ut auctor nisl sollicitudin ac. Duis non tellus eu elit posuere aliquet. Nulla porttitor eros pellentesque venenatis viverra. Aliquam dictum nisi ut congue egestas. Morbi pharetra libero ac eros mollis volutpat.",
-            image: require("../../assets/images/broken-6.jpg")
-        }, {
-            title: "This is the title seven",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut consequat lorem. Duis at quam quis nisl feugiat laoreet nec quis orci. Quisque consequat feugiat dui, non laoreet ligula consequat vitae. In hac habitasse platea dictumst. Pellentesque sodales nisl nibh, nec molestie arcu finibus vitae. ",
-            image: require("../../assets/images/broken-2.jpg")
-        }, {
-            title: "This is the title eight",
-            description: "Mauris congue, neque et laoreet dignissim, arcu ipsum viverra sem, nec sollicitudin diam dolor id mi. Mauris eros erat, efficitur euismod arcu vel, luctus congue odio. Quisque et faucibus velit. Nunc tempus tortor at orci convallis mattis. Quisque pellentesque nunc urna, ut auctor nisl sollicitudin ac. Duis non tellus eu elit posuere aliquet. Nulla porttitor eros pellentesque venenatis viverra. Aliquam dictum nisi ut congue egestas. Morbi pharetra libero ac eros mollis volutpat.",
-            image: require("../../assets/images/broken-1.jpg")
-        }, {
-            title: "This is the title nine",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut consequat lorem. Duis at quam quis nisl feugiat laoreet nec quis orci. Quisque consequat feugiat dui, non laoreet ligula consequat vitae. In hac habitasse platea dictumst. Pellentesque sodales nisl nibh, nec molestie arcu finibus vitae. ",
-            image: require("../../assets/images/broken-2.jpg")
-        }, {
-            title: "This is the title ten",
-            description: "Mauris congue, neque et laoreet dignissim, arcu ipsum viverra sem, nec sollicitudin diam dolor id mi. Mauris eros erat, efficitur euismod arcu vel, luctus congue odio. Quisque et faucibus velit. Nunc tempus tortor at orci convallis mattis. Quisque pellentesque nunc urna, ut auctor nisl sollicitudin ac. Duis non tellus eu elit posuere aliquet. Nulla porttitor eros pellentesque venenatis viverra. Aliquam dictum nisi ut congue egestas. Morbi pharetra libero ac eros mollis volutpat.",
-            image: require("../../assets/images/broken-5.jpg")
-        }]
+        data: []
     }
 }
+    componentDidMount() {
+        axios.get(`${Config.ngrok_url}/gather/category/listings`, {
+            params: {
+                type: this.props.props.route.params.type
+            }
+        }).then((res) => {
+            if (res.data.message === "Gathered the selected category!") {
+                console.log(res.data);
+
+                const { results } = res.data;
+
+                this.setState({
+                    data: results
+                })
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    
     calculateType = (type) => {
         switch (type) {
             case "body-work":
@@ -111,6 +96,71 @@ constructor(props) {
           </Text>
         );
     }
+    renderSwitchImages = (photos) => {
+        console.log("photos", photos.length);
+
+        switch (photos.length) {
+            case 1:
+                return (
+                    [
+                        { source: { uri: photos[0] } }
+                    ]
+                );
+                break;
+            case 2:
+                return (
+                    [
+                        { source: { uri: photos[0] } },
+                        { source: { uri: photos[1] } }
+                    ]
+                );
+                break;
+            case 3:
+                return (
+                    [
+                        { source: { uri: photos[0] } },
+                        { source: { uri: photos[1] } },
+                        { source: { uri: photos[2] } }
+                    ]
+                );
+                break;
+            case 4:
+                return (
+                    [
+                        { source: { uri: photos[0] } },
+                        { source: { uri: photos[1] } },
+                        { source: { uri: photos[2] } },
+                        { source: { uri: photos[3] } }
+                    ]
+                );
+                break;
+            case 5:
+                return (
+                    [
+                        { source: { uri: photos[0] } },
+                        { source: { uri: photos[1] } },
+                        { source: { uri: photos[2] } },
+                        { source: { uri: photos[3] } },
+                        { source: { uri: photos[4] } }
+                    ]
+                );
+                break;
+            case 6:
+                return (
+                    [
+                        { source: { uri: photos[0] } },
+                        { source: { uri: photos[1] } },
+                        { source: { uri: photos[2] } },
+                        { source: { uri: photos[3] } },
+                        { source: { uri: photos[4] } },
+                        { source: { uri: photos[5] } }
+                    ]
+                );
+                break;
+            default:
+                break;
+        }
+    }
     render() {
         console.log("this.props categories main helper", this.props);
 
@@ -130,28 +180,32 @@ constructor(props) {
                         <Title style={{ marginTop: 10, left: -15 }}>{this.calculateType(TYPE)}</Title>
                     </Left>
                 </Header>
-                <ScrollView style={styles.container}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 150 }} style={styles.container}>
                     <View style={styles.margin}>
                         <Text style={{ fontSize: 25, fontWeight: "bold" }}>300+ Vehicles availiable for repair</Text>
                         <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut consequat lorem. Duis at quam quis.</Text>
                     </View>
                     <View style={styles.margin}>
                         {typeof data !== "undefined" && data.length > 0 ? data.map((listing, index) => {
+                            console.log("listing", listing);
                             return (
                                 <Fragment>
                                     <Card style={styles.cardie}>
                                         <CardItem>
                                             <Left>
-                                                <Thumbnail source={listing.image} />
+                                                <Thumbnail source={require("../../assets/images/placeholder.png")} />
                                                 <Body>
-                                                <Text>{listing.title}</Text>
-                                                <Text note>April 15, 2016</Text>
+                                                    <Text>{`${listing.year} ${listing.make} ${listing.model}`}</Text>
+                                                    <Text>{listing.title}</Text>
                                                 </Body>
                                             </Left>
                                             </CardItem>
                                             <CardItem>
                                             <Body>
-                                                <Image source={listing.image} style={{height: 250, width: "100%", flex: 1}}/>
+                                                <Gallery
+                                                    style={{ height: 250, width: "100%", flex: 1 }}
+                                                    images={this.renderSwitchImages(listing.photos)}
+                                                />
                                                 <View style={{ marginTop: 10 }}>
                                                     <View style={{ marginBottom: 15, flexDirection: "row" }}>
                                                         <Image source={require("../../assets/icons/small-star.png")} style={styles.starIcon} />

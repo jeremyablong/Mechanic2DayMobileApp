@@ -4,6 +4,11 @@ import { StyleSheet, Dimensions } from "react-native";
 const { height, width } = Dimensions.get("window");
 
 export default StyleSheet.create({
+    containerScoll: {    
+        minHeight: height,
+        width,
+        backgroundColor: "white"
+    },
     container: {
         backgroundColor: 'white',
         minHeight: "100%",
@@ -68,10 +73,22 @@ export default StyleSheet.create({
         fontWeight: "bold",
         marginTop: 20
     },
+    centered: {
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
+    minButton: {
+        backgroundColor: "#c40d00",
+        width: width * 0.80,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
     title: {
-        fontSize: 30,
+        fontSize: 18,
         textAlign: "left", 
-        marginTop: 50,
+        marginTop: 100,
         marginBottom: 10
     },
     row: {
@@ -202,6 +219,22 @@ export default StyleSheet.create({
         marginTop: 30,
         minWidth: width * 0.85,
         minHeight: 300
+    },
+    innerPaneButton: {
+        backgroundColor: "#8884FF",
+        borderWidth: 2,
+        borderColor: "black",
+        width: width * 0.85,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
+    bottomSlideUpContainer: {
+        position: "absolute",
+        bottom: 10,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
     }
 });
-           
+    

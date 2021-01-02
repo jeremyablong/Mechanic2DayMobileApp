@@ -9,6 +9,7 @@ import { switchAccountType } from "../../../actions/accountType/type.js";
 import axios from "axios";
 import { Config } from "react-native-config";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { sendbirdLogin } from "../../../actions/sendbird/user.js";
 
 class ProfileMainHelper extends Component {
 constructor(props) {
@@ -22,6 +23,7 @@ constructor(props) {
     deauthenticate = () => {
         this.props.authenticated({});
         this.props.finishedSignup(false);
+        this.props.sendbirdLogin({ userId: null, nickname: null });
         this.props.switchAccountType({
             type: "CLIENT"
         })
@@ -212,4 +214,4 @@ const mapStateToProps = (state) => {
         };
     }
 }
-export default connect(mapStateToProps, { authenticated, finishedSignup, switchAccountType })(ProfileMainHelper);
+export default connect(mapStateToProps, { authenticated, finishedSignup, switchAccountType, sendbirdLogin })(ProfileMainHelper);

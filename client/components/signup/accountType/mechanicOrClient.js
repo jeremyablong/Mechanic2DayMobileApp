@@ -6,6 +6,7 @@ import { authenticated, finishedSignup } from "../../../actions/signup/auth.js";
 import { connect } from "react-redux";
 import axios from "axios";
 import Config from "react-native-config";
+import { sendbirdLogin } from "../../../actions/sendbird/user.js";
 
 const CreateAccountTypeHelper = (props) => {
     const continueToNextPage = (selection) => {
@@ -32,6 +33,8 @@ const CreateAccountTypeHelper = (props) => {
                 const { data } = res.data;
 
                 props.authenticated(data);
+
+                props.sendbirdLogin({ userId: data.unique_id, nickname: data.fullName });
 
                 props.finishedSignup(true);
 
@@ -85,4 +88,4 @@ const mapStateToProps = state => {
         previous: state.auth.authenticated
     }
 }
-export default connect(mapStateToProps, { authenticated, finishedSignup })(CreateAccountTypeHelper);
+export default connect(mapStateToProps, { authenticated, finishedSignup, sendbirdLogin })(CreateAccountTypeHelper);

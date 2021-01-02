@@ -53,6 +53,12 @@ app.use("/delete/listing/broken/vehicle", require("./routes/clients/delete/delet
 app.use("/gather/live/listings/vehicles", require("./routes/clients/gather/gatherVehicles.js"));
 app.use("/gather/specific/listing/vehicle/posting", require("./routes/clients/gather/getVehicleListing.js"));
 app.use("/gather/listing/by/poster/id", require("./routes/clients/gather/gatherUserById.js"));
+app.use("/create/channel/send/message", require("./routes/messaging/initiate/openChannelSendMessage.js"));
+app.use("/gather/conversations/sendbird", require("./routes/messaging/gather/gatherConversations.js"));
+app.use("/gather/individual/thread", require("./routes/messaging/individual/gatherMessageThread.js"));
+app.use("/gather/category/listings", require("./routes/categories/gather/getCategoryListings.js"));
+app.use("/update/location/listing/edit", require("./routes/clients/edit/update/saveNewLocationEdit.js"));
+app.use("/update/location/listing/edit/manual/entry", require("./routes/clients/edit/update/manualLocationEdit.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

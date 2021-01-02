@@ -186,12 +186,15 @@ constructor(props) {
                             console.log("listing", listing);
                             if (listing.live === true) {
                                 return (
-                                    <View>
+                                    <TouchableOpacity onPress={() => {
+                                        this.props.props.navigation.push("view-preview-listing-vehicle", { listing });
+                                    }}>
                                         <Card style={styles.cardCustom}>
                                             <CardItem>
                                             <Left>
                                                 <Body>
                                                 <Text style={{ fontSize: 18, color: "blue", fontWeight: "bold" }}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim}`}</Text>
+                                                <Text>{listing.description.slice(0, 125)}{typeof listing.description !== "undefined" && listing.description.length > 125 ? "..." : ""}</Text>
                                                 </Body>
                                             </Left>
                                             </CardItem>
@@ -199,19 +202,12 @@ constructor(props) {
                                                 <Body>
                                                     <Image source={{ uri: listing.photos[0] }} style={{ width: "97.5%", height: 225 }} />
                                                     <View style={styles.centered}>
-                                                        <Button danger style={[styles.minButton, { marginTop: 15 }]} onPress={() => {
-                                                            this.setState({
-                                                                listing,
-                                                                isVisible: true
-                                                            })
-                                                        }}>
-                                                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Delete</NativeText>
-                                                        </Button>
+                                                        
                                                     </View>
                                                 </Body>
                                             </CardItem>
                                         </Card>
-                                    </View>
+                                    </TouchableOpacity>
                                 );
                             }
                         }) : <SkeletonPlaceholder>
