@@ -25,7 +25,7 @@ const FooterHelper = (props) => {
                         <Text>Listings</Text>
                         </Button>
                         <Button onPress={() => {
-                            // props.props.navigation.navigate("homepage-main");
+                            props.props.navigation.navigate("chat-conversations");
                         }} badge vertical>
                         <Badge style={styles.badge}><Text>51</Text></Badge>
                             <Image source={require("../../assets/icons/chat.png")} style={styles.menuIcon} />

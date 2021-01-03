@@ -92,6 +92,12 @@ export default StyleSheet.create({
         borderBottomWidth: 1,
         marginTop: 30
     },
+    hrMarginBothWays: {
+        borderBottomColor: "lightgrey",
+        borderBottomWidth: 1,
+        marginTop: 30,
+        marginBottom: 30
+    },
     mildBoldText: {
         fontWeight: "bold",
         fontSize: 24
@@ -106,6 +112,32 @@ export default StyleSheet.create({
     },
     marginMargin: {
         margin: 20
+    },
+    pinkBtn: {
+        backgroundColor: "#FDE2FF",
+        width: width * 0.75,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        marginTop: 20,
+        borderWidth: 2,
+        borderColor: "black"
+    },
+    submitAppButton: {
+        marginTop: 20, 
+        width: width * 0.85,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
+    pinkerButton: {
+        backgroundColor: "#D7BCE8",
+        width: width * 0.75,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        borderWidth: 2,
+        borderColor: "black"
     },
     hrTwo: {
         borderBottomColor: "lightgrey",
@@ -128,6 +160,11 @@ export default StyleSheet.create({
         fontWeight: "bold",
         fontSize: 20,
         marginBottom: 10
+    },
+    center: {
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
     },
     column: {
         flexDirection: "column",

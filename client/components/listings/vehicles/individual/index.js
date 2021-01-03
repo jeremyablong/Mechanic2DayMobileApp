@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions, ImageBackground, RefreshControl, Animated, Keyboard } from "react-native";
 import styles from "./styles.js";
-import { Header, Left, Body, Right, Button, Title, Text as NativeText, Card, CardItem, Thumbnail, Content, Item, Input, Label } from 'native-base';
+import { Header, Left, Body, Right, Button, Title, Text as NativeText, Card, CardItem, Thumbnail, Content, Item, Input, Label, Textarea } from 'native-base';
 import Gallery from 'react-native-image-gallery';
 import ReadMore from 'react-native-read-more-text';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
@@ -17,7 +17,7 @@ import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../toastConfig.js";
-
+import { CalendarList } from 'react-native-calendars';
 
 const { width, height  } = Dimensions.get('window');
 
@@ -130,7 +130,10 @@ constructor(props) {
         user: null,
         channel_name: "",
         chatMessage: "",
-        error: ""
+        error: "",
+        markedDays: {},
+        bid: 0,
+        coverLetter: ""
     }
 }
     _renderItem = ({item, index}) => {
@@ -252,11 +255,33 @@ constructor(props) {
                             })
                         })
                     }
-                    
-                    this.setState({
-                        gallery: passedData,
-                        listing
-                    })
+                    if (listing.avaliable_dates.length > 0) {
+                        for (let indexxxxxxxx = 0; indexxxxxxxx < listing.avaliable_dates.length; indexxxxxxxx++) {
+                            const date = listing.avaliable_dates[indexxxxxxxx];
+                            console.log("date", date);
+    
+                            this.setState({
+                                markedDays: {
+                                    ...this.state.markedDays, 
+                                    [date]: {
+                                        selected: true, dotColor: '#50cebb'
+                                    }
+                                }
+                            }, () => {
+                                if (listing.avaliable_dates.length - 1 === indexxxxxxxx) {
+                                    this.setState({
+                                        gallery: passedData,
+                                        listing
+                                    })
+                                }
+                            })
+                        }
+                    } else {
+                        this.setState({
+                            gallery: passedData,
+                            listing
+                        })
+                    }
                 })
             } else {
                 console.log("err", res.data);
@@ -337,7 +362,7 @@ constructor(props) {
                             images={gallery}
                         />
                     </View>
-                    <ScrollView style={{ top: 175 }}>
+                    <View style={{ top: 220 }}>
                         <View style={{ marginLeft: 20, marginRight: 20 }}>
                             <Text style={styles.title}>{listing.title}</Text>
                             <View style={styles.row}>
@@ -355,9 +380,15 @@ constructor(props) {
                             <Text style={styles.category}>{this.calculateCategory(listing)}</Text>
                             <Text style={{ fontSize: 16 }}>hosted by {user !== null ? user.fullName : "Unknown"}</Text>
                         </View>
-                        {/* <View style={styles.rowMargin}>
-                            <Text style={{ fontSize: 20 }}>2016 Nissan Sentra Sedan 4-door 145,000 miles</Text>
-                        </View> */}
+                        <View style={{ margin: 20 }}>
+                            <Text style={{ fontSize: 20, fontWeight: "bold" }}>Place a bid!</Text>
+                            <Text>Here at MechanicToday we use a bid style system for pricing. We allow all mechanics to place a bid which allows the person with the vehicle in need of repair to selectivly choose the right mechanic in their budget and get quality service simultaniously!</Text>
+                            <Button style={styles.pinkBtn} onPress={() => {
+                                this.RBSheetTwo.open();
+                            }}>
+                                <NativeText style={{ color: "black", fontWeight: "bold" }}>PLACE A BID</NativeText>
+                            </Button>
+                        </View>
                         <View style={styles.hrTwo} />
                         <View style={styles.marginMargin}>
                             <Text style={styles.mildBoldText}>Vehicle Location</Text>
@@ -444,6 +475,31 @@ constructor(props) {
                                 />
                             </MapView> : null}
                         </View>
+                        <View style={{ margin: 20 }}>
+                            <Text style={{ fontSize: 24, fontWeight: "bold" }}>Avaliable days for repair</Text>
+                            <Text>The person that listed this vehicle has the following days availiable for the repair to be made - each circled day represents a 4 hour time chunk of avaliability!</Text>
+                            <View style={{ borderWidth: 2, borderBottomColor: "grey", margin: 20 }} />
+                            <CalendarList 
+                                style={{ maxHeight: 425 }}
+                                markedDates={this.state.markedDays}
+                                markingType={'multi-period'}
+                                firstDay={1}
+                                hideDayNames={false}
+                                // Callback which gets executed when visible months change in scroll view. Default = undefined
+                                onVisibleMonthsChange={(months) => {
+                                    console.log('now these months are visible', months);
+                                }}
+                                // Max amount of months allowed to scroll to the past. Default = 50
+                                pastScrollRange={50}
+                                // Max amount of months allowed to scroll to the future. Default = 50
+                                futureScrollRange={50}
+                                // Enable or disable scrolling of calendar list
+                                scrollEnabled={true}
+                                // Enable or disable vertical scroll indicator. Default = false
+                                showScrollIndicator={true}
+                            />
+                            <View style={{ borderWidth: 2, borderBottomColor: "grey", margin: 20 }} />
+                        </View>
                         <View style={styles.marginMargin}>
                             <View style={styles.row}>
                                 <Image source={require("../../../../assets/icons/small-star.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
@@ -505,7 +561,7 @@ constructor(props) {
                                 <Text style={{ margin: 5 }}>SuperGuest</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
-                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>During your stay</Text>
+                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>During your interaction</Text>
                                 <Text>If you need anything you can contact me at 213-248-8623</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
@@ -541,7 +597,7 @@ constructor(props) {
                                 />
                             </View>
                         </View>
-                    </ScrollView>
+                    </View>
                 </Fragment>
             );
         } else {
@@ -817,34 +873,132 @@ constructor(props) {
             })
         }
     }
+    handleSubmissionJobApplication = () => {
+        console.log("handleSubmissionJobApplication clicked");
+    }
+    renderContinuationButton = () => {
+        const { bid, coverLetter } = this.state;
+
+        if ((typeof bid !== "undefined" && bid.length > 0) && (typeof coverLetter !== "undefined" && coverLetter.length > 0)) {
+            return (
+                <Button success onPress={() => {
+                    this.handleSubmissionJobApplication();
+                }} style={styles.submitAppButton}>
+                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Submit & Apply</NativeText>
+                </Button>
+            );
+        } else {
+            return (
+                <Button light onPress={() => {
+                    
+                }} style={styles.submitAppButton}>
+                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Submit & Apply</NativeText>
+                </Button>
+            );
+        }
+    }
     render() {
         const { reviews } = this.state;
+
+        console.log(this.state);
         return (
         <Fragment>
+            <Header>
+                <Left style={{ flexDirection: "row" }}>
+                    <Button onPress={() => {
+                        this.props.props.navigation.goBack();
+                    }} transparent>
+                        <Image source={require("../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
+                    </Button>
+                </Left>
+                <Right>
+                    <Button style={styles.heartButton} onPress={() => {
+                        
+                    }} transparent>
+                        <Image source={require("../../../../assets/icons/heart.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
+                    </Button>
+                </Right>
+            </Header>
             <ScrollView refreshControl={
                 <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
               } style={{ height: "100%", flex: 1, backgroundColor: "white", minHeight: "100%" }} contentContainerStyle={{ paddingBottom: 300 }}>
-                <Header>
-                    <Left style={{ flexDirection: "row" }}>
-                        <Button onPress={() => {
-                            this.props.props.navigation.goBack();
-                        }} transparent>
-                            <Image source={require("../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
-                        </Button>
-                    </Left>
-                    <Right>
-                        <Button style={styles.heartButton} onPress={() => {
-                           
-                        }} transparent>
-                            <Image source={require("../../../../assets/icons/heart.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
-                        </Button>
-                    </Right>
-                </Header>
+                
                 <View style={styles.container}>
                     {this.renderConditional()}
                 </View>
             </ScrollView>
             <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
+            <RBSheet
+                ref={ref => {
+                    this.RBSheetTwo = ref;
+                }} 
+                animatedValue={new Animated.Value(0)}
+                height={height}
+                openDuration={250}
+                customStyles={{
+                    container: {
+                        
+                    }
+                }}
+            >
+                <ScrollView style={{ marginLeft: 20, marginRight: 20, marginTop: 40 }}>
+                    <View style={[styles.center, { marginBottom: 20 }]}>
+                        <View style={styles.center}>
+                            {this.renderContinuationButton()}
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row" }}>
+                        <View style={{ width: width * 0.75, flexDirection: "column" }}>
+                            <Text style={{ fontSize: 24, textDecorationLine: "underline" }}>Please read our information on "Submitting a proposal" before applying to a job.</Text>
+                        </View>
+                        <View style={{ width: width * 0.25, flexDirection: "column" }}>
+                            <TouchableOpacity onPress={() => {
+                                // this.props.props.navigation.navigate("");
+                            }}>
+                                <Image source={require("../../../../assets/icons/info.png")} style={{ maxWidth: 60, maxHeight: 60, marginTop: 20 }} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.hrMarginBothWays} />
+                    <Item style={{ width: width * 0.95 }} floatingLabel>
+                        <Label>Proposal Price ($ in USD)</Label>
+                        <Input 
+                        placeholderTextColor={"grey"} 
+                        placeholder={"Enter a bid (the price for entire job)..."} 
+                        value={this.state.bid} 
+                        keyboardType={"numeric"}
+                        onChangeText={(bid) => {
+                            this.setState({
+                                bid
+                            })
+                        }} />
+                    </Item>
+                    <View style={styles.hrMarginBothWays} />
+                    <Text style={{ fontSize: 16, marginBottom: 15 }}>Why should YOU be hired for the job? Tell your potential client why they should hire you over other applicants...</Text>
+                    <Textarea 
+                        rowSpan={5} 
+                        bordered 
+                        placeholderTextColor={"grey"} 
+                        placeholder={"Why should you be picked for the job? Here's your opportunity to shine!"} 
+                        value={this.state.coverLetter} 
+                        onChangeText={(value) => {
+                            this.setState({
+                                coverLetter: value
+                            })
+                        }} 
+                    />
+                    
+                </ScrollView>
+                <View style={styles.center}>
+                    <View style={styles.bottomView}>
+                        <Button onPress={() => {
+                            this.RBSheetTwo.close();
+                        }} style={styles.pinkerButton}>
+                            <NativeText style={{ }}>Exit/Close</NativeText>
+                        </Button>
+                    </View>
+                </View>
+            </RBSheet>
             <RBSheet
                 ref={ref => {
                     this.RBSheet = ref;
@@ -861,7 +1015,7 @@ constructor(props) {
             >
                 <View style={styles.slideUpContainer}>
                     <TouchableOpacity onPress={() => {
-                        this.RBSheet.open();
+                        this.RBSheet.close();
                     }} style={styles.topTop}>
                         <Image source={require("../../../../assets/icons/go-back.png")} style={{ maxWidth: 40, maxHeight: 40 }} />
                         <Text style={{ marginTop: 10 }}>Close/Exit</Text>

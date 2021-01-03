@@ -16,7 +16,11 @@ target 'client' do
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera/Permission-Camera.podspec"
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-  
+  pod 'Firebase'
+  pod 'Firebase/Core'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
+
   target 'clientTests' do
     inherit! :complete
     # Pods for testing

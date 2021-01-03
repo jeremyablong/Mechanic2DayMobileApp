@@ -106,9 +106,11 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>{this.props.accountType === "PROVIDER" ? `Switch to "client" account` : `Switch to "provider" account`}</NativeText></Left><Right><Image source={require("../../../assets/icons/profile-two.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
-                            <ListItem style={styles.listItem}>
+                            {this.props.accountType === "PROVIDER" ? <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("list-vehicle-start");
+                            }} style={styles.listItem}>
                             <Left><NativeText>Create a listing (need help/repair)</NativeText></Left><Right><Image source={require("../../../assets/icons/create.png")} style={styles.inlineIcon} /></Right>
-                            </ListItem>
+                            </ListItem> : null}
                             <ListItem style={styles.divider} itemDivider>
                             <Left><NativeText>REFERRALS & CREDITS</NativeText></Left> 
                             </ListItem> 

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { Header, Left, Body, Right, Button, Icon, Title, Text as NativeText } from 'native-base';
 
 
@@ -17,8 +17,8 @@ constructor(props) {
                         <Button onPress={() => {
                             this.props.props.navigation.goBack();
                         }} transparent>
-                     
-                        <NativeText>Back</NativeText>
+                        <Image source={require("../../assets/icons/go-back.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
+                        <NativeText style={{ color: "black" }}>Back</NativeText>
                         </Button>
                     </Left>
                     <Body>
@@ -26,7 +26,7 @@ constructor(props) {
                     </Body>
                     <Right>
                         <Button transparent>
-                        <NativeText>Cancel</NativeText>
+                        <NativeText style={{ color: "black" }}>Cancel</NativeText>
                         </Button>
                     </Right>
                 </Header>

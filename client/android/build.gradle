@@ -10,13 +10,13 @@ buildscript {
         playServicesVersion = "17.0.0"
     }
     repositories {
-        google()
+        google()  // Google's Maven repository
         jcenter()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:3.5.3")
         classpath 'com.android.tools.build:gradle:3.1.2' // <--- use this version or newer
-        classpath 'com.google.gms:google-services:4.1.0' // <--- use this version or newer
+        classpath 'com.google.gms:google-services:4.3.4' // <--- use this version or newer
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

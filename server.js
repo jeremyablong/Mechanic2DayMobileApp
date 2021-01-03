@@ -7,6 +7,10 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 const mongoDB = require("./config/db.js");
 const path = require("path");
+const http = require("http");
+const server = http.createServer(app);
+const io = require('socket.io')(server);
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -59,6 +63,10 @@ app.use("/gather/individual/thread", require("./routes/messaging/individual/gath
 app.use("/gather/category/listings", require("./routes/categories/gather/getCategoryListings.js"));
 app.use("/update/location/listing/edit", require("./routes/clients/edit/update/saveNewLocationEdit.js"));
 app.use("/update/location/listing/edit/manual/entry", require("./routes/clients/edit/update/manualLocationEdit.js"));
+app.use("/edit/listing/primary/settings", require("./routes/clients/edit/update/updatePrimaryData.js"));
+
+
+
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
@@ -108,6 +116,13 @@ if (process.env.NODE_ENV === "production") {
 	})
 }; 
 
-app.listen(PORT, () => {
-	console.log(`App is listening at port ${PORT}`)	
-})
+io.on("connection", socket => {
+
+	console.log("New client connected");
+  
+	socket.on("disconnect", () => console.log("Client disconnected"));
+});
+
+server.listen(PORT, () => {
+	console.log(`Server listening on port ${PORT}!`);
+});

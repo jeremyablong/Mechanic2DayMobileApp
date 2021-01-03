@@ -13,7 +13,7 @@ export default StyleSheet.create({
         flex: 1
     },
     container: {
-        backgroundColor: "rgba(255, 255, 255, 0.3)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
         borderWidth: 2,
         borderColor: "black",
         position: "absolute",
@@ -22,6 +22,7 @@ export default StyleSheet.create({
         shadowColor: "black",
         padding: 20,
         borderRadius: 25,
+        minHeight: 300,
         shadowOffset: {
             width: 0,
             height: 12,
@@ -29,7 +30,10 @@ export default StyleSheet.create({
         shadowOpacity: 0.58,
         shadowRadius: 16.00,
 
-        elevation: 24
+        elevation: 24,
+        justifyContent: 'center',
+        alignContent: "center",
+        alignItems: "center"
     },
     wrapper: {
         flex: 1

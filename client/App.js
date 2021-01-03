@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { connect } from "react-redux";
 import IntroSlider from "./components/intro/intro.js";
 import SignupPageOnePage from "./pages/signup/index.js";
@@ -41,17 +41,44 @@ import NotificationsPage from "./pages/notifications/index.js";
 import CategoriesMainPage from "./pages/categories/index.js";
 import IndividualMessagingPage from "./pages/messaging/individual/individual.js";
 import PreviewListingViewPage from "./pages/listings/create/preview/preview.js";
+import io from 'socket.io-client';
+import messaging from '@react-native-firebase/messaging';
+import firebase from "@react-native-firebase/app";
 
 const Stack = createStackNavigator();
+
+const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
+
+
 
 class App extends Component {
 constructor(props) {
   super(props);
   
 }
+  requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
+    if (enabled) {
+      this.getFcmToken() //<---- Add this
+      console.log('Authorization status:', authStatus);
+    }
+  }
+  getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    if (fcmToken) {
+     console.log(fcmToken);
+     console.log("Your Firebase Token is:", fcmToken);
+    } else {
+     console.log("Failed", "No token received");
+    }
+  }
   getStartingPage = () => {
     console.log("this.props.finsihed", this.props.finished);
+
     if (this.props.finished === true) {
       return "homepage-main";
     } else {
@@ -90,7 +117,27 @@ constructor(props) {
       }
     } 
   }
-  componentDidMount() {
+  async componentDidMount () {
+
+    this.requestUserPermission();
+
+    /* Success */
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log("Notification when app is on foreground", remoteMessage);
+    });
+
+    /* Success */
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log('Notification caused app to open from background state:', remoteMessage);
+    });
+
+    /* Success */
+    messaging().getInitialNotification().then(remoteMessage => {
+      if (remoteMessage) {
+        console.log('Notification caused app to open from quit state:', remoteMessage);
+      }
+    });
+    
     GetLocation.getCurrentPosition({
 			enableHighAccuracy: true,
 			timeout: 15000,

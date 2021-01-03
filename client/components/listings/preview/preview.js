@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text, ScrollView, Dimensions, Image, TouchableOpacity } from 'react-native';
 import styles from "./styles.js";
-import { Header, Left, Body, Right, Button, Icon, Title, Text as NativeText, Textarea, Form, Input, Item, Label } from 'native-base';
+import { Header, Picker, Left, Body, Right, Button, Title, Text as NativeText, Textarea, Form, Input, Item, Label } from 'native-base';
 import { Config } from "react-native-config";
 import axios from "axios";
 import _ from "lodash";
@@ -100,7 +100,8 @@ constructor(props) {
         extension: "", 
         state: "", 
         zipCode: "", 
-        city: ""
+        city: "",
+        listingCategory: ""
     };
 }
     calculateCategory = (listing) => {
@@ -363,8 +364,35 @@ constructor(props) {
                                 </Button>
                             </View>
                         </View>
+                        <View style={styles.hr} />
                         <View style={styles.containerTwo}>
-                            <Text style={styles.category}>{this.calculateCategory(listing)}</Text>
+                            <Text style={{ fontSize: 24, fontWeight: "bold", color: "#8884FF", marginTop: 10 }}>Select/Change your "Repair Type"</Text>
+                            <Picker 
+                                placeholderTextColor={"grey"}
+                                placeholder={'Select your "Repair Type"'}
+                                note
+                                mode="dropdown"
+                                style={{ width: width * 0.90 }}
+                                selectedValue={this.state.listingCategory}
+                                onValueChange={(value) => {
+                                    this.setState({
+                                        listingCategory: value
+                                    })
+                                }}
+                            >
+                                <Picker.Item label="Engine Repair" value="engine" />
+                                <Picker.Item label="Transmission Repair" value="transmission" />
+                                <Picker.Item label="Exhaust Repair" value="exhaust" />
+                                <Picker.Item label="General Maintenance" value="maintenance" />
+                                <Picker.Item label="Tire/brakes & Wheel Related Repair" value="tire-breaks-wheels" />
+                                <Picker.Item label="Interior Repair/Design" value="interior-repair-design" />
+                                <Picker.Item label="Electrical Repairs" value="electronics/electrical" />
+                                <Picker.Item label="Tuning/Aftermarket Upgrades" value="tuning-sports-upgrades" />
+                                <Picker.Item label="Speciality Repairs (BMW, Audi, Etc..)" value="speciality-repairs" />
+                                <Picker.Item label="Deisel Repairs" value="deisel" />
+                                <Picker.Item label="Body Work (Exterior Repairs)" value="body-work" />
+                                <Picker.Item label="Motorcycle/Motorbike Repairs" value="motorcycle/motorbike" />
+                            </Picker>
                             <Text style={{ fontSize: 16 }}>hosted by {user !== null ? user.fullName : "Unknown"}</Text>
                         </View>
                         {/* <View style={styles.rowMargin}>
@@ -514,7 +542,7 @@ constructor(props) {
                                 <Text style={{ margin: 5 }}>SuperGuest</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
-                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>During your stay</Text>
+                                <Text style={{ fontSize: 18, fontWeight: "bold"}}>During your interaction</Text>
                                 <Text>If you need anything you can contact me at 213-248-8623</Text>
                             </View>
                             <View style={[styles.margin, { marginTop: 20 }]}>
@@ -849,6 +877,29 @@ constructor(props) {
             }   
         }
     }
+    handleSavingDataEdited = () => {
+        console.log("handleSavingDataEdited clicked.");
+
+        const { listing, listingCategory, listingDescription, listingTitle } = this.state;
+
+        axios.post(`${Config.ngrok_url}/edit/listing/primary/settings`, {
+            listing,
+            id: this.props.unique_id,
+            category: listingCategory,
+            description: listingDescription,
+            title: listingTitle
+        }).then((res) => {
+            if (res.data.message === "Successfully saved new data!") {
+                console.log(res.data);
+
+                this.props.props.navigation.push("providers-listing-homepage");
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     render() {
         const listing = this.props.props.route.params.listing;
 
@@ -862,16 +913,18 @@ constructor(props) {
                             <Button onPress={() => {
                                 this.props.props.navigation.goBack();
                             }} transparent>
-                                <Icon name='arrow-back' />
-                                <NativeText>Back</NativeText>
+                                <Image source={require("../../../assets/icons/go-back.png")} style={{ maxWidth: 35, maxHeight: 35 }} />
+                                <NativeText style={{ color: "black" }}>Back</NativeText>
                             </Button>
                         </Left>
                         <Body>
-                            <Title>Preview Listing</Title>
+                            <Title>Modify Listing</Title>
                         </Body>
                         <Right>
-                            <Button transparent>
-                                <NativeText>Save</NativeText>
+                            <Button onPress={() => {
+                                this.handleSavingDataEdited();
+                            }} transparent>
+                                <NativeText style={{ color: "#8884FF" }}>Save</NativeText>
                             </Button>
                         </Right>
                     </Header>

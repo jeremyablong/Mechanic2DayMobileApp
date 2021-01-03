@@ -15,6 +15,7 @@
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "express-validator": "^6.8.0",
+    "firebase-admin": "^9.4.2",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
     "https": "^1.0.0",
@@ -31,6 +32,7 @@
     "path": "^0.12.7",
     "random-email": "^1.0.3",
     "sendbird": "^3.0.141",
+    "socket.io": "^3.0.4",
     "twilio": "^3.54.0",
     "uuid": "^8.3.2"
   },
