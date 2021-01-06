@@ -389,7 +389,7 @@ constructor(props) {
                             </View>
                             <View style={styles.hr} />
                         </View>
-                        <View style={styles.containerTwo}>
+                        <View style={[styles.containerTwo, { margin: 20 }]}>
                             <Text style={styles.category}>{this.calculateCategory(listing)}</Text>
                             <Text style={{ fontSize: 16 }}>hosted by {user !== null ? user.fullName : "Unknown"}</Text>
                         </View>
@@ -521,7 +521,7 @@ constructor(props) {
                             <View style={styles.noMargin}>
                                 {typeof reviews !== 'undefined' && reviews.length > 0 ? reviews.slice(0, 2).map((review, index) => {
                                     return (
-                                        <Fragment>
+                                        <Fragment key={index}>
                                             <Content style={styles.contentContent} padder>
                                                 <Card>
                                                     <CardItem>
@@ -1004,16 +1004,16 @@ constructor(props) {
                     
                         <Item style={{ width: width * 0.95 }} floatingLabel>
                             <Label>Proposal Price ($ in USD)</Label>
-                            <Input 
-                            placeholderTextColor={"grey"} 
-                            placeholder={"Enter a bid (the price for entire job)..."} 
-                            value={this.state.bid} 
-                            keyboardType={"numeric"}
-                            onChangeText={(bid) => {
-                                this.setState({
-                                    bid
-                                })
-                            }} />
+                                <Input 
+                                    placeholderTextColor={"grey"} 
+                                    placeholder={"Enter a bid (the price for entire job)..."} 
+                                    value={this.state.bid} 
+                                    keyboardType={"numeric"}
+                                    onChangeText={(bid) => {
+                                        this.setState({
+                                            bid
+                                        })
+                                }} />
                         </Item>
                         <View style={styles.hrMarginBothWays} />
                         <Text style={{ fontSize: 16, marginBottom: 15 }}>Why should YOU be hired for the job? Tell your potential client why they should hire you over other applicants...</Text>
@@ -1039,7 +1039,7 @@ constructor(props) {
                         <Button onPress={() => {
                             this.RBSheetTwo.close();
                         }} style={styles.pinkerButton}>
-                            <NativeText style={{ }}>Exit/Close</NativeText>
+                            <NativeText>Exit/Close</NativeText>
                         </Button>
                     </View>
                 </View>

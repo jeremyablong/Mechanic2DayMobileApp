@@ -9,7 +9,7 @@ const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.post("/", (req, res) => {
+    router.post("/", async (req, res) => {
 
         const database = db.db("<dbname>");
 
@@ -22,10 +22,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             fullName
         } = req.body;
 
-        collection.findOne({ unique_id: id }).then((user) => {
+        collection.findOne({ unique_id: id }).then(async (user) => {
             if (user) {
 
-                const promises = [];
+                const promiseArray = [];
 
                 for (let index = 0; index < user.broken_vehicles_listings.length; index++) {
                     const listinggg = user.broken_vehicles_listings[index];
@@ -61,7 +61,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     }]
                                 }
 
-                                listinggg.applicants_proposals.splice(idxxx, 1);
+                                listinggg.applicants_proposals = [];
 
                                 collection.save(user);
 
@@ -80,40 +80,36 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             } else {
                                 
                                 // send notification of denial to all other users
-                                const myPromise = new Promise((resolve, reject) => {
+
+                                promiseArray.push(new Promise((resolve, reject) => {
                                     axios.post(`${config.get("ngrok_url")}/denial/proposal/all/other/users`, {
                                         proposal,
                                         fullName,
                                         id
                                     }).then((res) => {
                                         console.log(res.data);
-
                                         if (res.data) {
-                                            listinggg.applicants_proposals = [];
-
-                                            collection.save(user);
-
-                                            if ((listinggg.applicants_proposals.length - 1) === idxxx) {
-                                                resolve();
-                                            }
+                                            resolve();
                                         }
                                     }).catch((err) => {
                                         console.log(err);
                                     })
-                                });
-                                promises.push(myPromise);
+                                }))
                             }
                         }
+                        listinggg.applicants_proposals = [];
+
+                        collection.save(user);
+
+                        await Promise.all(promiseArray).then((data) => {
+                            console.log("dataaaaaaaaaaaaa", data);
+        
+                            res.json({
+                                message: "Succesfully notfied other un-selected users and notified selected user!"
+                            })
+                        })
                     }
                 }
-
-                Promise.all(promises).then((data) => {
-                    console.log("dataaaaaaaaaaaaa", data);
-
-                    res.json({
-                        message: "Succesfully notfied other un-selected users and notified selected user!"
-                    })
-                })
             } else {
                 res.json({
                     message: "Could not locate the appropriate user..."

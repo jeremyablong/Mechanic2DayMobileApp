@@ -66,7 +66,8 @@ export default StyleSheet.create({
         fontSize: 30,
         textAlign: "left",
         fontWeight: "bold",
-        marginTop: 20
+        marginTop: 20,
+        marginRight: 20
     },
     title: {
         fontSize: 30,
@@ -103,8 +104,7 @@ export default StyleSheet.create({
         fontSize: 24
     },
     containerTwo: {
-        width,
-        marginLeft: 20
+        width
     },
     rowMargin: {
         margin: 0,
