@@ -7,50 +7,114 @@ import { connect } from "react-redux";
 import axios from "axios";
 import Config from "react-native-config";
 import { sendbirdLogin } from "../../../actions/sendbird/user.js";
+import messaging from '@react-native-firebase/messaging';
 
 const CreateAccountTypeHelper = (props) => {
     const continueToNextPage = (selection) => {
         console.log("continueToNextPage");
 
-        const { previous } = props;
+        requestUserPermission(selection);
+    }
+    const requestUserPermission = async (selection) => {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    
+        if (enabled) {
+          getFcmToken(selection) //<---- Add this
+          console.log('Authorization status:', authStatus);
+        } else {
+            const { previous } = props;
 
-        axios.post(`${Config.ngrok_url}/register/user`, {
-            address: previous.address,
-            authyID: previous.authyID,
-            birthdate: previous.birthdate,
-            gender: previous.gender,
-            fullName: previous.name,
-            password: previous.password,
-            unformatted: previous.unformatted ? previous.unformatted : null,
-            phoneNumber: previous.phoneNumber ? previous.phoneNumber : "",
-            email: previous.email ? previous.email : "",
-            wholeAddress: previous.wholeAddress,
-            accountType: selection
-        }).then((res) => {
-            if (res.data.message === "Successfully registered new user!") {
-                console.log(res.data);
+            axios.post(`${Config.ngrok_url}/register/user`, {
+                address: previous.address,
+                authyID: previous.authyID,
+                birthdate: previous.birthdate,
+                gender: previous.gender,
+                fullName: previous.name,
+                password: previous.password,
+                unformatted: previous.unformatted ? previous.unformatted : null,
+                phoneNumber: previous.phoneNumber ? previous.phoneNumber : "",
+                email: previous.email ? previous.email : "",
+                wholeAddress: previous.wholeAddress,
+                accountType: selection
+            }).then((res) => {
+                if (res.data.message === "Successfully registered new user!") {
+                    console.log(res.data);
 
-                const { data } = res.data;
+                    const { data } = res.data;
 
-                props.authenticated(data);
+                    props.authenticated(data);
 
-                props.sendbirdLogin({ userId: data.unique_id, nickname: data.fullName });
+                    props.sendbirdLogin({ userId: data.unique_id, nickname: data.fullName });
 
-                props.finishedSignup(true);
+                    props.finishedSignup(true);
 
-                setTimeout(() => {
-                    props.props.navigation.navigate("homepage-main");
-                },  500);
-            } else {
-                console.log("err", res.data);
-            }
-        }).catch((err) => {
-            console.log(err);
-        })
+                    setTimeout(() => {
+                        props.props.navigation.navigate("homepage-main");
+                    },  500);
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
 
-        props.authenticated({
-            ...props.previous, accountType: selection, page: 8
-        })
+            props.authenticated({
+                ...props.previous, accountType: selection, page: 8
+            })
+        }
+    }
+    const getFcmToken = async (selection) => {
+        const fcmToken = await messaging().getToken();
+        if (fcmToken) {
+            console.log(fcmToken);
+            console.log("Your Firebase Token is:", fcmToken);
+
+            const { previous } = props;
+
+            axios.post(`${Config.ngrok_url}/register/user`, {
+                address: previous.address,
+                authyID: previous.authyID,
+                birthdate: previous.birthdate,
+                gender: previous.gender,
+                fullName: previous.name,
+                password: previous.password,
+                unformatted: previous.unformatted ? previous.unformatted : null,
+                phoneNumber: previous.phoneNumber ? previous.phoneNumber : "",
+                email: previous.email ? previous.email : "",
+                wholeAddress: previous.wholeAddress,
+                accountType: selection,
+                firebasePushNotificationToken: fcmToken
+            }).then((res) => {
+                if (res.data.message === "Successfully registered new user!") {
+                    console.log(res.data);
+
+                    const { data } = res.data;
+
+                    props.authenticated(data);
+
+                    props.sendbirdLogin({ userId: data.unique_id, nickname: data.fullName });
+
+                    props.finishedSignup(true);
+
+                    setTimeout(() => {
+                        props.props.navigation.navigate("homepage-main");
+                    },  500);
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+
+            props.authenticated({
+                ...props.previous, accountType: selection, page: 8
+            })
+        } else {
+            console.log("Failed", "No token received");
+        }
     }
     return (
         <Fragment>

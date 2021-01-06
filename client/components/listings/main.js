@@ -38,7 +38,8 @@ constructor(props) {
         results: [],
         selected: null,
         dragPanel: true,
-        latLng: {}
+        latLng: {},
+        destroyMap: true
     }
     this.animatedValue = new Animated.Value(0);
     this.animatedValueTwo = new Animated.Value(0);
@@ -226,13 +227,16 @@ constructor(props) {
             console.log("ERRRRRRR", err);
         })
     }
-    render() {
-        console.log("this.state main.js", this.state);
-
-        const { results, listings } = this.state;
-        return (
-            <Fragment>
-                <MapView
+    componentWillUnmount() {
+        console.log("unmounted.")
+        this.setState({
+            destroyMap: false
+        });
+    }
+    renderMapLogic = () => {
+        if (this.state.destroyMap === true) {
+            return (
+                <MapView 
                     style={styles.mapCustom}
                     region={this.state.region}
                     onRegionChangeComplete={this.onRegionChange}
@@ -280,6 +284,16 @@ constructor(props) {
                         );
                     }) : null}
                 </MapView>
+            );
+        }
+    }
+    render() {
+        console.log("this.state main.js", this.state);
+
+        const { results, listings } = this.state;
+        return (
+            <Fragment>
+                {this.renderMapLogic()}
                 <View style={styles.topper}>
                     <View style={styles.circledView}>
                         <TouchableOpacity style={{ flexDirection: "column", maxHeight: 45 }} onPress={() => {

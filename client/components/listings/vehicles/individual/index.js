@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../toastConfig.js";
 import { CalendarList } from 'react-native-calendars';
 
+
 const { width, height  } = Dimensions.get('window');
 
 const title = "Broken exhaust pipe on a 2016 honda civic touring";
@@ -132,8 +133,9 @@ constructor(props) {
         chatMessage: "",
         error: "",
         markedDays: {},
-        bid: 0,
-        coverLetter: ""
+        bid: "",
+        coverLetter: "",
+        applied: false
     }
 }
     _renderItem = ({item, index}) => {
@@ -173,6 +175,18 @@ constructor(props) {
                 console.log("MAGIC ONE: ", res.data);
 
                 const { listing } = res.data;
+
+                if (listing.applicants_proposals) {
+                    for (let index = 0; index < listing.applicants_proposals.length; index++) {
+                        const proposal = listing.applicants_proposals[index];
+                        
+                        if (proposal.applicant === this.props.unique_id) {
+                            this.setState({
+                                applied: true
+                            })
+                        }
+                    }
+                }
                 
                 const new_picture_array = [];
 
@@ -258,7 +272,6 @@ constructor(props) {
                     if (listing.avaliable_dates.length > 0) {
                         for (let indexxxxxxxx = 0; indexxxxxxxx < listing.avaliable_dates.length; indexxxxxxxx++) {
                             const date = listing.avaliable_dates[indexxxxxxxx];
-                            console.log("date", date);
     
                             this.setState({
                                 markedDays: {
@@ -383,11 +396,11 @@ constructor(props) {
                         <View style={{ margin: 20 }}>
                             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Place a bid!</Text>
                             <Text>Here at MechanicToday we use a bid style system for pricing. We allow all mechanics to place a bid which allows the person with the vehicle in need of repair to selectivly choose the right mechanic in their budget and get quality service simultaniously!</Text>
-                            <Button style={styles.pinkBtn} onPress={() => {
+                            {this.state.applied === false ? <Button style={styles.pinkBtn} onPress={() => {
                                 this.RBSheetTwo.open();
                             }}>
                                 <NativeText style={{ color: "black", fontWeight: "bold" }}>PLACE A BID</NativeText>
-                            </Button>
+                            </Button> : null}
                         </View>
                         <View style={styles.hrTwo} />
                         <View style={styles.marginMargin}>
@@ -875,6 +888,32 @@ constructor(props) {
     }
     handleSubmissionJobApplication = () => {
         console.log("handleSubmissionJobApplication clicked");
+
+        const { coverLetter, bid, listing } = this.state;
+
+        axios.post(`${Config.ngrok_url}/place/bid/proposal/vehicle/listing`, {
+            other_user_id: listing.poster,
+            signed_in_user_id: this.props.unique_id,
+            bid,
+            cover_letter: coverLetter,
+            listing,
+            fullName: this.props.fullName
+        }).then((res) => {
+            if (res.data.message === "Successfully submitted the proposal!") {
+
+                this.setState({
+                    applied: true
+                }, () => {
+                    this.RBSheetTwo.close();
+                })
+
+                console.log(res.data);
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
     renderContinuationButton = () => {
         const { bid, coverLetter } = this.state;
@@ -941,7 +980,8 @@ constructor(props) {
                     }
                 }}
             >
-                <ScrollView style={{ marginLeft: 20, marginRight: 20, marginTop: 40 }}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 150 }} style={{ marginLeft: 20, marginRight: 20, marginTop: 40, paddingBottom: 250, flex: 1 }}>
+                <KeyboardAwareScrollView contentContainerStyle={{flex: 1}}>
                     <View style={[styles.center, { marginBottom: 20 }]}>
                         <View style={styles.center}>
                             {this.renderContinuationButton()}
@@ -959,35 +999,40 @@ constructor(props) {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={styles.hrMarginBothWays} />
-                    <Item style={{ width: width * 0.95 }} floatingLabel>
-                        <Label>Proposal Price ($ in USD)</Label>
-                        <Input 
-                        placeholderTextColor={"grey"} 
-                        placeholder={"Enter a bid (the price for entire job)..."} 
-                        value={this.state.bid} 
-                        keyboardType={"numeric"}
-                        onChangeText={(bid) => {
-                            this.setState({
-                                bid
-                            })
-                        }} />
-                    </Item>
-                    <View style={styles.hrMarginBothWays} />
-                    <Text style={{ fontSize: 16, marginBottom: 15 }}>Why should YOU be hired for the job? Tell your potential client why they should hire you over other applicants...</Text>
-                    <Textarea 
-                        rowSpan={5} 
-                        bordered 
-                        placeholderTextColor={"grey"} 
-                        placeholder={"Why should you be picked for the job? Here's your opportunity to shine!"} 
-                        value={this.state.coverLetter} 
-                        onChangeText={(value) => {
-                            this.setState({
-                                coverLetter: value
-                            })
-                        }} 
-                    />
                     
+                    <View style={styles.hrMarginBothWays} />
+                    
+                        <Item style={{ width: width * 0.95 }} floatingLabel>
+                            <Label>Proposal Price ($ in USD)</Label>
+                            <Input 
+                            placeholderTextColor={"grey"} 
+                            placeholder={"Enter a bid (the price for entire job)..."} 
+                            value={this.state.bid} 
+                            keyboardType={"numeric"}
+                            onChangeText={(bid) => {
+                                this.setState({
+                                    bid
+                                })
+                            }} />
+                        </Item>
+                        <View style={styles.hrMarginBothWays} />
+                        <Text style={{ fontSize: 16, marginBottom: 15 }}>Why should YOU be hired for the job? Tell your potential client why they should hire you over other applicants...</Text>
+                       
+                        <View style={{ flex: 1 }}>
+                        <Textarea 
+                            rowSpan={5} 
+                            bordered 
+                            placeholderTextColor={"grey"} 
+                            placeholder={"Why should you be picked for the job? Here's your opportunity to shine!"} 
+                            value={this.state.coverLetter} 
+                            onChangeText={(value) => {
+                                this.setState({
+                                    coverLetter: value
+                                })
+                            }} 
+                        />
+                        </View>
+                        </KeyboardAwareScrollView>
                 </ScrollView>
                 <View style={styles.center}>
                     <View style={styles.bottomView}>
@@ -1068,12 +1113,14 @@ const mapStateToProps = (state) => {
     if (Object.keys(state.auth.authenticated).length > 0) {
         return {
             authenticated: true,
-            unique_id: state.auth.authenticated.unique_id
+            unique_id: state.auth.authenticated.unique_id,
+            fullName: state.auth.authenticated.fullName
         };
     } else {
         return {
             authenticated: false,
-            unique_id: state.auth.authenticated.unique_id
+            unique_id: state.auth.authenticated.unique_id,
+            fullName: state.auth.authenticated.fullName
         }
     }
 } 

@@ -64,9 +64,17 @@ app.use("/gather/category/listings", require("./routes/categories/gather/getCate
 app.use("/update/location/listing/edit", require("./routes/clients/edit/update/saveNewLocationEdit.js"));
 app.use("/update/location/listing/edit/manual/entry", require("./routes/clients/edit/update/manualLocationEdit.js"));
 app.use("/edit/listing/primary/settings", require("./routes/clients/edit/update/updatePrimaryData.js"));
-
-
-
+app.use("/save/firebase/push/token", require("./routes/push-notifications/saveTokenUponLoad.js"));
+app.use("/place/bid/proposal/vehicle/listing", require("./routes/clients/proposals/submit/submitProposal.js"));
+app.use("/gather/proposals/list", require("./routes/proposals/gatherProposals/index.js"));
+app.use("/gather/breif/data", require("./routes/gatherRestrctedUserData.js"));
+app.use("/find/related/post/by/id", require("./routes/proposals/individual/gatherRelatedPostInfo.js"));
+app.use("/reject/proposal/vehicle/listing", require("./routes/proposals/reject/rejectProposal.js"));
+app.use("/accept/proposal/vehicle/listing", require(("./routes/proposals/accept/acceptProposal.js")));
+app.use("/accept/proposal/individual", require("./routes/proposals/accept/notifyUserOfAcceptance.js"));
+app.use("/denial/proposal/all/other/users", require("./routes/proposals/denial/denyProposal.js"));
+app.use("/notify/user/of/denial", require("./routes/proposals/reject/notifiyUserOfDenial.js"));
+app.use("/gather/active/jobs", require("./routes/activeJobs/gatherActiveJobs.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

@@ -95,8 +95,10 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Notifications</NativeText></Left><Right><Image source={require("../../../assets/icons/bell.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
-                            <ListItem style={styles.listItem}>
-                            <Left><NativeText>On the go</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
+                            <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("active-jobs");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Active Jobs/Repairs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             <ListItem style={styles.divider} itemDivider>
                             <Left><NativeText>ACCOUNT TYPE (CURRENT TYPE - CLIENT)</NativeText></Left> 

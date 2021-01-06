@@ -5,3 +5,4 @@ export const ACCOUNT_TYPE = "ACCOUNT_TYPE";
 export const DIAGNOSTICS = "DIAGNOSTICS";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAIL = "LOGIN_FAIL";
+export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION";

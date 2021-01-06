@@ -43,7 +43,11 @@ import IndividualMessagingPage from "./pages/messaging/individual/individual.js"
 import PreviewListingViewPage from "./pages/listings/create/preview/preview.js";
 import io from 'socket.io-client';
 import messaging from '@react-native-firebase/messaging';
-import firebase from "@react-native-firebase/app";
+import Toast from 'react-native-toast-message';
+import { checkToNavigatePushNotification } from "./actions/push-notifications/push.js";
+import ProposalsListPage from "./pages/proposals/list/index.js";
+import IndividualProposalViewPage from "./pages/proposals/individual/individual.js";
+import ActiveJobsMainPage from "./pages/activeRepairs/main/index.js";
 
 const Stack = createStackNavigator();
 
@@ -56,26 +60,7 @@ constructor(props) {
   super(props);
   
 }
-  requestUserPermission = async () => {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-    if (enabled) {
-      this.getFcmToken() //<---- Add this
-      console.log('Authorization status:', authStatus);
-    }
-  }
-  getFcmToken = async () => {
-    const fcmToken = await messaging().getToken();
-    if (fcmToken) {
-     console.log(fcmToken);
-     console.log("Your Firebase Token is:", fcmToken);
-    } else {
-     console.log("Failed", "No token received");
-    }
-  }
   getStartingPage = () => {
     console.log("this.props.finsihed", this.props.finished);
 
@@ -119,16 +104,29 @@ constructor(props) {
   }
   async componentDidMount () {
 
-    this.requestUserPermission();
+    const fcmToken = await messaging().getToken();
 
     /* Success */
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log("Notification when app is on foreground", remoteMessage);
+
+      Toast.show({
+        text1: remoteMessage.notification.title,
+        text2: remoteMessage.notification.body,
+        visibilityTime: 6500,
+        type: "success"
+      });
     });
 
     /* Success */
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log('Notification caused app to open from background state:', remoteMessage);
+
+      // this.props.navigation.navigate(remoteMessage.data.dl);
+      this.props.checkToNavigatePushNotification({
+        redirect: true,
+        route: remoteMessage.data.dl
+      })
     });
 
     /* Success */
@@ -153,6 +151,7 @@ constructor(props) {
 		})
   }
   render () {
+    console.log("this.props APP.js", this.props);
     return (
       <>
         <View style={{ flex: 1 }}> 
@@ -196,29 +195,35 @@ constructor(props) {
               <Stack.Screen name="categories-main" component={CategoriesMainPage} />
               <Stack.Screen name="messages-individual" component={IndividualMessagingPage} />
               <Stack.Screen name="view-preview-listing-vehicle" component={PreviewListingViewPage} />
+              <Stack.Screen name="proposals" component={ProposalsListPage} />
+              <Stack.Screen name="proposals-individual-view" component={IndividualProposalViewPage} />
+              <Stack.Screen name="active-jobs" component={ActiveJobsMainPage} />
             </Stack.Navigator>
           </NavigationContainer>
+          <Toast ref={(ref) => Toast.setRef(ref)} />
         </View>
       </>
     );
  }
 };
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   if (typeof state.auth.authenticated !== "undefined") {
     if (Object.keys(state.auth.authenticated).length === 0) {
         return {
-          finished: false
+          finished: false,
+          unique_id: null
         }
     } else {
         return {
           page: state.auth.authenticated.page,
-          finished: state.auth.finished
+          finished: state.auth.finished,
+          unique_id: state.auth.authenticated.unique_id
         }
     } 
   } else {
     return {
-
+      unique_id: state.auth.authenticated.unique_id
     }
   }
 }
-export default connect(mapStateToProps, { gatherLocationOnLoad })(App);
+export default connect(mapStateToProps, { gatherLocationOnLoad, checkToNavigatePushNotification })(App);

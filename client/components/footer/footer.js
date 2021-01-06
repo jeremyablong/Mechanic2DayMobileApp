@@ -12,10 +12,10 @@ const FooterHelper = (props) => {
                 <Footer>
                     <FooterTab>
                         <Button onPress={() => {
-                            // props.props.navigation.navigate("profile-main");
+                            props.props.navigation.navigate("proposals");
                         }} vertical>
-                            <Image source={require("../../assets/icons/calendar.png")} style={styles.menuIcon} />
-                        <Text>Calendar</Text>
+                            <Image source={require("../../assets/icons/apply.png")} style={styles.menuIcon} />
+                        <Text>Proposals</Text>
                         </Button>
                         <Button onPress={() => {
                             props.props.navigation.push("providers-listing-homepage");
@@ -68,7 +68,7 @@ const FooterHelper = (props) => {
                         </Button>
                         <Button onPress={() => {
                             if (props.finished === true) {
-                                props.props.navigation.navigate("profile-main");
+                                props.props.navigation.push("profile-main");
                             } else {
                                 props.props.navigation.navigate("homepage");
                             }

@@ -11,6 +11,8 @@ import PromotionWide from "./promotion/promo.js";
 import DesignedBoxScroll from "./scrollviews/designedBoxScroll.js";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import HomepageInfoHelper from "./info/info.js";
+import { connect } from "react-redux";
+import { checkToNavigatePushNotification } from "../../actions/push-notifications/push.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -110,10 +112,21 @@ constructor(props) {
             </Fragment>
         );
     }
+    constantRender = () => {
+        if (this.props.redirect === true) {
+            console.log("this.props.route", this.props.route);
+            this.props.props.navigation.navigate(this.props.route);
+
+            this.props.checkToNavigatePushNotification({
+                redirect: false,
+                route: ""
+            })
+        }
+    }
     render () {
         return (
             <Fragment>
-                
+                {this.constantRender()}
                 <ParallaxScrollView 
                     backgroundColor="black"
                     contentBackgroundColor="white" 
@@ -212,4 +225,11 @@ constructor(props) {
         );
     }
 }
-export default HomepageMainHelper;
+const mapStateToProps = (state) => {
+    console.log(state);
+    return {
+        redirect: state.redirect_push.redirect.redirect,
+        route: state.redirect_push.redirect.route
+    }
+}
+export default connect(mapStateToProps, { checkToNavigatePushNotification })(HomepageMainHelper);

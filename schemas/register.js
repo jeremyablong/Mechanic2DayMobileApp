@@ -48,6 +48,9 @@ const UserSchema =  new mongoose.Schema({
     },
     register_date: {
         type: String
+    },
+    firebasePushNotificationToken: {
+        type: String
     }
 });
 
