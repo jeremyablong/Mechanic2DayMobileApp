@@ -248,12 +248,9 @@ constructor(props) {
                             <Text>These listings aren't active yet and are saved from where you last left off.</Text>
                         </View>
                             {user !== null && _.has(user, "broken_vehicles_listings") ? user.broken_vehicles_listings.map((listing, index) => {
-                                console.log("listing", listing);
-                                if (listing.live === false) {
+                                if (listing.live === "active") {
                                     return (
-                                        <TouchableOpacity onPress={() => {
-                                            this.handleComplexRedirect(listing)
-                                        }}>
+                                        <Fragment>
                                             <Card style={styles.cardCustom}>
                                                 <CardItem>
                                                 <Left>
@@ -263,27 +260,33 @@ constructor(props) {
                                                     </Body>
                                                 </Left>
                                                 </CardItem>
+                                                <View style={{ margin: 15 }}>
+                                                    <AwesomeButtonRick onPress={() => {
+                                                        this.props.props.navigation.navigate("individual-broken-listing", { listing });
+                                                    }} width={width * 0.80} type="secondary">View Listing</AwesomeButtonRick>
+                                                </View>
                                                 <CardItem>
                                                 <Body>
                                                     {_.has(listing, "photos") ? <Image source={{ uri: listing.photos[0] }} style={{ width: "95%", height: 250 }} /> : null}
-                                                    <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>Finish your listing</Text>
-                                                    <Text>You're {this.renderPercentage(listing)} of the way there!</Text>
-                                                    <View style={{ marginTop: 15 }}>
-                                                        {this.renderProgressBarEach(listing)}
-                                                    </View>
+                                                    <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>Edit/manage your listing</Text>
+                                                    <Text>You can edit and manage your listing from here</Text>
+                                                    
                                                 </Body>
                                                 </CardItem>
                                                 <CardItem>
                                                 
-                                                <Right>
-                                                    <Button transparent textStyle={{color: '#87838B'}}>
-                                                
-                                                    <Text>Pick up where you left off</Text>
-                                                    </Button>
-                                                </Right>
+                                       
+                                                    <View style={styles.centered}>
+                                                        <Button onPress={() => {
+                                                            this.props.props.navigation.navigate("edit-manage-listing-booked", { listing });
+                                                        }} style={[styles.centered, { width: width * 0.80 }]} danger bordered>
+                                                            <NativeText style={{ color: "black", fontWeight: "bold" }}>Manage/Edit Listing</NativeText>
+                                                        </Button>
+                                                    </View>
+                                        
                                                 </CardItem>
                                             </Card>
-                                        </TouchableOpacity>
+                                        </Fragment>
                                     );
                                 }
                             }) : <SkeletonPlaceholder>
@@ -317,7 +320,45 @@ constructor(props) {
                                 <Text style={styles.activeListingText}>Innactive Listings</Text>
                                 <Text>Inactive listings are listings that are old, removed or deleted.</Text>
                                 <View style={{ marginTop: 15 }} />
-                                <SkeletonPlaceholder>
+                                {user !== null && _.has(user, "broken_vehicles_listings") ? user.broken_vehicles_listings.map((listing, index) => {
+                                    if (listing.live === false) {
+                                        return (
+                                            <TouchableOpacity onPress={() => {
+                                                this.handleComplexRedirect(listing)
+                                            }}>
+                                                <Card style={styles.cardCustom}>
+                                                    <CardItem>
+                                                    <Left>
+                                                        <Thumbnail style={{ minWidth: 75, minHeight: 75 }} source={require("../../../../../../assets/images/placeholder.png")} />
+                                                        <Body>
+                                                        <Text style={{ fontSize: 18, color: "blue", fontWeight: "bold" }}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim}`}</Text>
+                                                        </Body>
+                                                    </Left>
+                                                    </CardItem>
+                                                    <CardItem>
+                                                    <Body>
+                                                        {_.has(listing, "photos") ? <Image source={{ uri: listing.photos[0] }} style={{ width: "95%", height: 250 }} /> : null}
+                                                        <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>Finish your listing</Text>
+                                                        <Text>You're {this.renderPercentage(listing)} of the way there!</Text>
+                                                        <View style={{ marginTop: 15 }}>
+                                                            {this.renderProgressBarEach(listing)}
+                                                        </View>
+                                                    </Body>
+                                                    </CardItem>
+                                                    <CardItem>
+                                                    
+                                                    <Right>
+                                                        <Button transparent textStyle={{color: '#87838B'}}>
+                                                    
+                                                        <Text>Pick up where you left off</Text>
+                                                        </Button>
+                                                    </Right>
+                                                    </CardItem>
+                                                </Card>
+                                            </TouchableOpacity>
+                                        );
+                                    }
+                                }) : <SkeletonPlaceholder>
                                     <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
                                         <SkeletonPlaceholder.Item width={60} height={60} borderRadius={50} />
                                         <SkeletonPlaceholder.Item marginLeft={20}>
@@ -343,7 +384,7 @@ constructor(props) {
                                         />
                                         </SkeletonPlaceholder.Item>
                                     </SkeletonPlaceholder.Item>
-                                </SkeletonPlaceholder>
+                                    </SkeletonPlaceholder>}
                             </View>
                         </Content>
                         <View>

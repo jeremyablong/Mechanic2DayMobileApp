@@ -10,5 +10,8 @@
     "sendbird_app_id": "59615BD6-4F78-4B10-BF4A-587E1403BBD9",
     "sendbird_api_token": "90ec4b9775a8bf3974c04888632fe7cc9d585400",
     "firebaseCloudMessagingServerKey": "AAAA9zUSz2E:APA91bGvAIR1QhFku2iMGYp_nh6z6nDPRFiwqD6ORRo2vOkYBq8zs61RBFFPxOdVAdqJao98bIu4Y_I8enD-DNY05kyb5Jza1UlHJ4D73aUQuzhEsZ37LNaUgYrW3r8LFpsvdhDMPCMs",
-    "ngrok_url": "http://mental-health-mobile-app.ngrok.io"
+    "ngrok_url": "http://mental-health-mobile-app.ngrok.io",
+    "paypalSandboxAccount": "sb-mwizs1403235@business.example.com",
+    "paypalRESTClientID": "AXUw3NuSWLC2fDgRdhTHAOYKCO52r9KoFQXqGIU30ZQagSvT5su60t72JMuzkFSmEC_2MZQO_38Z7j1H",
+    "paypalRESTSecret": "ELcvXt3rY-zcuJcabzvMFNshwxin9LaMP6GL8Floo1OrDyzlxy2o2o-naT7LAfnBXonCgAkTKc3Z17Gt"
 }

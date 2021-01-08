@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text, Dimensions, Image, Animated, TouchableOpacity, ScrollView, PanResponder, ImageBackground } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import styles from './styles.js';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import { Card, CardItem, Thumbnail, Text as NativeText, Left, Body, Button } from 'native-base';
@@ -20,12 +20,7 @@ constructor(props) {
 
     this.state = {
         listings: [],
-        region: {
-            latitude: this.props.location !== null ? this.props.location.latitude : 37.78825,
-            longitude: this.props.location !== null ? this.props.location.longitude : -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-        },
+        initialRegion: {},
         show: false,
         draggableRange: {
             top: height,
@@ -52,6 +47,15 @@ constructor(props) {
 }
     componentDidMount() {
         this._panel.show(this.state.draggableRange.middle);
+
+        this.setState({
+            initialRegion: {
+                latitude: this.props.location !== null ? this.props.location.latitude : 37.78825,
+                longitude: this.props.location !== null ? this.props.location.longitude : -122.4324,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            }
+        })
 
         axios.post(`${Config.ngrok_url}/gather/live/listings/vehicles`).then((res) => {
             if (res.data.message === "Successfully gathered the desired listings!") {
@@ -118,9 +122,6 @@ constructor(props) {
         }).catch((err) => {
             console.log(err);
         })
-    }
-    onRegionChange = (region) => {
-        this.setState({ region });
     }
     reachedBottom = () => {
         this.setState({
@@ -228,18 +229,23 @@ constructor(props) {
         })
     }
     componentWillUnmount() {
-        console.log("unmounted.")
+        console.log("unmounted.");
+
         this.setState({
             destroyMap: false
         });
     }
     renderMapLogic = () => {
+        const { listings } = this.state;
+
         if (this.state.destroyMap === true) {
             return (
-                <MapView 
-                    style={styles.mapCustom}
-                    region={this.state.region}
-                    onRegionChangeComplete={this.onRegionChange}
+                <MapView  
+                    provider={PROVIDER_GOOGLE}
+                    ref={(ref) => this.customMap = ref}
+                    style={styles.mapCustom} 
+                    initialRegion={this.state.initialRegion}
+                    showsUserLocation={true}
                 >
                     {typeof listings !== "undefined" && listings.length > 0 ? listings.map((marker, index) => {
                         return (
@@ -491,14 +497,17 @@ constructor(props) {
                                     return (
                                         <TouchableOpacity style={styles.listItemTwo} onPress={() => {
                                             this.setState({
-                                                selected: item,
-                                                region: {
+                                                selected: item
+                                            }, () => {
+                                                const newRegion = {
                                                     latitude: item.position.lat,
                                                     longitude: item.position.lon,
                                                     latitudeDelta: 0.0922,
-                                                    longitudeDelta: 0.0421,
+                                                    longitudeDelta: 0.0421
                                                 }
-                                            }, () => {
+
+                                                this.customMap.animateToRegion(newRegion, 1000);
+
                                                 this._panel_two.hide();
 
                                                 this.refs.searchBar.unFocus();

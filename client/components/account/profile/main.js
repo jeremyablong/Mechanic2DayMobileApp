@@ -71,6 +71,44 @@ constructor(props) {
         //     this.props.props.navigation.push("homepage-main");
         // },  500);
     }
+    renderConditionalAuth = () => {
+        const { user } = this.state;
+
+        if (user !== null && user.accountType === "mechanic") {
+            if (this.props.accountType === "CLIENT") {
+                return (
+                    <Fragment>
+                        <ListItem style={styles.divider} itemDivider>
+                        <Left><NativeText>ACCOUNT TYPE (CURRENT TYPE - CLIENT)</NativeText></Left> 
+                        </ListItem>  
+                        <ListItem button onPress={() => {
+                            this.changeAccountType();
+                        }} style={styles.listItem}>
+                        <Left><NativeText>{this.props.accountType === "PROVIDER" ? `Switch to "client" account` : `Switch to "provider" account`}</NativeText></Left><Right><Image source={require("../../../assets/icons/profile-two.png")} style={styles.inlineIcon} /></Right>
+                        </ListItem>
+                    </Fragment>
+                )
+            } else {
+                return (
+                    <Fragment>
+                        <ListItem style={styles.divider} itemDivider>
+                        <Left><NativeText>ACCOUNT TYPE (CURRENT TYPE - CLIENT)</NativeText></Left> 
+                        </ListItem>  
+                        <ListItem button onPress={() => {
+                            this.changeAccountType();
+                        }} style={styles.listItem}>
+                        <Left><NativeText>{this.props.accountType === "PROVIDER" ? `Switch to "client" account` : `Switch to "provider" account`}</NativeText></Left><Right><Image source={require("../../../assets/icons/profile-two.png")} style={styles.inlineIcon} /></Right>
+                        </ListItem>
+                        <ListItem button={true} onPress={() => {
+                            this.props.props.navigation.push("list-vehicle-start");
+                        }} style={styles.listItem}>
+                        <Left><NativeText>Create a listing (need help/repair)</NativeText></Left><Right><Image source={require("../../../assets/icons/create.png")} style={styles.inlineIcon} /></Right>
+                        </ListItem>
+                    </Fragment>
+                );
+            }
+        }
+    }
     renderConditional = () => {
         if (this.state.mechanic) {
             return (
@@ -100,19 +138,7 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Active Jobs/Repairs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
-                            <ListItem style={styles.divider} itemDivider>
-                            <Left><NativeText>ACCOUNT TYPE (CURRENT TYPE - CLIENT)</NativeText></Left> 
-                            </ListItem>  
-                            <ListItem button onPress={() => {
-                                this.changeAccountType();
-                            }} style={styles.listItem}>
-                            <Left><NativeText>{this.props.accountType === "PROVIDER" ? `Switch to "client" account` : `Switch to "provider" account`}</NativeText></Left><Right><Image source={require("../../../assets/icons/profile-two.png")} style={styles.inlineIcon} /></Right>
-                            </ListItem>
-                            {this.props.accountType === "PROVIDER" ? <ListItem button={true} onPress={() => {
-                                this.props.props.navigation.push("list-vehicle-start");
-                            }} style={styles.listItem}>
-                            <Left><NativeText>Create a listing (need help/repair)</NativeText></Left><Right><Image source={require("../../../assets/icons/create.png")} style={styles.inlineIcon} /></Right>
-                            </ListItem> : null}
+                            {this.renderConditionalAuth()}
                             <ListItem style={styles.divider} itemDivider>
                             <Left><NativeText>REFERRALS & CREDITS</NativeText></Left> 
                             </ListItem> 

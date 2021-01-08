@@ -80,6 +80,9 @@ app.use("/gather/breif/data/two", require("./routes/gatherRestrictedDataTwo.js")
 app.use("/delete/notification", require("./routes/notifications/delete/deleteNotification.js"));
 app.use("/gather/accepted_jobs/details", require("./routes/activeJobs/gather/gatherJobs.js"));
 app.use("/gather/applied/information", require("./routes/activeJobs/gather/gatherApplicationDetails.js"));
+app.use("/initiate/payment/paypal/3/step", require("./routes/paypal/createOrderDelayed.js"));
+app.use("/update/payments/with/paypal/address", require("./routes/account/payments/payments/create/addPaypalEmailAddress.js"));
+app.use("/delete/paypal/account/email", require("./routes/account/payments/payments/changes/deletePaypalEmailAddress.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

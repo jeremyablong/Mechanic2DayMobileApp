@@ -99,7 +99,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         }
                         listinggg.applicants_proposals = [];
 
-                        listinggg.live = false;
+                        listinggg.live = "active";
 
                         collection.save(user);
 

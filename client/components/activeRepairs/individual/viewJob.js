@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Text, View, Image, TouchableOpacity, ScrollView, Linking } from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView, Linking, Dimensions } from 'react-native';
 import { Header, Left, Button, Title, Text as NativeText, ListItem, Right, Body, Icon } from 'native-base';
 import styles from './styles.js';
 import MapView, { Marker } from 'react-native-maps';
@@ -7,7 +7,12 @@ import Gallery from 'react-native-image-gallery';
 import axios from 'axios';
 import { Config } from 'react-native-config';
 import { connect } from "react-redux";
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+import RBSheet from "react-native-raw-bottom-sheet";
 
+
+
+const { height, width } = Dimensions.get("window");
 
 class ViewIndividualJobHelper extends Component {
 constructor(props) {
@@ -17,6 +22,7 @@ constructor(props) {
         photos: [],
         ready: false,
         user: null,
+        other_user: null,
         region: {
             latitude: 37.78825,
             longitude: -122.4324,
@@ -115,7 +121,25 @@ constructor(props) {
                     }
                 });
             }
-        }, 500)
+        }, 500);
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+                console.log(res.data);
+
+                const { user } = res.data;
+
+                this.setState({
+                    user
+                })
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
 
         axios.post(`${Config.ngrok_url}/gather/applied/information`, {
             vehicle
@@ -126,7 +150,7 @@ constructor(props) {
                 const { user } = res.data;
 
                 this.setState({
-                    user
+                    other_user: user
                 })
             } else {
                 console.log("err", res.data);
@@ -236,20 +260,42 @@ constructor(props) {
     callHost = () => {
         console.log("callHost clicked");
 
-        Linking.openURL(`tel:${this.state.user.phoneNumber[0].unformatted}`)
+        Linking.openURL(`tel:${this.state.other_user.phoneNumber[0].unformatted}`)
     }
     messageHost = () => {
         console.log("messageHost clicked");
     }
+    initiatePayment = () => {
+        console.log("initiatePayment clicked");
+
+        const item = this.props.props.route.params.item;
+        
+        const vehicle = this.props.props.route.params.vehicle;
+        
+        axios.post(`${Config.ngrok_url}/initiate/payment/paypal/3/step`, {
+            amount: item.agreed_amount,
+            vehicle
+        }).then((res) => {
+            if (res.data.message === "Successfully executed paypal logic!") {
+                console.log(res.data);
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     renderMainContent = () => {
-        const { user } = this.state;
+        const { user, other_user } = this.state;
+
+        console.log("USER", user);
 
         const vehicle = this.props.props.route.params.vehicle;
         const itemmm = this.props.props.route.params.item;
 
         const title = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
 
-        if (user !== null) {
+        if (other_user !== null && user !== null) {
             return (
                 <Fragment>
                     <View>
@@ -273,6 +319,11 @@ constructor(props) {
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.hr, { top: -100, marginBottom: 20 }]} />
+                        {user.accountType === "client" ? <View style={styles.paymentButton}>
+                            <AwesomeButtonRick onPress={() => {
+                                this.RBSheet.open();
+                            }} width={width * 0.85} type="secondary">Make Payment / Deposit Funds</AwesomeButtonRick>
+                        </View> : null}
                         <View style={styles.agreedContainer}>
                             <Text style={styles.descHeader}>Description</Text>
                             <Text style={styles.desc}>{vehicle.description}</Text>
@@ -282,7 +333,7 @@ constructor(props) {
                     </View>
                     <View style={{ top: -50 }}>
                         <View style={styles.adjustMargin}>
-                            <Text style={styles.hostedText}>Hosted by <Text style={{ textDecorationLine: "underline"}}>{user.fullName}</Text></Text>
+                            <Text style={styles.hostedText}>Hosted by <Text style={{ textDecorationLine: "underline"}}>{other_user.fullName}</Text></Text>
                         </View>
                         <View style={styles.adjustMarginCustom}>
                             <View style={styles.columnCustom}>
@@ -290,7 +341,7 @@ constructor(props) {
                                 <Text style={{ fontSize: 16 }}>1 Mechanic</Text>
                             </View>
                             <View style={styles.columnCustomSmaller}>
-                                <Image source={{ uri: user.profilePics[user.profilePics.length - 1].full_url }} style={styles.iconLarger} />
+                                <Image source={{ uri: other_user.profilePics[other_user.profilePics.length - 1].full_url }} style={styles.iconLarger} />
                             </View>
                             <View style={styles.hr} />
                         </View>
@@ -341,7 +392,7 @@ constructor(props) {
                     <View>
                         <MapView    
                             style={styles.map}
-                            initialRegion={this.state.region}
+                            region={this.state.region}
                         >
                             <Marker
                                 coordinate={this.state.region}
@@ -351,6 +402,40 @@ constructor(props) {
                             />
                         </MapView>
                     </View>
+                    <RBSheet
+                        ref={ref => {
+                            this.RBSheet = ref;
+                        }}
+                        height={height}
+                        openDuration={250}
+                        customStyles={{
+                            container: {
+                                
+                            }
+                        }}
+                    >
+                        <ScrollView style={styles.container}>
+                            <View style={{ margin: 20 }}>
+                                <Text style={styles.mainPaymentText}>Make Payment</Text>
+                                <Text style={{ marginBottom: 15 }}>You will now need to deposit funds into the 3-step payment system. The account user that has listed a vehicle for repair will deposit funds and only when both parties agree that the repair was done and confirmed will the payment be released to the mechanic hired for the job.</Text>
+                                <View style={styles.hr} />
+                                <View style={{ marginTop: 15 }}>
+                                    <Button info onPress={() => {
+                                        this.initiatePayment();
+                                    }} style={styles.initiatePaymentBtn}>
+                                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Initiate Payment</NativeText>
+                                    </Button>
+                                </View>
+                            </View>
+                        </ScrollView>
+                        <View style={styles.bottomButton}>
+                            <View style={styles.centered}>
+                                <AwesomeButtonRick onPress={() => {
+                                    this.RBSheet.close();
+                                }} width={width * 0.90} type="primary">Close Pane</AwesomeButtonRick>
+                            </View>
+                        </View>
+                    </RBSheet>
                 </Fragment>
             );
         }
@@ -385,7 +470,8 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
     return {
-        unique_id: state.auth.authenticated.unique_id
+        unique_id: state.auth.authenticated.unique_id,
+        accountType: state.auth.authenticated.accountType
     }
 }
 export default connect(mapStateToProps, { })(ViewIndividualJobHelper);

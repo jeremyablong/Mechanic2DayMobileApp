@@ -3,9 +3,10 @@ import { Image } from "react-native";
 import { Content, Footer, FooterTab, Button, Badge, Text } from "native-base";
 import styles from "./styles.js";
 import { connect } from "react-redux";
-
+import { useRoute } from '@react-navigation/native';
 
 const FooterHelper = (props) => {
+    const route = useRoute();
     if (props.accountType === "PROVIDER") {
         return (
             <Fragment>
@@ -32,7 +33,9 @@ const FooterHelper = (props) => {
                         <Text>Chat</Text>
                         </Button>
                         <Button onPress={() => {
-                           props.props.navigation.push("profile-main");
+                            if (route.name !== "profile-main") {
+                                props.props.navigation.push("profile-main");
+                            }
                         }} vertical>
                             <Image source={require("../../assets/icons/account.png")} style={styles.menuIcon} />
                         <Text>Account</Text>
@@ -68,7 +71,9 @@ const FooterHelper = (props) => {
                         </Button>
                         <Button onPress={() => {
                             if (props.finished === true) {
-                                props.props.navigation.push("profile-main");
+                                if (route.name !== "profile-main") {
+                                    props.props.navigation.push("profile-main");
+                                }
                             } else {
                                 props.props.navigation.navigate("homepage");
                             }

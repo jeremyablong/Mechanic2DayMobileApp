@@ -10,7 +10,7 @@ const PaymentCardAddNewHelper =  (props) => {
                 <Header>
                     <Left style={{ flexDirection: "row" }}>
                         <Button onPress={() => {
-                            props.props.navigation.goBack();
+                            props.props.navigation.push("payments-cards");
                         }} transparent>
                             <Image source={require("../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
@@ -30,7 +30,9 @@ const PaymentCardAddNewHelper =  (props) => {
                         <Image source={require("../../../../assets/icons/forward.png")} style={styles.specialIcon} />
                     </Right>
                 </ListItem>
-                <ListItem button={true} onPress={() => {}} style={styles.listItemCustom} icon>
+                <ListItem button={true} onPress={() => {
+                    props.props.navigation.navigate("create-payment-paypal");
+                }} style={styles.listItemCustom} icon>
                     <Left style={{ flexDirection: "row" }}>
                        
                         <Image source={require("../../../../assets/icons/paypal-colored.png")} style={styles.specialIcon} />

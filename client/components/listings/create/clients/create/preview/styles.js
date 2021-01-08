@@ -9,6 +9,10 @@ export default StyleSheet.create({
         width,
         backgroundColor: "white"
     },
+    rightRight: {   
+        position: "absolute",
+        right: 10
+    },
     icon: {
         maxWidth: 35,
         maxHeight: 35

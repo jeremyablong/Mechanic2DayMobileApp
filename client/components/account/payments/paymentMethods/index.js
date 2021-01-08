@@ -5,13 +5,18 @@ import styles from './styles.js';
 import axios from 'axios';
 import { connect } from "react-redux";
 import Config from "react-native-config";
+import _ from "lodash";
+import Dialog from "react-native-dialog";
 
 class EditPaymentMethodsHelper extends Component {
 constructor(props) {
     super(props);
 
     this.state = {
-        cards: []
+        cards: [],
+        user: null,
+        deleteModal: false,
+        selected: null
     }
 }
     componentDidMount() {
@@ -30,6 +35,70 @@ constructor(props) {
             }
         }).catch((err) => {
             console.log(err);
+        })
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+
+                const { user } = res.data;
+
+                this.setState({ 
+                    user 
+                });
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    renderPaypalEmailAddress = () => {
+        const { user } = this.state;
+
+        if (_.has(user, "paypal_payment_address")) {
+            return (
+                <Fragment>
+                    <ListItem onPress={() => {
+                        this.setState({
+                            deleteModal: true,
+                            selected: user.paypal_payment_address
+                        })
+                    }} button={true} style={styles.listItem} icon>
+                        <Left style={{ flexDirection: "row" }}>
+                            <TouchableOpacity onPress={() => {}}>
+                                <Image source={require("../../../../assets/icons/paypal-colored.png")} style={styles.paymentIcon} />
+                            </TouchableOpacity>
+                            <NativeText style={{ marginLeft: 20 }}>{user.paypal_payment_address}</NativeText>
+                        </Left>
+                    </ListItem>
+                </Fragment>
+            );
+        }
+    }
+    handleDelete = () => {
+        console.log("handleDelete");
+
+        axios.post(`${Config.ngrok_url}/delete/paypal/account/email`, {
+            id: this.props.unique_id,
+            paypal_email: this.state.selected
+        }).then((res) => {
+            if (res.data.message === "Deleted paypal account!") {
+                console.log(res.data);
+
+                this.setState({
+                    user: null
+                })
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+
+        this.setState({
+            deleteModal: false
         })
     }
     render () { 
@@ -90,6 +159,21 @@ constructor(props) {
                             );
                         }
                     }) : null}
+                    {this.renderPaypalEmailAddress()}
+                    <View>
+                        <Dialog.Container visible={this.state.deleteModal}>
+                        <Dialog.Title>Delete Paypal Email Address</Dialog.Title>
+                        <Dialog.Description>
+                            Do you want to delete this PayPal account? You cannot undo this action.
+                        </Dialog.Description>
+                        <Dialog.Button onPress={() => {
+                            this.setState({
+                                deleteModal: false
+                            })
+                        }} label="Cancel" />
+                        <Dialog.Button onPress={this.handleDelete} label="Delete Card" />
+                        </Dialog.Container>
+                    </View>
                 </View>
             </Fragment>
         );

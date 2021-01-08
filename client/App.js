@@ -49,6 +49,11 @@ import ProposalsListPage from "./pages/proposals/list/index.js";
 import IndividualProposalViewPage from "./pages/proposals/individual/individual.js";
 import ActiveJobsMainPage from "./pages/activeRepairs/main/index.js";
 import ViewIndividualJobPage from "./pages/activeRepairs/individual/viewJob.js";
+import ManageActiveRepairPage from "./pages/activeRepairs/manage/manageActiveRepair.js";
+import PaypalMenuPage from "./pages/account/payments/paypal/paypalMenu.js";
+
+
+
 
 const Stack = createStackNavigator();
 
@@ -200,6 +205,8 @@ constructor(props) {
               <Stack.Screen name="proposals-individual-view" component={IndividualProposalViewPage} />
               <Stack.Screen name="active-jobs" component={ActiveJobsMainPage} />
               <Stack.Screen name="view-individual-agreement" component={ViewIndividualJobPage} />
+              <Stack.Screen name="edit-manage-listing-booked" component={ManageActiveRepairPage} />
+              <Stack.Screen name="create-payment-paypal" component={PaypalMenuPage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />

@@ -15,6 +15,34 @@ export default StyleSheet.create({
     desc: {
         fontSize: 14
     },
+    initiatePaymentBtn: {
+        width: width * 0.90,
+        justifyContent: "center", 
+        alignItems: "center", 
+        alignContent: "center"
+    },
+    mainPaymentText: {
+        fontSize: 30,
+        fontWeight: "bold",
+        color: "blue",
+        marginBottom: 10
+    },      
+    bottomButton: {
+        position: "absolute",
+        bottom: 10,
+        margin: 20
+    },
+    paymentButton: {
+        top: -100, 
+        justifyContent: "center", 
+        alignItems: "center", 
+        alignContent: "center"
+    },
+    centered: {
+        justifyContent: "center", 
+        alignItems: "center", 
+        alignContent: "center"
+    },
     descHeader: {
         fontSize: 20, 
         fontWeight: "bold", 
@@ -75,6 +103,8 @@ export default StyleSheet.create({
     },
     iconLarger: {
         maxWidth: 50,
+        minWidth: 50,
+        minHeight: 50,
         maxHeight: 50,
         borderRadius: 45
     },

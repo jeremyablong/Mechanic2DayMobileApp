@@ -12,7 +12,7 @@ export const ToastConfig = {
     },
     error: ({ text1, text2, props, ...rest }) => {
         return (
-            <View style={{ height: "100%", width: '85%', backgroundColor: "#8c010d", padding: 10, borderWidth: 5, borderColor: "lightgrey", zIndex: 999999999999 }}>
+            <View style={{ height: "100%", width: '85%', backgroundColor: "#8c010d", padding: 10, borderWidth: 2, borderColor: "lightgrey", zIndex: 999999999999 }}>
                 <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>{text1}</Text>
                 <Text style={{ fontsize: 16, color: "white", fontWeight: "bold" }}>{text2}</Text>
             </View>

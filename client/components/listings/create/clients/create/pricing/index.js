@@ -209,7 +209,7 @@ constructor(props) {
                         </Picker>
                     </View>
                     <View style={styles.margin}>
-                        <Text style={styles.mediumText}>How urgent is this repair? When is the earliest you'd like it repaired?</Text>
+                        <Text style={styles.mediumText}>What type of repair in your vehicle in need of?</Text>
                         <Picker 
                             placeholder={"Select the TYPE of repair you need..."} 
                             placeholderTextColor={"grey"}
