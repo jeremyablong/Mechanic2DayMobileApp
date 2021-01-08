@@ -86,7 +86,7 @@ export default StyleSheet.create({
         elevation: 19,
     },
     loginText: {
-        color: 'white',
+        color: 'black',
         fontSize: 16,
         fontWeight: "bold"
     },

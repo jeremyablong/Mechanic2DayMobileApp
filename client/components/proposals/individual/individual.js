@@ -8,6 +8,7 @@ import ReadMore from 'react-native-read-more-text';
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
 
+
 class IndividualProposalViewHelper extends Component {
 constructor(props) {
     super(props);

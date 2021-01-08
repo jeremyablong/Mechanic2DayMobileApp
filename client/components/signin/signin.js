@@ -24,6 +24,8 @@ import {
     GoogleSigninButton,
     statusCodes,
 } from '@react-native-community/google-signin';
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+
 
 const { height, width } = Dimensions.get("window");
 
@@ -171,11 +173,11 @@ const SigninHelper = props => {
                     <Text style={styles.btnText}>Forgot your password?</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.buttonContainer, styles.loginButton]} onPress={() => {
+                <AwesomeButtonRick type="primary" width={300} onPress={() => {
                     handleSubmission();
                 }}>
                 <Text style={styles.loginText}>Login</Text>
-                </TouchableOpacity>
+                </AwesomeButtonRick>
 
 
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => {

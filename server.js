@@ -75,6 +75,11 @@ app.use("/accept/proposal/individual", require("./routes/proposals/accept/notify
 app.use("/denial/proposal/all/other/users", require("./routes/proposals/denial/denyProposal.js"));
 app.use("/notify/user/of/denial", require("./routes/proposals/reject/notifiyUserOfDenial.js"));
 app.use("/gather/active/jobs", require("./routes/activeJobs/gatherActiveJobs.js"));
+app.use("/gather/notifications", require("./routes/notifications/index.js"));
+app.use("/gather/breif/data/two", require("./routes/gatherRestrictedDataTwo.js"));
+app.use("/delete/notification", require("./routes/notifications/delete/deleteNotification.js"));
+app.use("/gather/accepted_jobs/details", require("./routes/activeJobs/gather/gatherJobs.js"));
+app.use("/gather/applied/information", require("./routes/activeJobs/gather/gatherApplicationDetails.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

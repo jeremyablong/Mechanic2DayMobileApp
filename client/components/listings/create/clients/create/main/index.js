@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import styles from "./styles.js";
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { Header, Left, Button, Right, Body, Title, Text as NativeText, Content, Card, CardItem, Thumbnail } from 'native-base';
 import SearchBar from 'react-native-search-bar';
 import * as Progress from 'react-native-progress';
@@ -10,6 +10,9 @@ import { Config } from "react-native-config";
 import _ from "lodash";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import Dialog from "react-native-dialog";
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+
+const { height, width } = Dimensions.get("window");
 
 
 class HomepageListingsCreateHelper extends Component {
@@ -170,11 +173,12 @@ constructor(props) {
                     />
                     <View style={[styles.centered, { marginTop: 15 }]}>
                         <View style={styles.centered}>
-                            <Button style={styles.borderedButton} bordered success onPress={() => {
+                            <AwesomeButtonRick width={width * 0.80} backgroundShadow={"#E8CEE4"} onPress={() => {
                                 this.props.props.navigation.navigate("list-vehicle-start");
-                            }}>
-                                <NativeText style={{ color: "black" }}>List another vehicle</NativeText>
-                            </Button>
+                            }} type="secondary">
+                                <Text>List Another Vehicle</Text>
+                            </AwesomeButtonRick>
+                           
                         </View>
                     </View>
                     <Content style={{ padding: 20 }}>

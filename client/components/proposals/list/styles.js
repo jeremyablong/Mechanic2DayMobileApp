@@ -21,7 +21,17 @@ export default StyleSheet.create({
         alignContent: "center",
         borderWidth: 2,
         borderColor: "black"
-    },  
+    }, 
+    headerHeader: {
+        fontSize: 18, 
+        fontWeight: "bold"
+    },
+    hr: {
+        marginTop: 15, 
+        marginBottom: 15, 
+        borderBottomColor: "grey", 
+        borderBottomWidth: 1
+    },
     center: {
         justifyContent: "center",
         alignItems: "center",

@@ -51,20 +51,20 @@ const FooterHelper = (props) => {
                         }} badge vertical>
                         <Badge style={styles.badge}><Text>2</Text></Badge>
                             <Image source={require("../../assets/icons/home.png")} style={styles.menuIcon} />
-                        <Text>Home</Text>
+                            <Text>Home</Text>
                         </Button>
                         <Button onPress={() => {
-                            // props.props.navigation.navigate("profile-main");
+                            props.props.navigation.navigate("active-jobs");
                         }} vertical>
                             <Image source={require("../../assets/icons/list.png")} style={styles.menuIcon} />
-                        <Text>List</Text>
+                            <Text>Active</Text>
                         </Button>
                         <Button onPress={() => {
                             props.props.navigation.navigate("chat-conversations");
                         }} badge vertical>
                         <Badge style={styles.badge}><Text>51</Text></Badge>
                             <Image source={require("../../assets/icons/messages.png")} style={styles.menuIcon} />
-                        <Text>Chat</Text>
+                            <Text>Chat</Text>
                         </Button>
                         <Button onPress={() => {
                             if (props.finished === true) {

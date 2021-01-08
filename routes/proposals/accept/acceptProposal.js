@@ -99,6 +99,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         }
                         listinggg.applicants_proposals = [];
 
+                        listinggg.live = false;
+
                         collection.save(user);
 
                         await Promise.all(promiseArray).then((data) => {

@@ -6,7 +6,7 @@ import { Config } from 'react-native-config';
 import axios from "axios";
 import { connect } from "react-redux";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 
 const { width, height } = Dimensions.get("window");
 
@@ -68,7 +68,7 @@ constructor(props) {
                                 } 
                             })
                         }
-                    }
+                    } 
                 })
 
                 promiseee.then((passedData) => {
@@ -84,121 +84,135 @@ constructor(props) {
         })
     }
     renderUntilReady = () => {
-        if (this.state.ready === false) {
+        if (this.state.proposals.length === 0) {
             return (
                 <Fragment>
-                    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-                            <SkeletonPlaceholder>
-                                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                    <View style={{ width, height: 250 }} />
-                                </View>
-                            </SkeletonPlaceholder>
-                            <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 20, marginTop: 15, marginBottom: 15 }}>There are currently 0 pending proposals...</Text>
+                    <View style={{ margin: 20 }}>
+                        <Text style={styles.headerHeader}>You do not have any proposals yet,  stay tuned as applicants start to apply for your job!</Text>
+                        <Text style={{ marginTop: 10 }}>Whenever some applies to a job you have posted, it will show up here...</Text>
+                        <View style={styles.hr} />
+                        <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 20, marginTop: 15, marginBottom: 15 }}>There are currently 0 pending proposals...</Text>
+                        <View style={[styles.hr, { marginBottom: 30 }]} />
+                        <View style={styles.center}>
                             <View style={styles.center}>
-                                <View style={styles.center}>
-                                    <Button onPress={() => {
-                                        this.props.props.navigation.push("active-jobs");
-                                    }} style={styles.openWidth}>
-                                        <NativeText style={{ color: "black", fontWeight: "bold" }}>View Active Listings</NativeText>
-                                    </Button>
-                                </View>
+                                <AwesomeButtonRick width={width * 0.75} backgroundShadow={"#E8CEE4"} onPress={() => {
+                                    console.log("clicked");
+
+                                    this.props.props.navigation.push("active-jobs");
+                                }} type="secondary">
+                                    <Image source={require("../../../assets/icons/make.png")} style={{ maxWidth: 40, maxHeight: 40 }}/>
+                                    <Text> View active jobs</Text>
+                                </AwesomeButtonRick>
                             </View>
-                            <SkeletonPlaceholder>
-                                
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                    <View style={{ width: 60, height: 60, borderRadius: 50 }} />
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                        
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                    <View style={{ width: 60, height: 60, borderRadius: 50 }} />
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                    
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                    <View style={{ width: 60, height: 60, borderRadius: 50 }} />
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                    <View style={{ width: 60, height: 60, borderRadius: 50 }} />
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                    <View style={{ width: 60, height: 60, borderRadius: 50 }} />
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-                                
-                                    <View style={{ marginLeft: 20 }}>
-                                    <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
-                                    <View
-                                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
-                                    />
-                                    </View>
-                                </View>
-                            </SkeletonPlaceholder>
-                    </ScrollView>
+                        </View>
+                    </View>
                 </Fragment>
             );
+        } else {
+            if (this.state.ready === false) {
+                return (
+                    <Fragment>
+                        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+                                <SkeletonPlaceholder>
+                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                        <View style={{ width, height: 250 }} />
+                                    </View>
+                                    
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                            
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                        
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                    
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                    
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                        <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+                                    
+                                        <View style={{ marginLeft: 20 }}>
+                                        <View style={{ width: width * 0.70, height: 50, borderRadius: 4 }} />
+                                        <View
+                                            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                                        />
+                                        </View>
+                                    </View>
+                                </SkeletonPlaceholder>
+                        </ScrollView>
+                    </Fragment>
+                );
+            }
         }
     }
     render() {

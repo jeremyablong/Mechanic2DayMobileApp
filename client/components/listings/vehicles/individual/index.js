@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions, ImageBackground, RefreshControl, Animated, Keyboard } from "react-native";
 import styles from "./styles.js";
-import { Header, Left, Body, Right, Button, Title, Text as NativeText, Card, CardItem, Thumbnail, Content, Item, Input, Label, Textarea } from 'native-base';
+import { Header, Left, Body, Right, Button, Title, Text as NativeText, Card, CardItem, Thumbnail, Content, Item, Input, Label, Textarea, Picker } from 'native-base';
 import Gallery from 'react-native-image-gallery';
 import ReadMore from 'react-native-read-more-text';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
@@ -18,6 +18,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../toastConfig.js";
 import { CalendarList } from 'react-native-calendars';
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 
 
 const { width, height  } = Dimensions.get('window');
@@ -135,8 +136,10 @@ constructor(props) {
         markedDays: {},
         bid: "",
         coverLetter: "",
-        applied: false
-    }
+        applied: false,
+        times: [],
+        selectedTime: "" 
+    } 
 }
     _renderItem = ({item, index}) => {
         return (
@@ -279,7 +282,8 @@ constructor(props) {
                                     [date]: {
                                         selected: true, dotColor: '#50cebb'
                                     }
-                                }
+                                },
+                                times: [...this.state.times, date]
                             }, () => {
                                 if (listing.avaliable_dates.length - 1 === indexxxxxxxx) {
                                     this.setState({
@@ -396,11 +400,9 @@ constructor(props) {
                         <View style={{ margin: 20 }}>
                             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Place a bid!</Text>
                             <Text>Here at MechanicToday we use a bid style system for pricing. We allow all mechanics to place a bid which allows the person with the vehicle in need of repair to selectivly choose the right mechanic in their budget and get quality service simultaniously!</Text>
-                            {this.state.applied === false ? <Button style={styles.pinkBtn} onPress={() => {
+                            {this.state.applied === false ? <AwesomeButtonRick width={width * 0.75} style={{ marginTop: 15 }} onPress={() => {
                                 this.RBSheetTwo.open();
-                            }}>
-                                <NativeText style={{ color: "black", fontWeight: "bold" }}>PLACE A BID</NativeText>
-                            </Button> : null}
+                            }} type="secondary">PLACE A BID</AwesomeButtonRick> : null}
                         </View>
                         <View style={styles.hrTwo} />
                         <View style={styles.marginMargin}>
@@ -586,11 +588,9 @@ constructor(props) {
                                 <Text style={{ fontSize: 18, marginTop: 10 }}>Response Time - Within one hour</Text>
                             </View>
                             {this.props.authenticated === true ? <View style={styles.marginCentered}>
-                                <Button style={{ width: "100%", justifyContent: "center" }} bordered onPress={() => {
+                                <AwesomeButtonRick width={width * 0.75} onPress={() => {
                                     this.RBSheet.open();
-                                }}>
-                                    <NativeText>Contact Mechanic</NativeText>
-                                </Button>
+                                }} type="secondary">Contact Mechanic</AwesomeButtonRick>
                                 
                             </View> : null}
                             <View style={styles.margin}>
@@ -804,14 +804,33 @@ constructor(props) {
                                 }).catch((err) => {
                                     console.log(err);
                                 })
+
+                                
                             })
                         }
-                        
-                        this.setState({
-                            gallery: passedData,
-                            listing, 
-                            refreshing: false
-                        })
+                        if (listing.avaliable_dates.length > 0) {
+                            for (let indexxxxxxxx = 0; indexxxxxxxx < listing.avaliable_dates.length; indexxxxxxxx++) {
+                                const date = listing.avaliable_dates[indexxxxxxxx];
+        
+                                this.setState({
+                                    markedDays: {
+                                        ...this.state.markedDays, 
+                                        [date]: {
+                                            selected: true, dotColor: '#50cebb'
+                                        }
+                                    },
+                                    times: [...this.state.times, date]
+                                }, () => {
+                                    if (listing.avaliable_dates.length - 1 === indexxxxxxxx) {
+                                        this.setState({
+                                            gallery: passedData,
+                                            listing, 
+                                            refreshing: false
+                                        })
+                                    }
+                                })
+                            }
+                        } 
                     })
                 } else {
                     console.log("err", res.data);
@@ -889,7 +908,7 @@ constructor(props) {
     handleSubmissionJobApplication = () => {
         console.log("handleSubmissionJobApplication clicked");
 
-        const { coverLetter, bid, listing } = this.state;
+        const { coverLetter, bid, listing, selectedTime } = this.state;
 
         axios.post(`${Config.ngrok_url}/place/bid/proposal/vehicle/listing`, {
             other_user_id: listing.poster,
@@ -897,7 +916,8 @@ constructor(props) {
             bid,
             cover_letter: coverLetter,
             listing,
-            fullName: this.props.fullName
+            fullName: this.props.fullName,
+            selectedTime
         }).then((res) => {
             if (res.data.message === "Successfully submitted the proposal!") {
 
@@ -916,9 +936,9 @@ constructor(props) {
         })
     }
     renderContinuationButton = () => {
-        const { bid, coverLetter } = this.state;
+        const { bid, coverLetter, selectedTime } = this.state;
 
-        if ((typeof bid !== "undefined" && bid.length > 0) && (typeof coverLetter !== "undefined" && coverLetter.length > 0)) {
+        if ((typeof selectedTime !== "undefined" && selectedTime.length > 0) && (typeof bid !== "undefined" && bid.length > 0) && (typeof coverLetter !== "undefined" && coverLetter.length > 0)) {
             return (
                 <Button success onPress={() => {
                     this.handleSubmissionJobApplication();
@@ -937,7 +957,7 @@ constructor(props) {
         }
     }
     render() {
-        const { reviews } = this.state;
+        const { reviews, times } = this.state;
 
         console.log(this.state);
         return (
@@ -980,7 +1000,7 @@ constructor(props) {
                     }
                 }}
             >
-                <ScrollView contentContainerStyle={{ paddingBottom: 150 }} style={{ marginLeft: 20, marginRight: 20, marginTop: 40, paddingBottom: 250, flex: 1 }}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 150 }} showsVerticalScrollIndicator={false} style={{ marginLeft: 20, marginRight: 20, marginTop: 40, paddingBottom: 250, flex: 1 }}>
                 <KeyboardAwareScrollView contentContainerStyle={{flex: 1}}>
                     <View style={[styles.center, { marginBottom: 20 }]}>
                         <View style={styles.center}>
@@ -1016,6 +1036,29 @@ constructor(props) {
                                 }} />
                         </Item>
                         <View style={styles.hrMarginBothWays} />
+                        <Text style={{ fontSize: 16, marginBottom: 8, marginTop: 15 }}>Select a day to do the repair work</Text>
+                        <Picker 
+                            placeholder={"Select a preferred day to do the repair"}
+                            placeholderTextColor={"grey"}
+                            note
+                            mode="dropdown"
+                            style={{ width: width * 0.85 }}
+                            selectedValue={this.state.selectedTime}
+                            onValueChange={(value) => {
+                                this.setState({
+                                    selectedTime: value
+                                })
+                            }}
+                        >
+                            {typeof times !== "undefined" && times.length > 0 ? times.map((time, index) => {
+                                return (
+                                    <Picker.Item label={`${time}   ----   YYYY-MM-DD`} value={time} />
+                                );
+                            }) : null}
+                        </Picker>
+
+                                
+                        <View style={styles.hrMarginBothWays} />
                         <Text style={{ fontSize: 16, marginBottom: 15 }}>Why should YOU be hired for the job? Tell your potential client why they should hire you over other applicants...</Text>
                        
                         <View style={{ flex: 1 }}>
@@ -1036,11 +1079,9 @@ constructor(props) {
                 </ScrollView>
                 <View style={styles.center}>
                     <View style={styles.bottomView}>
-                        <Button onPress={() => {
+                        <AwesomeButtonRick width={width * 0.75} onPress={() => {
                             this.RBSheetTwo.close();
-                        }} style={styles.pinkerButton}>
-                            <NativeText>Exit/Close</NativeText>
-                        </Button>
+                        }} type="primary">Exit/Close</AwesomeButtonRick>
                     </View>
                 </View>
             </RBSheet>
@@ -1096,11 +1137,10 @@ constructor(props) {
                             <Text style={{ color: "red", textAlign: "center" }}>{this.state.error}</Text>
                         </View>
                         <View style={styles.spacetop}>
-                            <Button onPress={() => {
+                            <AwesomeButtonRick width={width * 0.75} onPress={() => {
                                 this.handleSendMessage();
-                            }} style={styles.slideUpButton}>
-                                <NativeText style={{ color: "white" }}>Send Message</NativeText>
-                            </Button>
+                            }} type="secondary">Send Message</AwesomeButtonRick>
+                            
                         </View>
                     </View>
                 </View>

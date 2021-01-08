@@ -13,6 +13,8 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 import HomepageInfoHelper from "./info/info.js";
 import { connect } from "react-redux";
 import { checkToNavigatePushNotification } from "../../actions/push-notifications/push.js";
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -151,14 +153,19 @@ constructor(props) {
                                 }} style={styles.input} placeholderTextColor={"black"} placeholder={"What're you looking for ?"} />
                             </Item>
                             <View style={styles.centerContainer}>
-                                <Button style={[styles.btnBtn, { marginTop: 50 }]} bordered dark>
-                                    <NativeText>Hire a mechanic</NativeText>
-                                </Button>
-                                <Button onPress={() => {
+                                <AwesomeButtonRick width={width * 0.70} style={{ marginTop: 50, marginBottom: 20 }}  backgroundShadow={"#E8CEE4"} onPress={() => {
+
+                                }} type="secondary">
+                                    <Image source={require("../../assets/icons/service.png")} style={{ maxWidth: 40, maxHeight: 40 }}/>
+                                    <Text> Hire a mechanic</Text>
+                                </AwesomeButtonRick>
+                                <AwesomeButtonRick width={width * 0.70} backgroundShadow={"#E8CEE4"} onPress={() => {
                                     this.props.props.navigation.navigate("broken-vehicles-map");
-                                }} style={styles.btnBtn} bordered>
-                                    <NativeText>Browse Broken Vehicles</NativeText>
-                                </Button>
+                                }} type="primary">
+                                    <Image source={require("../../assets/icons/engine.png")} style={{ maxWidth: 40, maxHeight: 40 }}/>
+                                    <Text> Browse broken vehicles</Text>
+                                </AwesomeButtonRick>
+                                
                             </View>
                         </View>
                         <View style={styles.mainContent}>

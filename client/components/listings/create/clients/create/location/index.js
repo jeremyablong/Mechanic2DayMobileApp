@@ -104,7 +104,7 @@ constructor(props) {
     renderWhenReady = () => {
         const { country, street, extension, state, zipCode, city } = this.state;
 
-        if (country !== null && (typeof street !== "undefined" && street.length > 0) && (typeof extension !== "undefined" && extension.length > 0) && (typeof state !== "undefined" && state.length > 0) && (typeof zipCode !== "undefined" && zipCode.length > 0) && (typeof city !== "undefined" && city.length > 0)) {
+        if (country !== null && (typeof street !== "undefined" && street.length > 0) && (typeof state !== "undefined" && state.length > 0) && (typeof zipCode !== "undefined" && zipCode.length > 0) && (typeof city !== "undefined" && city.length > 0)) {
             return (
                 <Fragment>
                     <View style={[styles.centered, { margin: 20 }]}>

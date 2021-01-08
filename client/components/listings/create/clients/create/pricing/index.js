@@ -50,9 +50,9 @@ constructor(props) {
         })
     }
     renderButtons = () => {
-        const { selected, repair_timespan, min_reviews } = this.state;
+        const { selected, repair_timespan, min_reviews, type_of_repair } = this.state;
 
-        if (selected !== 0 && repair_timespan !== 0 && min_reviews !== null) {
+        if (selected !== 0 && repair_timespan !== 0 && min_reviews !== null && type_of_repair !== null) {
             return (
                 <Fragment>
                     <Button info style={styles.buttonSpecial} onPress={() => {

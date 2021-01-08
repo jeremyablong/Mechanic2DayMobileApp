@@ -48,6 +48,7 @@ import { checkToNavigatePushNotification } from "./actions/push-notifications/pu
 import ProposalsListPage from "./pages/proposals/list/index.js";
 import IndividualProposalViewPage from "./pages/proposals/individual/individual.js";
 import ActiveJobsMainPage from "./pages/activeRepairs/main/index.js";
+import ViewIndividualJobPage from "./pages/activeRepairs/individual/viewJob.js";
 
 const Stack = createStackNavigator();
 
@@ -198,6 +199,7 @@ constructor(props) {
               <Stack.Screen name="proposals" component={ProposalsListPage} />
               <Stack.Screen name="proposals-individual-view" component={IndividualProposalViewPage} />
               <Stack.Screen name="active-jobs" component={ActiveJobsMainPage} />
+              <Stack.Screen name="view-individual-agreement" component={ViewIndividualJobPage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />

@@ -18,7 +18,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         console.log("req.body", req.body);
 
-        const { other_user_id, signed_in_user_id, bid, cover_letter, listing, fullName } = req.body;
+        const { other_user_id, signed_in_user_id, bid, cover_letter, listing, fullName, selectedTime } = req.body;
 
         collection.find({ unique_id: { $in: [ other_user_id, signed_in_user_id ]}}).toArray((err, users) => {
             if (err) {
@@ -62,7 +62,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     amount: Number(bid),
                                     description: cover_letter,
                                     related: listing.id,
-                                    denied: false
+                                    denied: false,
+                                    selected_time: selectedTime
                                 }
 
                                 if (user.notifications) {
@@ -118,7 +119,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             type: "proposal",
                             amount: Number(bid),
                             description: cover_letter,
-                            accepted: null
+                            accepted: null,
+                            selected_time: selectedTime
                         }
 
                         if (user.applied_jobs) {
