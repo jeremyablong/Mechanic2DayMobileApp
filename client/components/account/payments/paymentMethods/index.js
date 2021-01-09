@@ -162,7 +162,7 @@ constructor(props) {
                     {this.renderPaypalEmailAddress()}
                     <View>
                         <Dialog.Container visible={this.state.deleteModal}>
-                        <Dialog.Title>Delete Paypal Email Address</Dialog.Title>
+                        <Dialog.Title>Delete PayPal Email Address</Dialog.Title>
                         <Dialog.Description>
                             Do you want to delete this PayPal account? You cannot undo this action.
                         </Dialog.Description>

@@ -70,7 +70,7 @@ const FooterHelper = (props) => {
                             <Text>Chat</Text>
                         </Button>
                         <Button onPress={() => {
-                            if (props.finished === true) {
+                            if (typeof props.authenticateddd !== "undefined" && props.authenticateddd !== null && Object.keys(props.authenticateddd).length > 0 && !props.authenticateddd.page) {
                                 if (route.name !== "profile-main") {
                                     props.props.navigation.push("profile-main");
                                 }
@@ -88,15 +88,18 @@ const FooterHelper = (props) => {
     }
 }
 const mapStateToProps = (state) => {
+    console.log("STATTTTTTTTT", state);
     if (state.accountType.type) {
         return {
             finished: state.auth.finished,
-            accountType: state.accountType.type.type
+            accountType: state.accountType.type.type,
+            authenticateddd: state.auth.authenticated
         };
     } else {
         return {
             finished: state.auth.finished,
-            accountType: null
+            accountType: null,
+            authenticateddd: state.auth.authenticated
         };
     }
 }

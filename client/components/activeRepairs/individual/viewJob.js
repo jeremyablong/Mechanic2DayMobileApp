@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Text, View, Image, TouchableOpacity, ScrollView, Linking, Dimensions } from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView, Linking, Dimensions, Animated } from 'react-native';
 import { Header, Left, Button, Title, Text as NativeText, ListItem, Right, Body, Icon } from 'native-base';
 import styles from './styles.js';
 import MapView, { Marker } from 'react-native-maps';
@@ -9,7 +9,6 @@ import { Config } from 'react-native-config';
 import { connect } from "react-redux";
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 import RBSheet from "react-native-raw-bottom-sheet";
-
 
 
 const { height, width } = Dimensions.get("window");
@@ -29,6 +28,10 @@ constructor(props) {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
         },
+        captureLink: null,
+        updateLink: null,
+        selfLink: null,
+        approveLink: null
     }
 }
     componentDidMount() {
@@ -274,10 +277,69 @@ constructor(props) {
         
         axios.post(`${Config.ngrok_url}/initiate/payment/paypal/3/step`, {
             amount: item.agreed_amount,
-            vehicle
+            vehicle,
+            paypal_access_token: this.props.paypalToken.access_token
         }).then((res) => {
             if (res.data.message === "Successfully executed paypal logic!") {
                 console.log(res.data);
+
+                const { links, data } = res.data;
+
+                for (let index = 0; index < links.length; index++) {
+                    const link = links[index];
+                    switch (link.rel) {
+                        case "self":
+                            this.setState({
+                                selfLink: {
+                                    link: link.rel,
+                                    href: link.href,
+                                    other: {
+                                        id: data.id,
+                                        status: data.status
+                                    }
+                                }
+                            })
+                            break;
+                        case "approve": 
+                            this.setState({
+                                approveLink: {
+                                    link: link.rel,
+                                    href: link.href,
+                                    other: {
+                                        id: data.id,
+                                        status: data.status
+                                    }
+                                }
+                            })
+                            break;
+                        case "update": 
+                            this.setState({
+                                updateLink: {
+                                    link: link.rel,
+                                    href: link.href,
+                                    other: {
+                                        id: data.id,
+                                        status: data.status
+                                    }
+                                }
+                            })
+                            break;
+                        case "capture":
+                            this.setState({
+                                captureLink: {
+                                    link: link.rel,
+                                    href: link.href,
+                                    other: {
+                                        id: data.id,
+                                        status: data.status
+                                    }
+                                }
+                            })
+                            break;
+                        default:
+                            break;
+                    }
+                }
             } else {
                 console.log("err", res.data);
             }
@@ -286,7 +348,7 @@ constructor(props) {
         })
     }
     renderMainContent = () => {
-        const { user, other_user } = this.state;
+        const { user, other_user, selfLink, approveLink, updateLink, captureLink } = this.state;
 
         console.log("USER", user);
 
@@ -322,8 +384,12 @@ constructor(props) {
                         {user.accountType === "client" ? <View style={styles.paymentButton}>
                             <AwesomeButtonRick onPress={() => {
                                 this.RBSheet.open();
-                            }} width={width * 0.85} type="secondary">Make Payment / Deposit Funds</AwesomeButtonRick>
-                        </View> : null}
+                            }} width={width * 0.85} type="primary">Make Payment / Deposit Funds</AwesomeButtonRick>
+                        </View> : <View style={styles.paymentButton}>
+                            <AwesomeButtonRick onPress={() => {
+                                this.RBSheetTwo.open();
+                            }} width={width * 0.85} type="secondary">Check for deposited funds</AwesomeButtonRick>
+                        </View>}
                         <View style={styles.agreedContainer}>
                             <Text style={styles.descHeader}>Description</Text>
                             <Text style={styles.desc}>{vehicle.description}</Text>
@@ -403,6 +469,7 @@ constructor(props) {
                         </MapView>
                     </View>
                     <RBSheet
+                        animated={new Animated.Value(0)}
                         ref={ref => {
                             this.RBSheet = ref;
                         }}
@@ -419,6 +486,15 @@ constructor(props) {
                                 <Text style={styles.mainPaymentText}>Make Payment</Text>
                                 <Text style={{ marginBottom: 15 }}>You will now need to deposit funds into the 3-step payment system. The account user that has listed a vehicle for repair will deposit funds and only when both parties agree that the repair was done and confirmed will the payment be released to the mechanic hired for the job.</Text>
                                 <View style={styles.hr} />
+                                {approveLink !== null ? <View style={{ marginTop: 15, marginBottom: 15 }}><AwesomeButtonRick onPress={() => {
+                                    this.RBSheet.close();
+                                    
+                                    this.props.props.navigation.navigate("paypal-web-view-one", { data: approveLink, other_user });
+                                }} width={width * 0.90} type="secondary">Continue and approve payment</AwesomeButtonRick></View> : null}
+                                {updateLink !== null ? <View style={{ marginTop: 15, marginBottom: 15 }}><AwesomeButtonRick onPress={() => {
+                                    // do something
+                                }} width={width * 0.90} type="secondary">Update Payment</AwesomeButtonRick></View> : null}
+                                
                                 <View style={{ marginTop: 15 }}>
                                     <Button info onPress={() => {
                                         this.initiatePayment();
@@ -433,6 +509,30 @@ constructor(props) {
                                 <AwesomeButtonRick onPress={() => {
                                     this.RBSheet.close();
                                 }} width={width * 0.90} type="primary">Close Pane</AwesomeButtonRick>
+                            </View>
+                        </View>
+                    </RBSheet>
+                    <RBSheet    
+                        animated={new Animated.Value(0)}
+                        ref={ref => {
+                            this.RBSheetTwo = ref;
+                        }}
+                        height={height}
+                        openDuration={250}
+                        customStyles={{
+                            container: {
+                                
+                            }
+                        }}
+                    >
+                        <ScrollView style={styles.container}>
+                            
+                        </ScrollView>
+                        <View style={styles.bottomButton}>
+                            <View style={styles.centered}>
+                                <AwesomeButtonRick onPress={() => {
+                                    this.RBSheetTwo.close();
+                                }} width={width * 0.90} type="secondary">Close Pane</AwesomeButtonRick>
                             </View>
                         </View>
                     </RBSheet>
@@ -471,7 +571,8 @@ constructor(props) {
 const mapStateToProps = (state) => {
     return {
         unique_id: state.auth.authenticated.unique_id,
-        accountType: state.auth.authenticated.accountType
+        accountType: state.auth.authenticated.accountType,
+        paypalToken: state.auth.authenticated.paypal_authorization
     }
 }
 export default connect(mapStateToProps, { })(ViewIndividualJobHelper);

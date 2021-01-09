@@ -51,9 +51,11 @@ import ActiveJobsMainPage from "./pages/activeRepairs/main/index.js";
 import ViewIndividualJobPage from "./pages/activeRepairs/individual/viewJob.js";
 import ManageActiveRepairPage from "./pages/activeRepairs/manage/manageActiveRepair.js";
 import PaypalMenuPage from "./pages/account/payments/paypal/paypalMenu.js";
-
-
-
+import ApprovalWebLinkPage from "./pages/activeRepairs/webViews/approvalWebLink.js";
+import UserInactivity from 'react-native-user-inactivity';
+import { authenticated, finishedSignup } from "./actions/signup/auth.js";
+import { sendbirdLogin } from "./actions/sendbird/user.js";
+import { switchAccountType } from "./actions/accountType/type.js";
 
 const Stack = createStackNavigator();
 
@@ -69,7 +71,6 @@ constructor(props) {
 
   getStartingPage = () => {
     console.log("this.props.finsihed", this.props.finished);
-
     if (this.props.finished === true) {
       return "homepage-main";
     } else {
@@ -106,7 +107,7 @@ constructor(props) {
       } else {
         return "intro";
       }
-    } 
+    }
   }
   async componentDidMount () {
 
@@ -161,6 +162,28 @@ constructor(props) {
     return (
       <>
         <View style={{ flex: 1 }}> 
+        <UserInactivity
+						timeForInactivity={600000}
+						onAction={isActive => { 
+							console.log("isActive", isActive); 
+
+              if (isActive === false) {
+                if (typeof this.props.authenticateddd !== 'undefined' && this.props.authenticateddd !== null && Object.keys(this.props.authenticateddd).length > 0) {
+                  console.log("signout.");
+
+                  this.props.authenticated({});
+                  // this.props.finishedSignup(false);
+                  this.props.sendbirdLogin({ userId: null, nickname: null });
+                  this.props.switchAccountType({
+                      type: "CLIENT"
+                  })
+                } else {
+                  console.log("already logged out.");
+                }
+              } 
+						}}
+            style={{ flex: 1 }}
+					>
           <NavigationContainer> 
             <Stack.Navigator screenOptions={{
                 headerShown: false
@@ -207,32 +230,38 @@ constructor(props) {
               <Stack.Screen name="view-individual-agreement" component={ViewIndividualJobPage} />
               <Stack.Screen name="edit-manage-listing-booked" component={ManageActiveRepairPage} />
               <Stack.Screen name="create-payment-paypal" component={PaypalMenuPage} />
+              <Stack.Screen name="paypal-web-view-one" component={ApprovalWebLinkPage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />
+          </UserInactivity>
         </View>
       </>
     );
  }
 };
 const mapStateToProps = (state) => {
+  console.log("STATE!!!!:", state);
   if (typeof state.auth.authenticated !== "undefined") {
     if (Object.keys(state.auth.authenticated).length === 0) {
         return {
-          finished: false,
-          unique_id: null
+          finished: state.auth.finished,
+          unique_id: null,
+          authenticateddd: null
         }
     } else {
         return {
           page: state.auth.authenticated.page,
           finished: state.auth.finished,
-          unique_id: state.auth.authenticated.unique_id
+          unique_id: state.auth.authenticated.unique_id,
+          authenticateddd: state.auth.authenticated
         }
     } 
   } else {
     return {
-      unique_id: state.auth.authenticated.unique_id
+      unique_id: state.auth.authenticated.unique_id,
+      authenticateddd: null
     }
   }
 }
-export default connect(mapStateToProps, { gatherLocationOnLoad, checkToNavigatePushNotification })(App);
+export default connect(mapStateToProps, { gatherLocationOnLoad, switchAccountType, checkToNavigatePushNotification, authenticated, finishedSignup, sendbirdLogin })(App);

@@ -4,12 +4,13 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-
+const axios = require('axios');
+const request = require('request');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
 
-        const { amount, vehicle } = req.body;
+        const { amount, vehicle, paypal_access_token } = req.body;
         
         const database = db.db("<dbname>");
 
@@ -21,41 +22,57 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 const configgg = {
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": "Bearer <Access-Token>",
+                        "Authorization": `Bearer ${paypal_access_token}`,
                         "PayPal-Partner-Attribution-Id": null
                     }
                 }
-        
-                axios.post('https://api-m.sandbox.paypal.com/v2/checkout/orders', {
+
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${paypal_access_token}`
+                };
+                
+                const dataString = `{
                     "intent": "CAPTURE",
                     "purchase_units": [{
                         "amount": {
                             "currency_code": "USD",
-                            "value": amount.toFixed(2)
+                            "value": "${amount.toFixed(2).toString()}"
                         },
                         "payee": {
-                            "email_address": "seller@example.com"
+                            "email_address": "${user.paypal_payment_address.toString()}"
                         },
                         "payment_instruction": {
-                            "disbursement_mode": "DELAYED",
-                            "platform_fees": [{
-                                "amount": {
-                                    "currency_code": "USD",
-                                    "value": "25.00"
-                                }
-                            }]
+                            "disbursement_mode": "DELAYED"
                         }
-                    }],
-                }, configgg).then((res) => {
-                    console.log(res.data);
+                    }]
+                }`;
+                
+                const options = {
+                    url: 'https://api.sandbox.paypal.com/v2/checkout/orders',
+                    method: 'POST',
+                    headers: headers,
+                    body: dataString
+                };
+                
+                const callback = (error, response, body) => {
+                    if (!error) {
+                        const parsed = JSON.parse(body);
 
-                    res.json({
-                        message: "Successfully executed paypal logic!",
-                        data: res.data
-                    })
-                }).catch((err) => {
-                    console.log(err);
-                })
+                        console.log("MAJIC HAPPENED!!!!!!: ", parsed);
+
+                        res.json({
+                            message: "Successfully executed paypal logic!",
+                            links: parsed.links,
+                            data: parsed
+                        })
+                    } else {
+                        console.log(error);
+                    }
+                }
+                
+                request(options, callback);
+    
             } else {
                 res.json({
                     message: "Could not locate the appropriate user..."
