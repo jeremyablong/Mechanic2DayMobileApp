@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Image, Animated, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, Animated, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { Header, Left, Body, Right, Button, Icon, Title, Text as NativeText, ListItem, List, Thumbnail } from 'native-base';
 import axios from "axios";
 import { Config } from 'react-native-config';
@@ -37,32 +37,49 @@ constructor(props) {
                 const { notifications } = res.data;
 
                 const promiseee = new Promise((resolve, reject) => {
-                    for (let index = 0; index < notifications.length; index++) {
-                        const notification = notifications[index];
-                        
-                        axios.post(`${Config.ngrok_url}/gather/breif/data/two`, {
-                            id: notification.from
-                        }).then((res) => {
-                            if (res.data) {
-                                console.log("res.data", res.data);
-    
-                                const { user } = res.data;
-    
-                                if (user.profilePics.length > 0) {
-                                    notification.full_url = user.profilePics[user.profilePics.length - 1].full_url;
-                                    notification.fullName = user.fullName;
+                    if (notifications.length > 0) {
+                        for (let index = 0; index < notifications.length; index++) {
+                            const notification = notifications[index];
+                            
+                            axios.post(`${Config.ngrok_url}/gather/breif/data/two`, {
+                                id: notification.from
+                            }).then((res) => {
+                                if (res.data) {
+                                    console.log("res.data", res.data);
         
-                                    this.setState({
-                                        notifications: [notification, ...this.state.notifications]
-                                    }, () => {
-                                        if ((notifications.length - 1) === index) {
-                                            resolve();
-                                        }
-                                    })
+                                    const { user } = res.data;
+        
+                                    if (user.profilePics.length > 0) {
+                                        notification.full_url = user.profilePics[user.profilePics.length - 1].full_url;
+                                        notification.fullName = user.fullName;
+            
+                                        this.setState({
+                                            notifications: [notification, ...this.state.notifications]
+                                        }, () => {
+                                            if ((notifications.length - 1) === index) {
+                                                resolve();
+                                            }
+                                        })
+                                    } else {
+                                        notification.full_url = "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg";
+                                        notification.fullName = user.fullName;
+            
+                                        this.setState({
+                                            notifications: [notification, ...this.state.notifications]
+                                        }, () => {
+                                            if ((notifications.length - 1) === index) {
+                                                resolve();
+                                            }
+                                        })
+                                    }
                                 } else {
+                                    console.log("err", res.data);
+    
+                                    const { user } = res.data;
+    
                                     notification.full_url = "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg";
                                     notification.fullName = user.fullName;
-        
+    
                                     this.setState({
                                         notifications: [notification, ...this.state.notifications]
                                     }, () => {
@@ -71,25 +88,12 @@ constructor(props) {
                                         }
                                     })
                                 }
-                            } else {
-                                console.log("err", res.data);
-
-                                const { user } = res.data;
-
-                                notification.full_url = "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg";
-                                notification.fullName = user.fullName;
-
-                                this.setState({
-                                    notifications: [notification, ...this.state.notifications]
-                                }, () => {
-                                    if ((notifications.length - 1) === index) {
-                                        resolve();
-                                    }
-                                })
-                            }
-                        }).catch((err) => {
-                            console.log(err);
-                        })
+                            }).catch((err) => {
+                                console.log(err);
+                            })
+                        }
+                    } else {
+                        resolve();
                     }
                 })
                 promiseee.then(() => {
@@ -200,7 +204,7 @@ constructor(props) {
                         </Button>
                     </Right>
                 </Header>
-                <View style={styles.container}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 150 }} style={styles.container}>
                     <List>
                     {typeof notifications !== "undefined" && notifications.length > 0 && ready === true ? notifications.map((notification, index) => {
                         console.log("notification", notification);
@@ -236,12 +240,12 @@ constructor(props) {
                         );
                     }) : this.skelatonRender()}
                     </List>
-                </View>
+                </ScrollView>
                 {selected !== null ? <RBSheet
                     ref={ref => {
                         this.RBSheet = ref;
                     }}
-                    height={275}
+                    height={350}
                     openDuration={250}
                     customStyles={{
                         container: {

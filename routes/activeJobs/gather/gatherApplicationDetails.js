@@ -13,15 +13,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { vehicle } = req.body;
+        const { other_user_id } = req.body;
         
         console.log("req.nbody", req.body);
 
-        collection.findOne({ "broken_vehicles_listings.id": vehicle.id }).then((user) => {
+        collection.findOne({ unique_id: other_user_id }).then((user) => {
             if (user) {
 
                 console.log("HOST", user);
-                
+
                 delete user.address;
                 delete user.authyID;
                 delete user.password;

@@ -16,7 +16,7 @@ const FooterHelper = (props) => {
                             props.props.navigation.navigate("proposals");
                         }} vertical>
                             <Image source={require("../../assets/icons/apply.png")} style={styles.menuIcon} />
-                        <Text>Proposals</Text>
+                        <Text>Proposal</Text>
                         </Button>
                         <Button onPress={() => {
                             props.props.navigation.push("providers-listing-homepage");
@@ -57,7 +57,7 @@ const FooterHelper = (props) => {
                             <Text>Home</Text>
                         </Button>
                         <Button onPress={() => {
-                            props.props.navigation.navigate("active-jobs");
+                            props.props.navigation.push("active-jobs");
                         }} vertical>
                             <Image source={require("../../assets/icons/list.png")} style={styles.menuIcon} />
                             <Text>Active</Text>

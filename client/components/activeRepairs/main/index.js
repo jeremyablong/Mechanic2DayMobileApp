@@ -128,7 +128,7 @@ constructor(props) {
                 <Header>
                     <Left style={{ flexDirection: "row" }}>
                         <Button onPress={() => {
-                            this.props.props.navigation.goBack();
+                            this.props.props.navigation.push("homepage-main");
                         }} transparent>
                             <Image style={styles.headerIcon} source={require('../../../assets/icons/go-back.png')} />
                         </Button>
@@ -151,9 +151,9 @@ constructor(props) {
                         console.log(item);
                         const { title, description, make, model, year } = item.vehicle_data;
                         return (
-                        <View>
+                        <View style={styles.background}>
                             <View style={styles.cardHeader}>
-                                <Image style={styles.icon} source={require("../../../assets/icons/go.png")}/>
+                                <Image style={styles.icon} source={require("../../../assets/images/not-availiable.jpg")}/>
                                 <Text style={{ maxWidth: width * 0.70 }}>{title}</Text>
                             </View>
                             <Gallery

@@ -34,23 +34,23 @@ const slides = [
   },
   {
     key: 4,
-    title: 'Get the best bang for your buck!',
-    text: 'Our prices cut show prices nearly in HALF! Use our app and save - one dollar at a time.',
+    title: 'Affordable and reliable auto repairs!',
+    text: 'Quality repairs from your local neighbors all through ONE central app! Our mechanics are your friends, family and neighbors - now thats trustworthy.',
     image: require('../../assets/images/onboarding/four.jpg'),
     backgroundColor: '#22bcb5',
     innerBackground: require('../../assets/images/onboarding/four.jpg')
   },
   {
     key: 5,
-    title: 'Get the best bang for your buck!',
-    text: 'Our prices cut show prices nearly in HALF! Use our app and save - one dollar at a time.',
+    title: 'Any Location - Any Time - Any Day.',
+    text: 'We will come to you at any time on any day at any time! 24/7 auto repairs and breakdown service at your fingertips - literally!',
     image: require('../../assets/images/onboarding/five.jpg'),
     backgroundColor: '#22bcb5',
     innerBackground: require('../../assets/images/onboarding/five.jpg')
   },
   {
     key: 6,
-    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In metus ante',
+    title: 'Lorem ipsum dolor sit amet, consectetur',
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In metus ante, scelerisque vel viverra ac, volutpat mattis turpis',
     image: require('../../assets/images/onboarding/six.jpg'),
     backgroundColor: '#22bcb5',
@@ -58,8 +58,8 @@ const slides = [
   },
   {
     key: 7,
-    title: 'Welcome to MechanicToday! Enjoy...',
-    text: 'Proin semper, magna ut porta congue, neque ligula lacinia lacus, ut pellentesque erat enim non elit. Aenean bibendum ac magna sed semper.',
+    title: 'We will come to you!',
+    text: 'Our network of certified mechanics will come to you and do the repair from the comfort of your home! Quicker "expedited" services avaliable for a fee.',
     image: require('../../assets/images/onboarding/seven.jpg'),
     backgroundColor: '#22bcb5',
     innerBackground: require('../../assets/images/onboarding/seven.jpg')

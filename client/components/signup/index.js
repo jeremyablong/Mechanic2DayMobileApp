@@ -13,6 +13,7 @@ import {
     GoogleSigninButton,
     statusCodes,
 } from '@react-native-community/google-signin';
+import messaging from '@react-native-firebase/messaging';
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,54 +31,122 @@ constructor(props) {
     }
     this.phoneInput = React.createRef(null);
 }
-    _signIn = async () => {
-        try {
-            await GoogleSignin.hasPlayServices();
+    requestUserPermission = async () => {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-            const userInfo = await GoogleSignin.signIn();
+        if (enabled) {
 
-            if (userInfo) {
-                axios.post(`${Config.ngrok_url}/save/oauth/google/user`, {
-                    email: userInfo.user.email,
-                    fullName: userInfo.user.name,
-                    google_id: userInfo.user.id,
-                    google_pic: userInfo.user.photo
-                }).then((res) => {
-                    console.log("Res.data", res.data);
-                    
-                    if (res.data.message === "Successfully registered new user!") {
-    
-                        this.props.authenticated(res.data.data);
+            console.log('Authorization status:', authStatus);
+
+            const _signIn = async () => {
+                try {
+                    await GoogleSignin.hasPlayServices();
+        
+                    const userInfo = await GoogleSignin.signIn();
+        
+                    const fcmToken = await messaging().getToken();
+        
+                    if (userInfo && fcmToken) {
+                        axios.post(`${Config.ngrok_url}/save/oauth/google/user`, {
+                            email: userInfo.user.email,
+                            fullName: userInfo.user.name,
+                            google_id: userInfo.user.id,
+                            google_pic: userInfo.user.photo,
+                            firebasePushNotificationToken: fcmToken
+                        }).then((res) => {
+                            console.log("Res.data", res.data);
+                            
+                            if (res.data.message === "Successfully registered new user!") {
             
-                        this.props.finishedSignup(true);
-    
-                        setTimeout(() => {
-                            this.props.props.navigation.navigate("homepage-main");
-                        },  750);
-                    } else {
-                        console.log("Err", res.data);
+                                this.props.authenticated(res.data.data);
+                    
+                                this.props.finishedSignup(true);
+            
+                                setTimeout(() => {
+                                    this.props.props.navigation.navigate("homepage-main");
+                                },  750);
+                            } else {
+                                console.log("Err", res.data);
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
                     }
-                }).catch((err) => {
-                    console.log(err);
-                })
-            }
+        
+                } catch (error) {
+                    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                        // user cancelled the login flow
+                        console.log("user cancelled the login flow");
+                    } else if (error.code === statusCodes.IN_PROGRESS) {
+                        // operation (e.g. sign in) is in progress already
+                        console.log("sing in progress already");
+                    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                        // play services not available or outdated
+                        console.log("play services not available or outdated");
+                    } else {
+                        // some other error happened
+                        console.log("other err happened.", error)
+                    }
+                }
+            };
 
-        } catch (error) {
-            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                // user cancelled the login flow
-                console.log("user cancelled the login flow");
-            } else if (error.code === statusCodes.IN_PROGRESS) {
-                // operation (e.g. sign in) is in progress already
-                console.log("sing in progress already");
-            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                // play services not available or outdated
-                console.log("play services not available or outdated");
-            } else {
-                // some other error happened
-                console.log("other err happened.", error)
-            }
+            _signIn();
+        } else {
+            const _signIn = async () => {
+                try {
+                    await GoogleSignin.hasPlayServices();
+        
+                    const userInfo = await GoogleSignin.signIn();
+        
+                    if (userInfo) {
+                        axios.post(`${Config.ngrok_url}/save/oauth/google/user`, {
+                            email: userInfo.user.email,
+                            fullName: userInfo.user.name,
+                            google_id: userInfo.user.id,
+                            google_pic: userInfo.user.photo
+                        }).then((res) => {
+                            console.log("Res.data", res.data);
+                            
+                            if (res.data.message === "Successfully registered new user!") {
+            
+                                this.props.authenticated(res.data.data);
+                    
+                                this.props.finishedSignup(true);
+            
+                                setTimeout(() => {
+                                    this.props.props.navigation.navigate("homepage-main");
+                                },  750);
+                            } else {
+                                console.log("Err", res.data);
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    }
+        
+                } catch (error) {
+                    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                        // user cancelled the login flow
+                        console.log("user cancelled the login flow");
+                    } else if (error.code === statusCodes.IN_PROGRESS) {
+                        // operation (e.g. sign in) is in progress already
+                        console.log("sing in progress already");
+                    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                        // play services not available or outdated
+                        console.log("play services not available or outdated");
+                    } else {
+                        // some other error happened
+                        console.log("other err happened.", error)
+                    }
+                }
+            };
+
+            _signIn();
         }
-    };
+    }
     handleEmailContinuation = () => {
         const { email } = this.state;
 
@@ -223,7 +292,7 @@ constructor(props) {
                                             style={{ width: width * 0.80, height: 48 }}
                                             size={GoogleSigninButton.Size.Wide}
                                             color={GoogleSigninButton.Color.Dark}
-                                            onPress={this._signIn}
+                                            onPress={this.requestUserPermission}
                                             disabled={this.state.isSigninInProgress} 
                                         />
                                     </View>
@@ -251,7 +320,7 @@ constructor(props) {
                                             style={{ width: width * 0.80, height: 48 }}
                                             size={GoogleSigninButton.Size.Wide}
                                             color={GoogleSigninButton.Color.Dark}
-                                            onPress={this._signIn}
+                                            onPress={this.requestUserPermission}
                                             disabled={this.state.isSigninInProgress} 
                                         />
                                     </View>

@@ -18,12 +18,18 @@ export default StyleSheet.create({
     header:{
         padding:30,
         alignItems: 'center',
-        backgroundColor: "#00BFFF",
+        minHeight: 250, 
+        width
     },
     headerTitle:{
-        fontSize:30,
+        fontSize:38,
         color:"#FFFFFF",
-        marginTop:10,
+        backgroundColor: "rgba(0, 0, 0, 0.35)",
+        minWidth: width * 0.85,
+        padding: 15,
+        fontWeight: "bold",
+        marginTop:30,
+        textAlign: 'center'
     },
     name:{
         fontSize:22,
@@ -65,7 +71,7 @@ export default StyleSheet.create({
     },
     name:{
         fontSize:22,
-        color:"#00BFFF",
+        color:"black",
         fontWeight:'600',
         alignSelf:'center',
         marginLeft:10
@@ -77,7 +83,7 @@ export default StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius:30,
-        backgroundColor: "#00BFFF",
+        backgroundColor: "#8884FF",
     },
     shareButtonText:{
         color: "#FFFFFF",

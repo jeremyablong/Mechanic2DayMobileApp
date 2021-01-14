@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { Header, Left, Right, Button, Title, Text as NativeText, Body, ListItem } from 'native-base';
+import { Header, Left, Right, Button, Title, Text as NativeText, Body, ListItem, List } from 'native-base';
 import styles from './styles.js';
 import axios from 'axios';
 import { connect } from "react-redux";
@@ -65,7 +65,7 @@ constructor(props) {
                             deleteModal: true,
                             selected: user.paypal_payment_address
                         })
-                    }} button={true} style={styles.listItem} icon>
+                    }} button={true} style={styles.listItem}>
                         <Left style={{ flexDirection: "row" }}>
                             <TouchableOpacity onPress={() => {}}>
                                 <Image source={require("../../../../assets/icons/paypal-colored.png")} style={styles.paymentIcon} />
@@ -116,6 +116,7 @@ constructor(props) {
                             <Title style={{ paddingTop: 10 }}>Edit your payment methods</Title>
                         </Left>
                     </Header>
+                    <List>
                     <ListItem button={true} onPress={() => {
                         this.props.props.navigation.navigate("add-payment-card");
                     }} style={styles.listItem}>
@@ -159,6 +160,7 @@ constructor(props) {
                             );
                         }
                     }) : null}
+                    </List>
                     {this.renderPaypalEmailAddress()}
                     <View>
                         <Dialog.Container visible={this.state.deleteModal}>

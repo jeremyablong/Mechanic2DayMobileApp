@@ -14,7 +14,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { proposal, other, listinggg } = req.body;
+        const { proposal, other, listinggg, other_user } = req.body;
 
         collection.findOne({ unique_id: proposal.applicant }).then((user) => {
             if (user) {
@@ -26,7 +26,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     agreement_system_date: Date.now(),
                     agreed_amount: proposal.amount,
                     currency: "$ - USD",
-                    other_user_id: other
+                    initiator: other,
+                    other_user,
+                    other_user_agrees_completion: false,
+                    poster_agrees_completion: false
                 };
 
                 if (user.accepted_jobs) {

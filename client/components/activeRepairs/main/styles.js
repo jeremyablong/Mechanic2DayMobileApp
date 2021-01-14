@@ -10,7 +10,7 @@ export default StyleSheet.create({
     },
     container:{
         flex:1,
-        marginTop:20,
+        backgroundColor: "white"
     },
     list: {
         paddingHorizontal: 5,
@@ -56,11 +56,14 @@ export default StyleSheet.create({
         borderColor:"#DCDCDC",
         borderWidth:3,
     },
+    background: {
+        backgroundColor: "white"
+    },
     name:{
         fontSize: 24,
         flex:1,
         alignSelf:'center',
-        color:"#5D576B",
+        color:"blue",
         fontWeight:'bold',
         textDecorationLine: "underline"
     },

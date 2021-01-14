@@ -54,7 +54,8 @@ constructor(props) {
             passedData,
             listing,
             id: this.props.unique_id,
-            fullName: this.props.fullName
+            fullName: this.props.fullName,
+            other_user: passedData.applicant
         }).then((res) => {
             if (res.data.message === "Succesfully notfied other un-selected users and notified selected user!") {
                 console.log(res.data);

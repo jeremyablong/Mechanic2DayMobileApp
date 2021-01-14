@@ -354,7 +354,7 @@ constructor(props) {
         
         if (this.state.showCustomization === true) {
             return (
-                <ScrollView>
+                <ScrollView contentContainerStyle={{ paddingBottom: 125 }}>
                 <View style={{ marginLeft: 20, marginTop: 15 }}>
                     <TouchableOpacity onPress={() => {
                         this.setState({

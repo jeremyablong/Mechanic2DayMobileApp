@@ -19,7 +19,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             passedData,
             listing,
             id, 
-            fullName
+            fullName,
+            other_user
         } = req.body;
 
         collection.findOne({ unique_id: id }).then(async (user) => {
@@ -47,7 +48,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                         agreement_system_date: Date.now(),
                                         agreed_amount: proposal.amount,
                                         currency: "$ - USD",
-                                        other_user_id: id
+                                        initiator: id,
+                                        other_user,
+                                        other_user_agrees_completion: false,
+                                        poster_agrees_completion: false
                                     })
                                 } else {
                                     user["accepted_jobs"] = [{
@@ -57,11 +61,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                         agreement_system_date: Date.now(),
                                         agreed_amount: proposal.amount,
                                         currency: "$ - USD",
-                                        other_user_id: id
+                                        initiator: id,
+                                        other_user,
+                                        other_user_agrees_completion: false,
+                                        poster_agrees_completion: false
                                     }]
                                 }
-
-                                listinggg.applicants_proposals = [];
 
                                 collection.save(user);
 
@@ -69,7 +74,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 axios.post(`${config.get("ngrok_url")}/accept/proposal/individual`, {
                                     proposal,
                                     other: listinggg.poster,
-                                    listinggg
+                                    listinggg,
+                                    other_user
                                 }).then((res) => {
                                     if (res.data) {
                                         console.log(res.data);

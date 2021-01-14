@@ -83,6 +83,15 @@ app.use("/gather/applied/information", require("./routes/activeJobs/gather/gathe
 app.use("/initiate/payment/paypal/3/step", require("./routes/paypal/createOrderDelayed.js"));
 app.use("/update/payments/with/paypal/address", require("./routes/account/payments/payments/create/addPaypalEmailAddress.js"));
 app.use("/delete/paypal/account/email", require("./routes/account/payments/payments/changes/deletePaypalEmailAddress.js"));
+app.use("/capture/paypal/payment/second/step", require("./routes/paypal/capturePayment.js"));
+app.use("/notify/push/notification/email/paypal/other", require("./routes/push-notifications/paypalRelated/notifyOtherRegEmail.js"));
+app.use("/finalize/payment/paypal/vehicle/repair", require("./routes/paypal/finalizePaymentHalf.js"));
+app.use("/accept/job/quality/work/lister", require("./routes/paypal/acceptOtherHalf.js"));
+app.use("/start/listing/location/roadside/assistance", require("./routes/roadsideAssistance/create/createListingLocation.js"));
+app.use("/gather/listings/roadside/assistance", require("./routes/roadsideAssistance/gather/gatherUnfinishedListings.js"));
+app.use("/update/listing/drivers/license/info/roadside/assistance", require("./routes/roadsideAssistance/create/DLinfo.js"));
+app.use("/save/insurance/info/roadside/assistance", require("./routes/roadsideAssistance/create/insuranceInfo.js"));
+
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

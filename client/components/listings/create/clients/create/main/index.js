@@ -74,19 +74,19 @@ constructor(props) {
     renderProgressBarEach = (listing) => {
         switch (listing.page) {
             case 1:
-                return <Progress.Bar progress={0.15} width={300} />;
+                return <Progress.Bar progress={0.15} width={225} />;
                 break;
             case 2:
-                return <Progress.Bar progress={0.3} width={300} />;
+                return <Progress.Bar progress={0.3} width={225} />;
                 break;
             case 3:
-                return <Progress.Bar progress={0.45} width={300} />;
+                return <Progress.Bar progress={0.45} width={225} />;
                 break;
             case 4:
-                return <Progress.Bar progress={0.6} width={300} />;
+                return <Progress.Bar progress={0.6} width={225} />;
                 break;
             case 5:
-                return <Progress.Bar progress={0.85} width={300} />;
+                return <Progress.Bar progress={0.85} width={225} />;
                 break;
             default:
                 break;
@@ -245,7 +245,7 @@ constructor(props) {
                     <Content style={{ padding: 20 }}>
                         <View style={{ margin: 20 }}>
                             <Text style={styles.activeListingText}>In progress</Text>
-                            <Text>These listings aren't active yet and are saved from where you last left off.</Text>
+                            <Text>These listings are ACTIVE and have a mechanic assigned to the task.</Text>
                         </View>
                             {user !== null && _.has(user, "broken_vehicles_listings") ? user.broken_vehicles_listings.map((listing, index) => {
                                 if (listing.live === "active") {
@@ -316,7 +316,7 @@ constructor(props) {
                                     </SkeletonPlaceholder.Item>
                                 </SkeletonPlaceholder.Item>
                                 </SkeletonPlaceholder>}
-                            <View style={{ margin: 20 }}>
+                            <View style={{ margin: 0 }}>
                                 <Text style={styles.activeListingText}>Innactive Listings</Text>
                                 <Text>Inactive listings are listings that are old, removed or deleted.</Text>
                                 <View style={{ marginTop: 15 }} />

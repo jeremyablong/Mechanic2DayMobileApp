@@ -181,6 +181,17 @@ export default StyleSheet.create({
         height: "100%",
         alignItems: "center"
     },
+    centered: {
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center"
+    },
+    customButtonFive: {
+        width: width * 0.75,
+        justifyContent: "center",
+        borderWidth: 2,
+        borderColor: "black"
+    },
     btnBtn: {
         minWidth: "80%",
         justifyContent: "center",

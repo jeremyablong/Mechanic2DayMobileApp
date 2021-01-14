@@ -152,7 +152,7 @@ constructor(props) {
                     <View style={styles.margin}>
                         <Text style={styles.mediumText}>How many reviews must a mechanic have to apply to your listing?</Text>
                         <Picker 
-                            placeholder={"Select your minimum amount of reviews to apply..."} 
+                            placeholder={"Select minimum amount of reviews to apply..."} 
                             placeholderTextColor={"grey"}
                             note
                             mode="dropdown"

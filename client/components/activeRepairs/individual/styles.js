@@ -10,10 +10,13 @@ export default StyleSheet.create({
     },
     container:{
         flex:1,
-        marginTop:20,
+        backgroundColor: "white"
     },
     desc: {
         fontSize: 14
+    },
+    biggerText: {
+        fontSize: 18
     },
     initiatePaymentBtn: {
         width: width * 0.90,
@@ -96,6 +99,28 @@ export default StyleSheet.create({
     columnCustom: {
         flexDirection: "column",
         width: width * 0.75
+    },
+    acceptPaymentBtn: {
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        width: width * 0.75
+    },
+    acceptPaymentBtnTwo: {
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        width: width * 0.75,
+        borderColor: "black",
+        borderWidth: 1,
+        marginTop: 40
+    },
+    payerText: {
+        fontSize: 30,
+        color: "darkblue",
+        textAlign: "center",
+        textDecorationLine: "underline",
+        fontWeight: "bold"
     },
     columnCustomSmaller: {
         flexDirection: "column",

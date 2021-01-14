@@ -25,6 +25,9 @@ const UserSchema =  new mongoose.Schema({
     email: {
         type: String
     },
+    paypal_authorization: {
+        type: Object
+    },
     google_id: {
         type: String
     }, 

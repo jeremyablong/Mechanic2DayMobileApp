@@ -65,7 +65,7 @@ constructor(props) {
                         
                         <View style={styles.rightRight}>
                             <Button onPress={() => {
-                                if (_.has(user, "paypal_payment_address")) {
+                                if (_.has(user, "paypal_payment_address") || this.props.paypal) {
                                     this.props.props.navigation.navigate("create-vehicle-listing-one");
                                 } else {
                                     this.setState({
@@ -152,7 +152,8 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
     return {
-        unique_id: state.auth.authenticated.unique_id
+        unique_id: state.auth.authenticated.unique_id,
+        paypal: state.auth.authenticated.paypal_payment_address
     }
 }
 export default connect(mapStateToProps, { })(PreviewStepsBrokenVehicleListing);

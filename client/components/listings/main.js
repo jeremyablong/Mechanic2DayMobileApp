@@ -59,7 +59,7 @@ constructor(props) {
 
         axios.post(`${Config.ngrok_url}/gather/live/listings/vehicles`).then((res) => {
             if (res.data.message === "Successfully gathered the desired listings!") {
-                console.log(res.data);
+
 
                 const { listings } = res.data;
 
@@ -68,19 +68,22 @@ constructor(props) {
                 const promiseee = new Promise((resolve, reject) => {
                     for (let index = 0; index < sliced_listings.length; index++) {
                         const element = sliced_listings[index];
-
-                        console.log("element", element);
                         
                         if (_.has(element.location, "country")) {
+                            
+
                             const headers = {
                                 params: {
                                     key: Config.mapquest_api_key,
-                                    location: element.location.street
+                                    street: element.location.street, 
+                                    city: element.location.city, 
+                                    state: element.location.state,
+                                    postalCode: element.location.zipCode
                                 }
                             };
         
                             axios.get("http://www.mapquestapi.com/geocoding/v1/address", headers).then((res) => {
-                                console.log(res.data);
+                                
     
                                 if (res.data.results) {
                                     element.location = {
@@ -110,7 +113,6 @@ constructor(props) {
                 })
 
                 promiseee.then((passedData) => {
-                    console.log("passedData sliced_listings", passedData);
 
                     this.setState({
                         listings: passedData
@@ -136,8 +138,6 @@ constructor(props) {
     dragEnd = (position, gestureState) => {
 
         const { draggableRange } = this.state;
-
-        console.log("gestureState", gestureState, "position", position);
         // If panel was moving upwards, do upwards operations
         if (gestureState.vy < 0) {
             // If user moves the panel above middleUp, drag it to the top
@@ -192,7 +192,7 @@ constructor(props) {
         }
     }
     customDragEnd = (position, gestureState) => {
-        console.log("gestureState", gestureState, "position", position);
+        // console.log("gestureState", gestureState, "position", position);
     }
     handleSearchLocationChange = () => {
         console.log("handleSearchLocationChange");
@@ -217,7 +217,6 @@ constructor(props) {
             }
         }
         axios.get(`https://api.tomtom.com/search/2/search/${this.state.searchValue}.json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV&language=en-US`).then((res) => {
-            console.log(res.data);
 
             const { results } = res.data;
 
@@ -229,7 +228,6 @@ constructor(props) {
         })
     }
     componentWillUnmount() {
-        console.log("unmounted.");
 
         this.setState({
             destroyMap: false
@@ -249,7 +247,7 @@ constructor(props) {
                 >
                     {typeof listings !== "undefined" && listings.length > 0 ? listings.map((marker, index) => {
                         return (
-                            <Fragment>
+                            <Fragment key={index}>
                                 <Marker 
                                     coordinate={marker.location} 
                                     title={`${marker.year} ${marker.make} ${marker.model}`} 
@@ -261,30 +259,31 @@ constructor(props) {
                                         this.props.props.navigation.navigate("individual-broken-listing", { listing: marker });
                                     }}
                                 >
-                                    <Callout>
-                                        <View style={styles.callout}>
-                                            <Card style={{ flex: 0 }}>
-                                                <CardItem>
-                                                <Left>
-                                                    <Thumbnail source={{uri: marker.photos[0] }} />
+                                        <Callout onPress={() => {
+                                            this.props.props.navigation.navigate("individual-broken-listing", { listing: marker });
+                                        }}>
+                                            <View style={styles.callout}>
+                                                <Card style={{ flex: 0 }}>
+                                                    <CardItem>
+                                                    <Left>
+                                                        <Thumbnail source={{uri: marker.photos[0] }} />
+                                                        <Body>
+                                                            <NativeText>{`${marker.year} ${marker.make} ${marker.model}`}</NativeText>
+                                                            <NativeText note>{marker.title.slice(0, 60)}{typeof marker.title !== "undefined" && marker.title.length > 60 ? "..." : ""}</NativeText>
+                                                        </Body>
+                                                    </Left>
+                                                    </CardItem>
+                                                    <CardItem>
                                                     <Body>
-                                                        <NativeText>{`${marker.year} ${marker.make} ${marker.model}`}</NativeText>
-                                                        <NativeText note>{marker.title.slice(0, 60)}{typeof marker.title !== "undefined" && marker.title.length > 60 ? "..." : ""}</NativeText>
+                                                        <Image source={{uri: marker.photos[0] }} style={styles.innerPicture}/>
+                                                        <NativeText>
+                                                            {marker.description.slice(0, 120)}{typeof marker.description !== "undefined" && marker.description.length > 120 ? "..." : ""}
+                                                        </NativeText>
                                                     </Body>
-                                                </Left>
-                                                </CardItem>
-                                                <CardItem>
-                                                <Body>
-                                                    <Image source={{uri: marker.photos[0] }} style={styles.innerPicture}/>
-                                                    <NativeText>
-                                                        {marker.description.slice(0, 120)}{typeof marker.description !== "undefined" && marker.description.length > 120 ? "..." : ""}
-                                                    </NativeText>
-                                                </Body>
-                                                </CardItem>
-                                              
-                                            </Card>
-                                        </View>
-                                    </Callout>
+                                                    </CardItem>
+                                                </Card>
+                                            </View>
+                                        </Callout>
                                 </Marker>
                             </Fragment>
                         );
@@ -320,7 +319,7 @@ constructor(props) {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <SlidingUpPanel 
+                {this.state.destroyMap === true ? <SlidingUpPanel 
                     allowDragging={this.state.dragPanel}
                     animatedValue={this.animatedValue}
                     onDragEnd={(position, gestureState) => this.dragEnd(position, gestureState)}
@@ -341,9 +340,8 @@ constructor(props) {
                             <Text style={styles.h3}>Mechanics in Big Bear Lake</Text>
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
                                 {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
-                                    console.log("listing", listing);
                                     return (
-                                        <TouchableOpacity onPress={() => {
+                                        <TouchableOpacity key={index} onPress={() => {
                                             this.props.props.navigation.navigate("individual-broken-listing", { listing });
                                         }} style={styles.listingItem}>
                                             <ImageBackground source={{ uri: listing.photos[0] }} style={styles.wideImage}>
@@ -387,7 +385,7 @@ constructor(props) {
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
                                 {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
                                     return (
-                                        <TouchableOpacity onPress={() => {
+                                        <TouchableOpacity key={index} onPress={() => {
                                             this.props.props.navigation.navigate("individual-broken-listing", { listing });
                                         }} style={styles.listingItem}>
                                             <ImageBackground source={{ uri: listing.photos[0] }} style={styles.wideImage}>
@@ -433,7 +431,7 @@ constructor(props) {
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
                                 {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
                                     return (
-                                        <TouchableOpacity onPress={() => {
+                                        <TouchableOpacity key={index} onPress={() => {
                                             this.props.props.navigation.navigate("individual-broken-listing", { listing });
                                         }} style={styles.listingItem}>
                                             <ImageBackground source={{ uri: listing.photos[0] }} style={styles.wideImage}>
@@ -473,7 +471,7 @@ constructor(props) {
                             </ScrollView>
                         </View>
                     </ScrollView>
-                </SlidingUpPanel>
+                </SlidingUpPanel> : null}
                 <SlidingUpPanel animatedValue={this.animatedValueTwo} ref={c => this._panel_two = c}>
                 <View style={styles.container}>
                     <View style={styles.searchbarContainer}>
@@ -495,7 +493,7 @@ constructor(props) {
                         {typeof results !== 'undefined' && results.length > 0 ? results.map((item, index) => {
                             if (item.type === "Point Address" || item.type === "Geography") {
                                     return (
-                                        <TouchableOpacity style={styles.listItemTwo} onPress={() => {
+                                        <TouchableOpacity key={index} style={styles.listItemTwo} onPress={() => {
                                             this.setState({
                                                 selected: item
                                             }, () => {

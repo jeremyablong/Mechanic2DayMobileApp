@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { View, Text, Image } from 'react-native';
-import { Header, Left, Body, Right, Button, Title, Text as NativeText, ListItem } from 'native-base';
+import { Header, Left, Body, Right, Button, Title, Text as NativeText, ListItem, List } from 'native-base';
 import styles from './styles.js';
 
 const PaymentMainPageHelper =  (props) => {
@@ -10,13 +10,14 @@ const PaymentMainPageHelper =  (props) => {
                 <Header>
                     <Left style={{ flexDirection: "row" }}>
                         <Button onPress={() => {
-                            props.props.navigation.goBack();
+                            props.props.navigation.navigate("profile-main");
                         }} transparent>
                             <Image source={require("../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
                         <Title style={{ paddingTop: 10 }}>Payments & Payouts</Title>
                     </Left>
                 </Header>
+                <List>
                 <ListItem button={true} onPress={() => {
                     props.props.navigation.navigate("payments-cards");
                 }} style={styles.listItem}>
@@ -53,6 +54,7 @@ const PaymentMainPageHelper =  (props) => {
                         <NativeText style={{ color: "darkblue" }}>USD-$</NativeText>
                     </Right>
                 </ListItem>
+                </List>
             </View>
         </Fragment>
     );

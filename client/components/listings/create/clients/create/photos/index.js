@@ -32,7 +32,8 @@ constructor(props) {
         currentIndex: 0,
         selected: null,
         spinner: false,
-        listing: null
+        listing: null,
+        changed: false
     }
 
     this._panResponder = PanResponder.create({
@@ -180,7 +181,8 @@ constructor(props) {
                     const { listing } = res.data;
 
                     this.setState({
-                        spinner: false
+                        spinner: false,
+                        changed: true
                     }, () => {
                         this.props.props.navigation.replace("create-vehicle-listing-four", { listing });
                     })
@@ -200,11 +202,13 @@ constructor(props) {
             })
         })
 
-        setTimeout(() => {
-            this.setState({
-                spinner: false
-            })
-        },  15000);
+        if (this.state.changed === false) {
+            setTimeout(() => {
+                this.setState({
+                    spinner: false
+                })
+            },  15000);
+        }
     }
     render() {
         console.log("this.state. photo index.js", this.state);

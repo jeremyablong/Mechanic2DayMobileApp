@@ -8,6 +8,7 @@ import axios from "axios";
 import { Config } from 'react-native-config';
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from '../../../../components/toastConfig.js';
+import { authenticated } from "../../../../actions/signup/auth.js";
 
 const { width, height } = Dimensions.get("window"); 
 
@@ -29,6 +30,11 @@ constructor(props) {
             }).then((res) => {
                 if (res.data.message === "Successfully updated paypal email!") {
                     console.log(res.data);
+
+                    this.props.authenticated({
+                        ...this.props.authenticatedData, 
+                        paypal_payment_address: paypalEmailAddress
+                    })
 
                     Toast.show({
                         text1: "Successfully updated your PayPal email address!",
@@ -96,7 +102,8 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
     return {
-        unique_id: state.auth.authenticated.unique_id
+        unique_id: state.auth.authenticated.unique_id,
+        authenticatedData: state.auth.authenticated
     }
 }
-export default connect(mapStateToProps, { })(PaypalMenuHelper);
+export default connect(mapStateToProps, { authenticated })(PaypalMenuHelper);

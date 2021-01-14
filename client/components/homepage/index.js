@@ -27,43 +27,43 @@ constructor(props) {
         data: [{
             title: "Engine Jobs",
             description: "Anything related to the main engine functionality",
-            background: require("../../assets/images/car-3.jpg"),
+            background: require("../../assets/images/mech-1.jpg"),
             data: "engine",
             index: 1
         }, { 
             title: "Transmission Jobs",
             description: "Anything related to the exahust of the vehicle/bike",
-            background: require("../../assets/images/car-2.jpg"),
+            background: require("../../assets/images/mech-2.jpg"),
             data: "transmission",
             index: 2
         }, { 
             title: "Maintenance",
             description: "Anything related to the maintenance of a vehicle/bike",
-            background: require("../../assets/images/car-1.jpg"),
+            background: require("../../assets/images/mech-3.jpg"),
             index: 3,
             data: "maintenance"
         }, {
             title: "Exhaust Jobs",
             description: "Anything related to the main engine exhuast",
-            background: require("../../assets/images/car-4.jpg"),
+            background: require("../../assets/images/mech-4.jpg"),
             index: 4,
             data: "exhaust"
         }, { 
             title: "Tire/Breaks Repair",
             description: "Anything related to the wheels/tires of a vehicle/bike",
-            background: require("../../assets/images/car-5.jpg"),
+            background: require("../../assets/images/mech-5.jpg"),
             index: 5,
             data: "tire-breaks-wheels"
         }, {
             title: "Interior Design/Repair",
             description: "Anything related to the interior of a vehicle",
-            background: require("../../assets/images/car-6.jpg"),
+            background: require("../../assets/images/mech-6.jpg"),
             index: 6,
             data: "interior-repair-design"
         }, { 
             title: "Electrical Work",
             description: "Fuses, lights, signals, and the main electrical components of any vehicle",
-            background: require("../../assets/images/car-7.jpg"),
+            background: require("../../assets/images/mech-7.jpg"),
             index: 7,
             data: "electronics/electrical"
         }, {
@@ -87,7 +87,7 @@ constructor(props) {
         }, { 
             title: "Motorcycle & Motorbike",
             description: "Designated specifically for motorbikes & motorcycles repairs and maintenance",
-            background: require("../../assets/images/car-12.jpg"),
+            background: require("../../assets/images/mech-3.jpg"),
             index: 11,
             data: "motorcycle/motorbike"
         }, { 
@@ -136,7 +136,7 @@ constructor(props) {
                     contentContainerStyle={styles.containerStyle}
                     renderBackground={() => {
                         return (
-                            <Image source={require("../../assets/images/car-7.jpg")} style={styles.background} />
+                            <Image source={require("../../assets/images/mech-4.jpg")} style={styles.background} />
                         );
                     }}
                     renderForeground={() => (
@@ -169,7 +169,15 @@ constructor(props) {
                             </View>
                         </View>
                         <View style={styles.mainContent}>
-                           
+                            <View style={[styles.centered, { marginBottom: 25 }]}>
+                            <View style={styles.centered}>
+                                <Button info onPress={() => {
+                                    this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                                }} style={styles.customButtonFive}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
+                                </Button>
+                            </View>
+                            </View>
                             <View>
                                 <Text style={styles.repairText}>Repair Categories</Text>
                                 <Text style={styles.descriptionSmaller}>Browse different vehicle repair categories to find which area fits your needs best!</Text>
@@ -178,7 +186,7 @@ constructor(props) {
                             
                                 <Carousel 
                                     layout={'stack'} 
-                                    layoutCardOffset={`70`}
+                                    layoutCardOffset={70}
                                     ref={(c) => { 
                                         this._carousel = c; 
                                     }}

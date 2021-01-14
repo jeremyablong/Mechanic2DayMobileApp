@@ -91,6 +91,11 @@ constructor(props) {
             } else {
                 return (
                     <Fragment>
+                        <ListItem button={true} onPress={() => {
+                            this.props.props.navigation.navigate("advertise-roadside-assistance-main");
+                        }} style={styles.listItem}>
+                        <Left><NativeText>Advertise Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
+                        </ListItem>
                         <ListItem style={styles.divider} itemDivider>
                         <Left><NativeText>ACCOUNT TYPE (CURRENT TYPE - CLIENT)</NativeText></Left> 
                         </ListItem>  
@@ -138,6 +143,7 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Active Jobs/Repairs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
+                            
                             {this.renderConditionalAuth()}
                             <ListItem style={styles.divider} itemDivider>
                             <Left><NativeText>REFERRALS & CREDITS</NativeText></Left> 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Alert } from 'react-native';
+import { View } from 'react-native';
 import { connect } from "react-redux";
 import IntroSlider from "./components/intro/intro.js";
 import SignupPageOnePage from "./pages/signup/index.js";
@@ -56,6 +56,20 @@ import UserInactivity from 'react-native-user-inactivity';
 import { authenticated, finishedSignup } from "./actions/signup/auth.js";
 import { sendbirdLogin } from "./actions/sendbird/user.js";
 import { switchAccountType } from "./actions/accountType/type.js";
+import Unauthorized from "./components/unauthorized.js";
+import _ from "lodash";
+import OrderDetailsPaypalPaymentPage from "./pages/activeRepairs/orderDetails/details.js";
+import RoadsideAssistanceLandingPage from "./pages/roadsideAssistance/main/roadsideLanding.js";
+import CreateListingMainPage from "./pages/roadsideAssistance/createListing/main/index.js";
+import RoadsideAssistanceAddressPage from "./pages/roadsideAssistance/createListing/create/address/address.js";
+import PreviewRoadsideAssistancePage from "./pages/roadsideAssistance/createListing/create/preview/preview.js";
+import CredentialsCreatePage from "./pages/roadsideAssistance/createListing/create/credentials/creds.js";
+import ManageListingsRoadsideAssistancePage from "./pages/roadsideAssistance/manage/main.js";
+import RoadsideAssistanceInsuranceFormPage from "./pages/roadsideAssistance/createListing/create/insurance/index.js";
+import GeneralInfoRoadsideAssistanceCreatePage from "./pages/roadsideAssistance/createListing/create/general/generalInfo.js";
+
+
+
 
 const Stack = createStackNavigator();
 
@@ -157,13 +171,20 @@ constructor(props) {
 			console.warn(code, message);
 		})
   }
+  calculateRouteLogic = () => {
+    if (typeof this.props.authenticateddd !== "undefined" && this.props.authenticateddd !== null && Object.keys(this.props.authenticateddd).length > 0 && !_.has(this.props.authenticateddd, "page")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   render () {
     console.log("this.props APP.js", this.props);
     return (
       <>
         <View style={{ flex: 1 }}> 
         <UserInactivity
-						timeForInactivity={600000}
+						timeForInactivity={3600000}
 						onAction={isActive => { 
 							console.log("isActive", isActive); 
 
@@ -209,7 +230,7 @@ constructor(props) {
               <Stack.Screen name="view-individual-card-info" component={IndividualCreditDebitCardPage} />
               <Stack.Screen name="credits-coupons" component={CreditsHomepagePage} />
               <Stack.Screen name="view-public-profile-page" component={ViewPublicProfilePage} />
-              <Stack.Screen name="chat-conversations" component={MessagingConversationsPage} />
+              <Stack.Screen name="chat-conversations" component={this.calculateRouteLogic() ? MessagingConversationsPage : Unauthorized} />
               <Stack.Screen name="individual-broken-listing" component={IndividualBrokenVehiclePage} />
               <Stack.Screen name="broken-vehicles-map" component={MapViewAllListingsPage} />
               <Stack.Screen name="mechanic-for-hire-individual" component={MechanicListingPage} />
@@ -226,11 +247,20 @@ constructor(props) {
               <Stack.Screen name="view-preview-listing-vehicle" component={PreviewListingViewPage} />
               <Stack.Screen name="proposals" component={ProposalsListPage} />
               <Stack.Screen name="proposals-individual-view" component={IndividualProposalViewPage} />
-              <Stack.Screen name="active-jobs" component={ActiveJobsMainPage} />
+              <Stack.Screen name="active-jobs" component={this.calculateRouteLogic() ? ActiveJobsMainPage : Unauthorized} />
               <Stack.Screen name="view-individual-agreement" component={ViewIndividualJobPage} />
               <Stack.Screen name="edit-manage-listing-booked" component={ManageActiveRepairPage} />
               <Stack.Screen name="create-payment-paypal" component={PaypalMenuPage} />
               <Stack.Screen name="paypal-web-view-one" component={ApprovalWebLinkPage} />
+              <Stack.Screen name="paypal-view-order-details" component={OrderDetailsPaypalPaymentPage} />
+              <Stack.Screen name="roadside-assistance-main-landing" component={RoadsideAssistanceLandingPage} />
+              <Stack.Screen name="advertise-roadside-assistance-main" component={CreateListingMainPage} />
+              <Stack.Screen name="advertise-create-address" component={RoadsideAssistanceAddressPage} />
+              <Stack.Screen name="advertise-create-address-preview" component={PreviewRoadsideAssistancePage} />
+              <Stack.Screen name="roadside-assistance-create-credentials" component={CredentialsCreatePage} />
+              <Stack.Screen name="roadside-assistance-display-listings" component={ManageListingsRoadsideAssistancePage} />
+              <Stack.Screen name="roadside-assistance-insurance-details" component={RoadsideAssistanceInsuranceFormPage} />
+              <Stack.Screen name="roadside-assistance-general-data" component={GeneralInfoRoadsideAssistanceCreatePage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />
@@ -259,7 +289,7 @@ const mapStateToProps = (state) => {
     } 
   } else {
     return {
-      unique_id: state.auth.authenticated.unique_id,
+      unique_id: null,
       authenticateddd: null
     }
   }

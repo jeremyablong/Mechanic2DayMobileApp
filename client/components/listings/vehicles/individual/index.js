@@ -20,7 +20,6 @@ import { ToastConfig } from "../../../toastConfig.js";
 import { CalendarList } from 'react-native-calendars';
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 
-
 const { width, height  } = Dimensions.get('window');
 
 const title = "Broken exhaust pipe on a 2016 honda civic touring";
@@ -183,10 +182,12 @@ constructor(props) {
                     for (let index = 0; index < listing.applicants_proposals.length; index++) {
                         const proposal = listing.applicants_proposals[index];
                         
-                        if (proposal.applicant === this.props.unique_id) {
-                            this.setState({
-                                applied: true
-                            })
+                        if (Object.keys(this.props.authenticateddd).length > 0 && !_.has(this.props.authenticateddd, "page")) {
+                            if (proposal.applicant === this.props.unique_id) {
+                                this.setState({
+                                    applied: true
+                                })
+                            }
                         }
                     }
                 }
@@ -958,8 +959,6 @@ constructor(props) {
     }
     render() {
         const { reviews, times } = this.state;
-
-        console.log(this.state);
         return (
         <Fragment>
             <Header>
@@ -1154,13 +1153,15 @@ const mapStateToProps = (state) => {
         return {
             authenticated: true,
             unique_id: state.auth.authenticated.unique_id,
-            fullName: state.auth.authenticated.fullName
+            fullName: state.auth.authenticated.fullName,
+            authenticateddd: state.auth.authenticated
         };
     } else {
         return {
             authenticated: false,
             unique_id: state.auth.authenticated.unique_id,
-            fullName: state.auth.authenticated.fullName
+            fullName: state.auth.authenticated.fullName,
+            authenticateddd: {}
         }
     }
 } 
