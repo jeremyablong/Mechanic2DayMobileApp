@@ -7,6 +7,7 @@ import { Config } from 'react-native-config';
 import { connect } from 'react-redux';
 import Gallery from 'react-native-image-gallery';
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 
 const { height, width } = Dimensions.get("window");
@@ -136,9 +137,12 @@ constructor(props) {
                     </Left>
                 </Header>
                 <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 125 }}>
-                <View style={{ margin: 20 }}>
-                    <Text style={{ fontSize: 15, fontWeight: "bold", color: "grey" }}>These are your ACTIVE/PENDING jobs. You have been selected out of a variety of candidates to complete the below jobs! Congrats!</Text>
-                </View>
+                {typeof accepted_jobs !== "undefined" && accepted_jobs.length === 0 && ready === true ? <View style={{ margin: 20 }}>
+                    <Text style={styles.headHead}>You currently do NOT have any pending or open jobs. Apply for some more jobs to get the ball rolling!</Text>
+                </View> : null}
+                {typeof accepted_jobs !== "undefined" && accepted_jobs.length > 0 && ready === true ? <View style={{ margin: 20 }}>
+                    <Text style={styles.headHead}>These are your currently OPEN and ACTIVE jobs!</Text>
+                </View> : null}
                 {ready === true ? <FlatList style={styles.list}
                     contentContainerStyle={styles.listContainer}
                     data={accepted_jobs}
@@ -177,7 +181,70 @@ constructor(props) {
                             </View>
                         </View>
                         )
-                    }}/> : null}
+                    }}/> : <View style={styles.margin}>
+                        <SkeletonPlaceholder>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                            <View style={{ marginLeft: 20 }}>
+                            <View style={{ width: width * 0.60, height: 20, borderRadius: 4 }} />
+                            <View
+                                style={{ marginTop: 6, width: width * 0.45, height: 20, borderRadius: 4 }}
+                            />
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 20 }} />
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                            <View style={{ marginLeft: 20 }}>
+                            <View style={{ width: width * 0.60, height: 20, borderRadius: 4 }} />
+                            <View
+                                style={{ marginTop: 6, width: width * 0.45, height: 20, borderRadius: 4 }}
+                            />
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 20 }} />
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                            <View style={{ marginLeft: 20 }}>
+                            <View style={{ width: width * 0.60, height: 20, borderRadius: 4 }} />
+                            <View
+                                style={{ marginTop: 6, width: width * 0.45, height: 20, borderRadius: 4 }}
+                            />
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 20 }} />
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                            <View style={{ marginLeft: 20 }}>
+                            <View style={{ width: width * 0.60, height: 20, borderRadius: 4 }} />
+                            <View
+                                style={{ marginTop: 6, width: width * 0.45, height: 20, borderRadius: 4 }}
+                            />
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 20 }} />
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                            <View style={{ marginLeft: 20 }}>
+                            <View style={{ width: width * 0.60, height: 20, borderRadius: 4 }} />
+                            <View
+                                style={{ marginTop: 6, width: width * 0.45, height: 20, borderRadius: 4 }}
+                            />
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 20 }} />
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                            <View style={{ marginLeft: 20 }}>
+                            <View style={{ width: width * 0.60, height: 20, borderRadius: 4 }} />
+                            <View
+                                style={{ marginTop: 6, width: width * 0.45, height: 20, borderRadius: 4 }}
+                            />
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 20 }} />
+                        </SkeletonPlaceholder>
+                    </View>}
                 </ScrollView>
             </Fragment>
         )

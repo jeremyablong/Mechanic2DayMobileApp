@@ -8,7 +8,6 @@ import {
     launchImageLibrary
 } from 'react-native-image-picker';
 import Gallery from 'react-native-image-gallery';
-import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 import { ToastConfig } from "../../../../toastConfig.js";
 import Toast from 'react-native-toast-message';
 import axios from "axios";
@@ -130,6 +129,13 @@ constructor(props) {
                     spinner: false
                 })
             })
+            if (this.state.spinner === true) {
+                setTimeout(() => {
+                    this.setState({
+                        spinner: false
+                    })
+                }, 20000);
+            }
         })
     }
     calculateReadiness = () => {
@@ -230,7 +236,7 @@ constructor(props) {
                     </View>
                     {typeof pictures !== 'undefined' && pictures.length > 0 ? <View>
                     <View style={styles.margin}>
-                        <Text style={styles.customText}>Press & hold to remove a photo from the que</Text>
+                        <Text style={styles.customText}>Press & hold to remove a photo from the queue</Text>
                     </View>
                     <Gallery
                         onPageSelected={(index) => {

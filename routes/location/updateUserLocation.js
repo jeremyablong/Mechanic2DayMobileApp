@@ -13,29 +13,25 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { id, passed_id, drivers } = req.body;
+        const { id, location } = req.body;
 
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
 
-                if (user.roadside_assistance_listings) {
-                    for (let index = 0; index < user.roadside_assistance_listings.length; index++) {
-                        const listinggg = user.roadside_assistance_listings[index];
-
-                        if (listinggg.id === passed_id) {
-
-                            listinggg.drivers = drivers;
-                            listinggg.page = 3;
-
-                            collection.save(user);
-
-                            res.json({
-                                message: "Found user and updated DL info!",
-                                listing: listinggg
-                            })
-                        }
-                    }
+                if (user.current_location) {
+                    user.current_location = location;
+                } else {
+                    user["current_location"] = location;
                 }
+
+                console.log("current_location", user.current_location);
+
+                collection.save(user);
+ 
+                res.json({
+                    message: "Successfully updated location",
+                    user
+                })
             } else {
                 res.json({
                     message: "Could not locate the appropriate user..."

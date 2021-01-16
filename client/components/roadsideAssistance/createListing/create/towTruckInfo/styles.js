@@ -8,23 +8,10 @@ export default StyleSheet.create({
         maxWidth: 35, 
         maxHeight: 35
     },
-    customBoxer: {
-        justifyContent: "center",
-        alignItems: "center",
-        alignContent: "center"
-    },
-    listitem: { 
-        width: width * 0.70
-    },
     container: {    
         minHeight: height,
         width,
         backgroundColor: "white"
-    },
-    absoluteRight: {
-        position: "absolute",
-        right: 10,
-        top: 15
     },
     centered: {
         justifyContent: "center",
@@ -34,20 +21,7 @@ export default StyleSheet.create({
     margin: {
         margin: 20
     },
-    selectedCountry: {
-        marginTop: 15,
-        color: "#8884FF",
-        fontWeight: "bold",
-        fontSize: 18
-    },
-    marginTop30: {
-        marginTop: 30
-    },
-    dlText: {
-        fontSize: 18,
-        textAlign: "left"
-    },
-    dateButton: {
+    submitButton: {
         width: width * 0.75,
         justifyContent: "center"
     }

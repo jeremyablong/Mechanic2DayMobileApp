@@ -13,6 +13,9 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+      <!-- <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="YOUR_LICENCE_KEY_HERE" /> -->
+      <service android:name="com.transistorsoft.locationmanager.service.TrackingService" android:foregroundServiceType="location" />
+      <service android:name="com.transistorsoft.locationmanager.service.LocationRequestService" android:foregroundServiceType="location" />
       <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyDAAobUDbCGbHNz4GNzlWZtn-aQ4Y8udXw"/>

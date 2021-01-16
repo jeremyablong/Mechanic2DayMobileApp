@@ -22,7 +22,8 @@ constructor(props) {
         ready: false,
         notification: null,
         index: 0,
-        selected: null
+        selected: null,
+        noContent: false
     }
     this.reference = [];
 }
@@ -37,7 +38,7 @@ constructor(props) {
                 const { notifications } = res.data;
 
                 const promiseee = new Promise((resolve, reject) => {
-                    if (notifications.length > 0) {
+                    if (typeof notifications !== "undefined" && notifications.length > 0) {
                         for (let index = 0; index < notifications.length; index++) {
                             const notification = notifications[index];
                             
@@ -94,6 +95,10 @@ constructor(props) {
                         }
                     } else {
                         resolve();
+
+                        this.setState({
+                            noContent: true
+                        })
                     }
                 })
                 promiseee.then(() => {
@@ -155,7 +160,7 @@ constructor(props) {
         );
     };
     skelatonRender = () => {
-        if (true) {
+        if (this.state.noContent === false) {
             return (
                 <SkeletonPlaceholder>
                     
@@ -177,6 +182,16 @@ constructor(props) {
                     <View style={{ width: width, height: 60 }} />
                     <View style={{ marginTop: 20 }} />
                 </SkeletonPlaceholder>
+            );
+        } else {
+            return (
+                <View style={{ flex: 1 }}>
+                    <List>
+                        <ListItem style={{ minHeight: 100, justifyContent: "center", alignItems: "center", alignContent: "center" }}>
+                            <NativeText style={{ fontSize: 20, color: "blue", fontWeight: "bold", textAlign: "center" }}>You do not have any notifications yet... Check back soon!</NativeText>
+                        </ListItem>
+                    </List>
+                </View>
             );
         }
     }

@@ -8,8 +8,8 @@ export const ToastConfig = {
         return (
                 <BaseToast
                     {...rest}
-                    style={{ borderLeftColor: 'green' }}
-                    contentContainerStyle={{ paddingHorizontal: 15 }}
+                    style={{ borderLeftColor: 'green' , zIndex: 99999999999999999999999999999999999999 }}
+                    contentContainerStyle={{ paddingHorizontal: 15, zIndex: 99999999999999999999999999999999999999 }}
                     text1Style={{
                         fontSize: 16,
                         fontWeight: 'bold'
@@ -26,8 +26,8 @@ export const ToastConfig = {
         return (
             <BaseToast
                 {...rest}
-                style={{ borderLeftColor: 'red' }}
-                contentContainerStyle={{ paddingHorizontal: 15 }}
+                style={{ borderLeftColor: 'red', zIndex: 99999999999999999999999999999999999999 }}
+                contentContainerStyle={{ paddingHorizontal: 15, zIndex: 99999999999999999999999999999999999999 }}
                 text1Style={{
                     fontSize: 16,
                     fontWeight: 'bold'
@@ -44,8 +44,8 @@ export const ToastConfig = {
         return (
             <BaseToast
                 {...rest}
-                style={{ borderLeftColor: 'blue' }}
-                contentContainerStyle={{ paddingHorizontal: 15 }}
+                style={{ borderLeftColor: 'blue', zIndex: 99999999999999999999999999999999999999 }}
+                contentContainerStyle={{ paddingHorizontal: 15, zIndex: 99999999999999999999999999999999999999 }}
                 text1Style={{
                     fontSize: 16,
                     fontWeight: 'bold'

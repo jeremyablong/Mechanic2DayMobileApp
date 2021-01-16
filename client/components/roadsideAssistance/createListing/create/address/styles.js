@@ -13,6 +13,20 @@ export default StyleSheet.create({
         width, 
         backgroundColor: "white"
     },
+    importantInstructional: {
+        fontSize: 16,
+        marginTop: 20
+    },
+    buttonCustom: {
+        width: width * 0.45,
+        justifyContent: "center",
+        marginTop: 25
+    },
+    displayImage: {
+        minWidth: width * 0.95,
+        minHeight: 300,
+        marginTop: 30
+    },
     centered: {
         justifyContent: "center",
         alignItems: "center",

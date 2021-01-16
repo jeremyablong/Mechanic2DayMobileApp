@@ -1,13 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Image, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
-import { Header, Left, Body, Button, Right, Title, Subtitle } from 'native-base';
+import { View, Text, Image, TouchableOpacity, Keyboard, Dimensions, ScrollView } from 'react-native';
+import { Header, Left, Body, Button, Right, Title, Subtitle, Text as NativeText } from 'native-base';
 import styles from './styles.js';
 import Autocomplete from "react-native-autocomplete-input";
-import GetLocation from 'react-native-get-location';
 import axios from "axios";
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 import { Config } from 'react-native-config';
 import { connect } from "react-redux";
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 
 const { width, height } = Dimensions.get("window");
@@ -21,22 +21,63 @@ constructor(props) {
         query: "",
         hideOrNot: true,
         selected: null,
-        full: null
+        full: null,
+        picture: null, 
+        pictureDisplay: null
     }
 }
+    launchCameraRoll = () => {
+        console.log("launchCameraRoll");
+
+        launchImageLibrary({
+            mediaType: "photo",
+            quality: 1,
+            includeBase64: true,
+            saveToPhotos: true
+        }, this.completedCameraRollProcess)
+    }
+    completedCameraRollProcess = (data) => {
+        console.log("completedCameraRollProcess", data);
+        
+        this.setState({
+            picture: data.base64,
+            pictureDisplay: data.uri
+        })
+    }
+    launchCamera = () => {
+        console.log("launchCamera");
+
+        launchCamera({
+            mediaType: "photo",
+            quality: 1,
+            includeBase64: true,
+            saveToPhotos: true
+        }, this.completedLaunchCamera)
+    }
+    completedLaunchCamera = (data) => {
+        console.log("completedLaunchCamera", data);
+
+        this.setState({
+            picture: data.base64,
+            pictureDisplay: data.uri
+        })
+    }
     handleContinuation = () => {
         console.log("handleContinuation clicked.");
 
-        const { full } = this.state;
+        const { full, picture } = this.state;
 
         axios.post(`${Config.ngrok_url}/start/listing/location/roadside/assistance`, {
             location: full,
-            id: this.props.unique_id
+            id: this.props.unique_id,
+            company_image: picture
         }).then((res) => {
             if (res.data.message === "Successfully updated and generated roadside assistance listing!") {
                 console.log(res.data);
                 
-                this.props.props.navigation.replace("roadside-assistance-create-credentials");
+                const { listing } = res.data;
+
+                this.props.props.navigation.replace("roadside-assistance-create-credentials", { listing });
             } else {
                 console.log("err", res.data);
             }
@@ -67,7 +108,7 @@ constructor(props) {
     }
     render() {
         console.log("this.state location create roadside assitance", this.state);
-        const { results, query, selected } = this.state;
+        const { results, query, selected, picture, pictureDisplay } = this.state;
         return (
             <Fragment>
                 <Header>
@@ -83,7 +124,7 @@ constructor(props) {
                         <Subtitle>Create roadside assistance listing</Subtitle>
                     </Body>
                 </Header>
-                <View style={styles.container}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 175 }} style={styles.container}>
                     <View style={styles.margin}>
                         <Text style={styles.header}>Tell us more about your roadside assistance company</Text>
                         <View style={styles.hr} />
@@ -123,9 +164,21 @@ constructor(props) {
                                 <Text style={styles.selectedArea}>Selected Area</Text>
                                 <Text style={styles.selected}>{selected}</Text>
                             </View> : null}
+                            <View style={styles.centered}>
+                                <Text style={styles.importantInstructional}>Select a headliner photo (this photo will be displayed as your company picture) - good things to use are logo's w/backgrounds, shop pictures or anything else.</Text>
+                                <View style={[styles.centered, { flexDirection: "row" }]}>
+                                    <Button info onPress={this.launchCameraRoll} style={[styles.buttonCustom, { marginRight: 3 }]}>
+                                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Select Photo</NativeText>
+                                    </Button>
+                                    <Button onPress={this.launchCamera} style={[styles.buttonCustom, { marginLeft: 3 }]}>
+                                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Take Photo</NativeText>
+                                    </Button>
+                                </View>
+                                {pictureDisplay !== null ? <Image style={styles.displayImage} source={{ uri: pictureDisplay }} /> : null}
+                            </View>
                         </View>
                     </View>
-                </View>
+                </ScrollView>
                 {selected !== null ? <View style={styles.absoluteBottom}>
                     <View style={styles.centered}>
                         <AwesomeButtonRick onPress={this.handleContinuation} width={width * 0.90} type="secondary">Continue</AwesomeButtonRick>

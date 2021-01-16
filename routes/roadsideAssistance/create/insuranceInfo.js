@@ -29,6 +29,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const { policy_number, selected_insurance_policies, insurance_photos, id, listing_id } = req.body;
 
+        const pictures_array = [];
+
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
                 const photos = [];
@@ -39,45 +41,52 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     if (listinggg.id === listing_id) {
                         console.log("match!!", listinggg);
 
-                        for (let indexxxxxxx = 0; indexxxxxxx < insurance_photos.length; indexxxxxxx++) {
+                        const promiseee = new Promise((resolve, reject) => {
+                            for (let indexxxxxxx = 0; indexxxxxxx < insurance_photos.length; indexxxxxxx++) {
 
-                            const generatedID = uuidv4();
-
-                            const photo = insurance_photos[indexxxxxxx];
-
-                            photos.push(generatedID);
-
-                            const bufferImage = new Buffer(photo.replace(/^data:image\/\w+;base64,/, ""),'base64');
-                            
-                            s3.putObject({
-                                Body: bufferImage,
-                                Bucket: "mechanic-mobile-app",
-                                Key: generatedID,
-                                ContentEncoding: 'base64'
-                            }, (errorr, dataaa) => {
-                                if (errorr) {
-                                    console.log(errorr);
-                                }
-                                console.log(dataaa);
-
-                                if ((insurance_photos.length - 1) === indexxxxxxx) {
-
-                                    listinggg.insurance_info = {
-                                        policy_number,
-                                        selected_insurance_policies,
-                                        insurance_proof_images: photos
+                                const generatedID = uuidv4();
+    
+                                const photo = insurance_photos[indexxxxxxx];
+    
+                                photos.push(`https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`);
+    
+                                const bufferImage = new Buffer(photo.replace(/^data:image\/\w+;base64,/, ""),'base64');
+                                
+                                s3.putObject({
+                                    Body: bufferImage,
+                                    Bucket: "mechanic-mobile-app",
+                                    Key: generatedID,
+                                    ContentEncoding: 'base64'
+                                }, (errorr, dataaa) => {
+                                    if (errorr) {
+                                        console.log(errorr);
                                     }
-                                    listinggg.page = 4;
+                                    console.log(dataaa);
 
-                                    collection.save(user);
+                                    pictures_array.push(dataaa);
+    
+                                    if (insurance_photos.length === pictures_array.length) {
+                                        resolve();
+                                    }
+                                });
+                            }
+                        })
 
-                                    res.json({
-                                        message: "Successfully updated listing with insurance information!",
-                                        listing: listinggg
-                                    })
-                                }
-                            });
-                        }
+                        promiseee.then((passedValues) => {
+                            listinggg.insurance_info = {
+                                policy_number,
+                                selected_insurance_policies,
+                                insurance_proof_images: photos
+                            }
+                            listinggg.page = 4;
+
+                            collection.save(user);
+
+                            res.json({
+                                message: "Successfully updated listing with insurance information!",
+                                listing: listinggg
+                            })
+                        })
                     }
                 }
             } else {

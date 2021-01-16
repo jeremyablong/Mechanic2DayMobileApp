@@ -121,6 +121,14 @@ constructor(props) {
                     <Content>
                         <List>
                             <ListItem style={styles.divider} itemDivider>
+                             <Left><NativeText>QUICK LINKS</NativeText></Left>
+                            </ListItem>                    
+                            <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.navigate("homepage-main");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Main Homepage</NativeText></Left><Right><Image source={require("../../../assets/icons/home.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem>
+                            <ListItem style={styles.divider} itemDivider>
                              <Left><NativeText>ACCOUNT SETTINGS</NativeText></Left>
                             </ListItem>                    
                             <ListItem button={true} onPress={() => {

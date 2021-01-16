@@ -48,38 +48,38 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     axios.get(`https://api-m.sandbox.paypal.com/v2/checkout/orders/${accepted_job.paypal_order_id}`, configgg).then((res) => {
                                         console.log(res.data);
             
-                                        const headers = {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${paypal_access_token}`
-                                        };
+                                        // const headers = {
+                                        //     'Content-Type': 'application/json',
+                                        //     'Authorization': `Bearer ${paypal_access_token}`
+                                        // };
                                         
-                                        const dataString = `{}`;
+                                        // const dataString = `{}`;
                                         
-                                        const options = {
-                                            url: `https://api-m.sandbox.paypal.com/v2/checkout/orders/${accepted_job.paypal_order_id}/authorize`,
-                                            method: 'POST',
-                                            headers: headers,
-                                            body: dataString
-                                        };
+                                        // const options = {
+                                        //     url: `https://api-m.sandbox.paypal.com/v2/checkout/orders/order_id/capture`,
+                                        //     method: 'POST',
+                                        //     headers: headers,
+                                        //     body: dataString
+                                        // };
                                         
-                                        const callback = (error, response, body) => {
-                                            if (!error) {
-                                                const parsed = JSON.parse(body);
+                                        // const callback = (error, response, body) => {
+                                        //     if (!error) {
+                                        //         const parsed = JSON.parse(body);
                                 
-                                                console.log("FINAL STEP WORKED!", parsed);
+                                        //         console.log("FINAL STEP WORKED!", parsed);
         
-                                                if ((users.length - 1) === indexxxxxxx) {
-                                                    ressssss.json({
-                                                        message: "Successfully updated one half of agreement!",
-                                                        item: accepted_job
-                                                    })
-                                                }
-                                            } else {
-                                                console.log(error);
-                                            }
-                                        }
+                                        //         if ((users.length - 1) === indexxxxxxx) {
+                                        //             ressssss.json({
+                                        //                 message: "Successfully updated one half of agreement!",
+                                        //                 item: accepted_job
+                                        //             })
+                                        //         }
+                                        //     } else {
+                                        //         console.log(error);
+                                        //     }
+                                        // }
                                         
-                                        request(options, callback); 
+                                        // request(options, callback); 
                                     }).catch((err) => {
                                         console.log(err);
                                     })

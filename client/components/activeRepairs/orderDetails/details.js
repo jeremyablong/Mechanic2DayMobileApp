@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text, Image, ScrollView, Dimensions } from 'react-native';
-import { Header, Left, Button, Title, Text as NativeText } from 'native-base';
+import { Header, Left, Button, Title, Text as NativeText, List, ListItem } from 'native-base';
 import styles from './styles.js';
 import axios from 'axios';
 import { Config } from "react-native-config";
@@ -82,12 +82,20 @@ constructor(props) {
                         <View style={styles.hr} />
                         <Text style={styles.midSized}>Payment Protection: {seller_protection.status}</Text>
                         <View style={styles.hr} />
-                        <Text style={styles.paymentOutter}>Initiated Payment Amount: <Text style={styles.payment}>{amount.value} {amount.currency_code}</Text></Text>
+                        <Text style={styles.paymentOutter}>Initiated Payment Amount: <Text style={styles.payment}>${amount.value} {amount.currency_code}</Text></Text>
                         <View style={styles.hr} />
                         <Text style={[styles.midSizedCustom, { marginTop: 10, textDecorationLine: "underline" }]}>Fee's Breakdown</Text>
-                        <Text style={styles.midSized}>Gross Amount: {`${seller_receivable_breakdown.gross_amount.value} ${seller_receivable_breakdown.gross_amount.currency_code}`}</Text>
-                        <Text style={[styles.midSized, { marginTop: 10 }]}>Net Amount: {`${seller_receivable_breakdown.net_amount.value} ${seller_receivable_breakdown.net_amount.currency_code}`}</Text>
-                        <Text style={[styles.midSized, { marginTop: 10 }]}>PayPal Fee's: {`${seller_receivable_breakdown.paypal_fee.value} ${seller_receivable_breakdown.paypal_fee.currency_code}`}</Text>
+                        <List>
+                            <ListItem>
+                                <NativeText style={styles.midSized}>Gross Amount: {`${seller_receivable_breakdown.gross_amount.value} ${seller_receivable_breakdown.gross_amount.currency_code}`}</NativeText>
+                            </ListItem>
+                            <ListItem>
+                                <NativeText style={styles.midSized}>Net Amount: {`${seller_receivable_breakdown.net_amount.value} ${seller_receivable_breakdown.net_amount.currency_code}`}</NativeText>
+                            </ListItem>
+                            <ListItem>
+                                <NativeText style={styles.midSized}>PayPal Fee's: {`${seller_receivable_breakdown.paypal_fee.value} ${seller_receivable_breakdown.paypal_fee.currency_code}`}</NativeText>
+                            </ListItem>
+                        </List>
                     </Fragment>
                 );
             } else {

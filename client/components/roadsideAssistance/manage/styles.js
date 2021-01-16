@@ -21,6 +21,17 @@ export default StyleSheet.create({
     font15: {
         fontSize: 15
     },
+    title: {
+        fontSize: 25, 
+        fontWeight: "bold", 
+        marginBottom: 15, 
+        textAlign: "center", 
+        color: "#5D576B",
+        textDecorationLine: "underline"
+    },
+    em: {
+        color: "#8884FF"
+    },
     customCard: {
         flex: 0,
         shadowColor: "#000",

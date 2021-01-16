@@ -10,14 +10,17 @@ export default StyleSheet.create({
         height,
         width: "100%",
         resizeMode: "stretch",
-        flex: 1
+        flex: 1,
+        justifyContent: 'center',
+        alignContent: "center",
+        alignItems: "center"
     },
     container: {
         backgroundColor: "rgba(255, 255, 255, 0.6)",
         borderWidth: 2,
         borderColor: "black",
-        position: "absolute",
-        top: 10,
+        // position: "absolute",
+        // top: 10,
         margin: 15,
         shadowColor: "black",
         padding: 20,

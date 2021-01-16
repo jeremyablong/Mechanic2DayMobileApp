@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import { Header, Left, Body, Right, Title, Subtitle, Button, Input, Label, Item, Form, Picker, Icon, Text as NativeText } from 'native-base';
+import { Header, Left, Body, Right, Title, Subtitle, Button, Input, Label, Item, Form, Picker, Icon, ListItem, List, Text as NativeText, Content, Card, CardItem } from 'native-base';
 import styles from './styles.js';
 import CountryPicker from 'react-native-country-picker-modal';
 import DatePicker from 'react-native-date-picker';
@@ -10,6 +10,10 @@ import { ToastConfig } from "../../../../toastConfig.js";
 import axios from "axios";
 import { Config } from "react-native-config";
 import { connect } from "react-redux";
+import SlidingUpPanel from 'rn-sliding-up-panel';
+import moment from "moment";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import uuid from "react-native-uuid";
 
 const { width, height } = Dimensions.get("window");
 
@@ -259,7 +263,8 @@ constructor(props) {
         driversLicenseLastName: "",
         birthdate: null,
         birthModalVisible: false,
-        issueDatePicked: false
+        issueDatePicked: false,
+        drivers: []
     }
 }
     handleCountrySelection = (country) => {
@@ -309,16 +314,10 @@ constructor(props) {
 
         const passed_id = this.props.props.route.params.listing.id;
 
-        const { driversLicenseNumber, country, selectedState, issueDate, driversLicenseFirstName, driversLicenseMiddleName, driversLicenseLastName, birthdate, issueDatePicked } = this.state;
+        const { drivers } = this.state;
 
         axios.post(`${Config.ngrok_url}/update/listing/drivers/license/info/roadside/assistance`, {
-            dl_number: driversLicenseNumber, 
-            dl_country: country, 
-            dl_state: selectedState, 
-            issue_date: issueDate, 
-            dl_first_name: driversLicenseFirstName, 
-            dl_middle_name: driversLicenseMiddleName, 
-            dl_last_name: driversLicenseLastName,
+            drivers,
             id: this.props.unique_id,
             passed_id
         }).then((res) => {
@@ -335,8 +334,53 @@ constructor(props) {
             console.log(err);
         })
     }
+    calculateReadinessMain = () => {
+        const { drivers } = this.state;
+        if (typeof drivers !== "undefined" && drivers.length > 0) {
+            return false;
+        } else {
+            return true;            
+        }
+    }
+    addDriverInformation = () => {
+        console.log("addDriverInformation");
+
+        const { driversLicenseNumber, country, selectedState, issueDate, driversLicenseFirstName, driversLicenseMiddleName, driversLicenseLastName } = this.state;
+
+        this.setState({
+            drivers: [...this.state.drivers, {
+                drivers_license_number: driversLicenseNumber,
+                country,
+                selected_state: selectedState,
+                issue_date_unformatted: issueDate,
+                issue_date: moment(issueDate).format("dddd, MMMM Do YYYY"),
+                drivers_license_first_name: driversLicenseFirstName,
+                drivers_license_last_name: driversLicenseLastName,
+                drivers_license_middle_name: driversLicenseMiddleName,
+                id: uuid.v4()
+            }],
+            driversLicenseFirstName: "",
+            driversLicenseLastName: "",
+            driversLicenseMiddleName: "",
+            country: null,
+            selectedState: "",
+            issueDate: new Date(),
+            driversLicenseNumber: ""
+        }, () => {
+            this._panel.hide();
+        })
+    }
+    deleteItem = (driver) => {
+        this.setState({
+            drivers: this.state.drivers.filter((item) => {
+                if (item.id !== driver.id) {
+                    return item;
+                }
+            })
+        })
+    }
     render() {
-        const { country } = this.state;
+        const { country, drivers } = this.state;
         console.log("credentials creds.js roadside state", this.state);
 
         console.log("this.PROPIES", this.props);
@@ -350,106 +394,193 @@ constructor(props) {
                             <Image source={require("../../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
                     </Left>
-                    <Body style={{ left: -80 }}>
+                    <Body style={{ left: 0 }}>
                         <Title>Driver's license</Title>
                         <Subtitle>License & more...</Subtitle>
                     </Body>
-               
+                    <Right>
+                        <Button transparent onPress={() => {
+                            this._panel.show();
+                        }}>
+                            <Image source={require("../../../../../assets/icons/plus.png")} style={styles.headerIcon} />
+                        </Button>
+                    </Right>
                 </Header>
-                
                 <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 125 }}>
-                    <View style={styles.margin}>
-                        <Form>
-                            <CountryPicker preferredCountries={["US"]} withAlphaFilter={false} withCurrency={true} withCallingCode={true} onSelect={this.handleCountrySelection}/>
-                            {country !== null ? <Text style={styles.selectedCountry}>You've selected {country.name}</Text> : null}
-                            <Item style={{ width: width * 0.775 }} floatingLabel>
-                                <Label>Drivers License Number</Label>
-                                <Input keyboardType={"numeric"} onChangeText={(value) => {
-                                    this.setState({
-                                        driversLicenseNumber: value
-                                    })
-                                }} value={this.state.driversLicenseNumber} />
-                            </Item>
-                            <View style={{ marginTop: 30 }}>
-                                <Picker
-                                    mode="dropdown"
-                                    iosHeader="Select your state"
-                                    iosIcon={<Icon name="arrow-down" />} 
-                                    placeholder={"Select your state"}
-                                    placeholderTextColor={"grey"}
-                                    style={{ width: width * 0.90 }}
-                                    selectedValue={this.state.selectedState}
-                                    onValueChange={this.onStateChange}
-                                >
-                                    {states.map((state, index) => {
-                                        return <Picker.Item key={index} label={state.name} value={state.name} />;
-                                    })}
-                                </Picker>
+                    <View style={{ backgroundColor: "white", padding: 20 }}>
+                        <Text style={{ fontSize: 14 }}>Click the icon at the top right in the header to add new drivers or click the button below</Text>
+                        <View style={styles.centered}>
+                            <View style={styles.centered}>
+                                <Button info onPress={() => {
+                                    this._panel.show();
+                                }} style={[styles.dateButton, { marginTop: 25 }]}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Add New Driver</NativeText>
+                                </Button>
                             </View>
-                            <View style={styles.marginTop30}>
-                                <View style={styles.centered}>
-                                <View style={styles.centered}>
-                                    <Button onPress={() => {
-                                        this.setState({
-                                            isVisible: true
-                                        })
-                                    }} style={styles.dateButton}>
-                                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Select DL Issue Date</NativeText>
-                                    </Button>
-                                </View>
-                                </View>
-                            </View>
-                            <View style={styles.marginTop30}>
-                                <Item style={{ width: width * 0.775 }} floatingLabel>
-                                    <Label>DL First Name</Label>
-                                    <Input onChangeText={(value) => {
-                                        this.setState({
-                                            driversLicenseFirstName: value
-                                        })
-                                    }} value={this.state.driversLicenseFirstName} />
-                                </Item>
-                                <Item style={{ width: width * 0.775 }} floatingLabel>
-                                    <Label>DL Middle Name</Label>
-                                    <Input onChangeText={(value) => {
-                                        this.setState({
-                                            driversLicenseMiddleName: value
-                                        })
-                                    }} value={this.state.driversLicenseMiddleName} />
-                                </Item>
-                                <Item style={{ width: width * 0.775 }} floatingLabel>
-                                    <Label>DL Last Name</Label>
-                                    <Input onChangeText={(value) => {
-                                        this.setState({
-                                            driversLicenseLastName: value
-                                        })
-                                    }} value={this.state.driversLicenseLastName} />
-                                </Item>
-                            </View>
-                            <View style={styles.marginTop30}>
-                                <View style={styles.centered}>
-                                <View style={styles.centered}>
-                                    {this.calculateReadiness() ? <Button light onPress={() => {
-                                        Toast.show({
-                                            text1: "Complete each field before continuing..",
-                                            text2: "All fields are required and need to be filled out before proceeding",
-                                            type: "error",
-                                            visibilityTime: 4500,
-                                            position: "bottom"
-                                        })
-                                    }} style={styles.dateButton}>
-                                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Continue To Next Page</NativeText>
-                                    </Button> : <Button success onPress={() => {
-                                        this.handleFinalSubmission();
-                                    }} style={styles.dateButton}>
-                                        <NativeText style={{ color: "white", fontWeight: "bold" }}>Continue To Next Page</NativeText>
-                                    </Button>}
-                                </View>
-                                </View>
-                            </View>
-                        </Form>
+                        </View>
+                        <View>
+                            <Content padder>
+                                {typeof drivers !== "undefined" && drivers.length > 0 ? drivers.map((driver, index) => {
+                                    return (
+                                        <Card key={index}>
+                                            <CardItem header bordered>
+                                            <Text>{`${driver.drivers_license_first_name} ${driver.drivers_license_middle_name} ${driver.drivers_license_last_name}`}</Text>
+                                            <Right><TouchableOpacity onPress={() => {
+                                                this.deleteItem(driver);
+                                            }}><Image source={require("../../../../../assets/icons/trash.png")} style={{ maxWidth: 40, maxHeight: 40}} /></TouchableOpacity></Right>
+                                            </CardItem>
+                                            <CardItem bordered>
+                                            <Body>
+                                                <Text>
+                                                    <List>
+                                                        <ListItem style={styles.listitem}>
+                                                            <Text>DL Issue Date: {driver.issue_date}</Text>
+                                                        </ListItem>
+                                                        <ListItem style={styles.listitem}>
+                                                            <Text>DL State: {driver.selected_state}</Text>
+                                                        </ListItem>
+                                                        <ListItem style={styles.listitem}>
+                                                            <Text>DL Country: {driver.country.name}</Text>
+                                                        </ListItem>
+                                                       
+                                                    </List>
+                                                </Text>
+                                            </Body>
+                                            </CardItem>
+                                            <CardItem footer bordered>
+                                                <Text>DL Number: {driver.drivers_license_number}</Text>
+                                            </CardItem>
+                                        </Card>
+                                    );
+                                }) : null}
+                            </Content>
+                        </View>
                     </View>
-                    
+                    <View style={styles.customBoxer}>
+                        <View style={styles.centered}>
+                            <View style={styles.centered}>
+                                {this.calculateReadinessMain() ? <Button light onPress={() => {
+                                    Toast.show({
+                                        text1: "Complete each field before continuing..",
+                                        text2: "All fields are required and need to be filled out before proceeding",
+                                        type: "error",
+                                        visibilityTime: 4500,
+                                        position: "bottom"
+                                    })
+                                }} style={styles.dateButton}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Continue To Next Page</NativeText>
+                                </Button> : <Button success onPress={this.handleFinalSubmission} style={styles.dateButton}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Continue To Next Page</NativeText>
+                                </Button>}
+                            </View>
+                        </View>
+                    </View>
                 </ScrollView>
+
+                <SlidingUpPanel allowDragging={false} ref={c => this._panel = c}>
+                    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 125, paddingTop: 50 }}>
+                        <KeyboardAwareScrollView>
+                        <View style={styles.margin}>
+                            <Form>
+                                <CountryPicker preferredCountries={["US"]} withAlphaFilter={false} withCurrency={true} withCallingCode={true} onSelect={this.handleCountrySelection}/>
+                                {country !== null ? <Text style={styles.selectedCountry}>You've selected {country.name}</Text> : null}
+                                <Item style={{ width: width * 0.775 }} floatingLabel>
+                                    <Label>Drivers License Number</Label>
+                                    <Input keyboardType={"numeric"} onChangeText={(value) => {
+                                        this.setState({
+                                            driversLicenseNumber: value
+                                        })
+                                    }} value={this.state.driversLicenseNumber} />
+                                </Item>
+                                <View style={{ marginTop: 30 }}>
+                                    <Picker
+                                        mode="dropdown"
+                                        iosHeader="Select your state"
+                                        iosIcon={<Icon name="arrow-down" />} 
+                                        placeholder={"Select your state"}
+                                        placeholderTextColor={"grey"}
+                                        style={{ width: width * 0.90 }}
+                                        selectedValue={this.state.selectedState}
+                                        onValueChange={this.onStateChange}
+                                    >
+                                        {states.map((state, index) => {
+                                            return <Picker.Item key={index} label={state.name} value={state.name} />;
+                                        })}
+                                    </Picker>
+                                </View>
+                                <View style={styles.marginTop30}>
+                                    <View style={styles.centered}>
+                                    <View style={styles.centered}>
+                                        <Button onPress={() => {
+                                            this.setState({
+                                                isVisible: true
+                                            })
+                                        }} style={styles.dateButton}>
+                                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Select DL Issue Date</NativeText>
+                                        </Button>
+                                    </View>
+                                    </View>
+                                </View>
+                                <View style={styles.marginTop30}>
+                                    <Item style={{ width: width * 0.775 }} floatingLabel>
+                                        <Label>DL First Name</Label>
+                                        <Input onChangeText={(value) => {
+                                            this.setState({
+                                                driversLicenseFirstName: value
+                                            })
+                                        }} value={this.state.driversLicenseFirstName} />
+                                    </Item>
+                                    <Item style={{ width: width * 0.775 }} floatingLabel>
+                                        <Label>DL Middle Name</Label>
+                                        <Input onChangeText={(value) => {
+                                            this.setState({
+                                                driversLicenseMiddleName: value
+                                            })
+                                        }} value={this.state.driversLicenseMiddleName} />
+                                    </Item>
+                                    <Item style={{ width: width * 0.775 }} floatingLabel>
+                                        <Label>DL Last Name</Label>
+                                        <Input onChangeText={(value) => {
+                                            this.setState({
+                                                driversLicenseLastName: value
+                                            })
+                                        }} value={this.state.driversLicenseLastName} />
+                                    </Item>
+                                </View>
+                            </Form>
+                        </View>
+                        <View style={[styles.centered, { marginBottom: 30 }]}>
+                            <View style={styles.centered}>
+                                {this.calculateReadiness() ? <Button light onPress={() => {
+                                    Toast.show({
+                                        text1: "Complete each field before continuing..",
+                                        text2: "All fields are required and need to be filled out before proceeding",
+                                        type: "error",
+                                        visibilityTime: 4500,
+                                        position: "bottom"
+                                    })
+                                }} style={styles.dateButton}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Add Driver</NativeText>
+                                </Button> : <Button success onPress={() => {
+                                    this.addDriverInformation();
+                                }} style={styles.dateButton}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Add Driver</NativeText>
+                                </Button>}
+                            </View>
+                        </View>
+                        <View style={styles.centered}>
+                            <View style={styles.centered}>
+                                <Button danger onPress={() => {
+                                    this._panel.hide();
+                                }} style={styles.dateButton}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Close/Exit</NativeText>
+                                </Button>
+                            </View>
+                        </View>
+                        </KeyboardAwareScrollView>
+                    </ScrollView>
+                </SlidingUpPanel>
+                
                 <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <View>
                 <Modal onBackdropPress={() => {

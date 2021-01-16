@@ -40,22 +40,22 @@ class PreviewRoadsideAssistanceHelper extends Component {
                     <List>
                         <ListItem style={{ minHeight: 55 }}>
                             <Left>
-                                <NativeText style={styles.normalFont}>Details (description of services)</NativeText>
+                                <NativeText style={styles.normalFont}>Details (Driver's License Info)</NativeText>
                             </Left>
                         </ListItem>
                         <ListItem style={{ minHeight: 55 }}>
                             <Left>
-                                <NativeText style={styles.normalFont}>Specifications of tow truck</NativeText>
+                                <NativeText style={styles.normalFont}>Insurance Information</NativeText>
                             </Left>
                         </ListItem>
                         <ListItem style={{ minHeight: 55 }}>
                             <Left>
-                                <NativeText style={styles.normalFont}>Photos</NativeText>
+                                <NativeText style={styles.normalFont}>General Details (Company details)</NativeText>
                             </Left>
                         </ListItem>
                         <ListItem style={{ minHeight: 55 }}>
                             <Left>
-                                <NativeText style={styles.normalFont}>Title</NativeText>
+                                <NativeText style={styles.normalFont}>Pricing</NativeText>
                             </Left>
                         </ListItem>
                         <ListItem style={{ minHeight: 55 }}>

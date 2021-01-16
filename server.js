@@ -91,6 +91,13 @@ app.use("/start/listing/location/roadside/assistance", require("./routes/roadsid
 app.use("/gather/listings/roadside/assistance", require("./routes/roadsideAssistance/gather/gatherUnfinishedListings.js"));
 app.use("/update/listing/drivers/license/info/roadside/assistance", require("./routes/roadsideAssistance/create/DLinfo.js"));
 app.use("/save/insurance/info/roadside/assistance", require("./routes/roadsideAssistance/create/insuranceInfo.js"));
+app.use("/update/listing/roadside/assistance/general/details", require("./routes/roadsideAssistance/create/generalDetails.js"));
+app.use("/update/pricing/services/roadside/assistance", require("./routes/roadsideAssistance/create/pricing.js"));
+app.use("/submit/vehicle/details/roadside/assistance", require("./routes/roadsideAssistance/create/vehicleDetails.js"));
+app.use("/gather/roadside/assistance/listings", require("./routes/roadsideAssistance/gather/gatherListingsAll.js"));
+app.use("/update/location/geo", require("./routes/location/updateUserLocation.js"));
+
+
 
 
 app.get('*', function(req, res) {

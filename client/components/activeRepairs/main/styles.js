@@ -12,6 +12,13 @@ export default StyleSheet.create({
         flex:1,
         backgroundColor: "white"
     },
+    headHead: {
+        fontSize: 24, 
+        fontWeight: "bold", 
+        color: "darkblue", 
+        textAlign: "center", 
+        textDecorationLine: "underline"
+    },
     list: {
         paddingHorizontal: 5,
         backgroundColor:"#E6E6E6"
@@ -25,6 +32,9 @@ export default StyleSheet.create({
         backgroundColor:"white",
         flexBasis: '46%',
         marginHorizontal: 5,
+    },
+    margin: {
+        margin: 20
     },
     cardFooter: {
         paddingVertical: 17,

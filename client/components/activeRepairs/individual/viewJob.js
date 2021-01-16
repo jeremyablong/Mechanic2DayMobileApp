@@ -40,7 +40,8 @@ constructor(props) {
         approveLink: null,
         showDialog: false,
         showOrderDetails: false,
-        item: null
+        item: null,
+        initiator: null
     }
 }
     componentDidMount() {
@@ -136,7 +137,7 @@ constructor(props) {
         }, 500);
 
         axios.post(`${Config.ngrok_url}/gather/general/info`, {
-            id: this.props.unique_id
+            id: this.props.props.route.params.item.initiator
         }).then((res) => {
             if (res.data.message === "Found user!") {
                 console.log(res.data);
@@ -273,8 +274,8 @@ constructor(props) {
     callHost = () => {
         console.log("callHost clicked");
 
-        if (_.has(this.state.other_user.phoneNumber[0], "unformatted")) {
-            Linking.openURL(`tel:${this.state.other_user.phoneNumber[0].unformatted}`);
+        if (_.has(this.state.user.phoneNumber[0], "unformatted")) {
+            Linking.openURL(`tel:${this.state.user.phoneNumber[0].unformatted}`);
         } else {
             Toast.show({
                 text1: "User has not submitted a phone number yet.",
@@ -519,6 +520,19 @@ constructor(props) {
             console.log(err);
         })
     }
+    callMechanic = () => {
+        if (_.has(this.state.other_user.phoneNumber[0], "unformatted")) {
+            Linking.openURL(`tel:${this.state.other_user.phoneNumber[0].unformatted}`);
+        } else {
+            Toast.show({
+                text1: "User has not submitted a phone number yet.",
+                text2: "Please message this user for their phone number as they have no previously provided it.",
+                type: "error",
+                visibilityTime: 4500,
+                position: "bottom"
+            })
+        }
+    }
     renderMainContent = () => {
         const { user, other_user, selfLink, approveLink, updateLink, captureLink, item } = this.state;
 
@@ -544,7 +558,7 @@ constructor(props) {
                                 <Text>Directions</Text>
                             </TouchableOpacity>
                             {itemmm.initiator === this.props.unique_id ? <TouchableOpacity onPress={() => {
-                                    
+                                this.callMechanic();
                             }} style={styles.column}>
                                 <Image source={require('../../../assets/icons/engine.png')} style={styles.iconIcon} />
                                 <Text>Call Mechanic</Text>
@@ -559,11 +573,11 @@ constructor(props) {
                         </View>
                         <View style={[styles.hr, { top: -100, marginBottom: 20 }]} />
                         {itemmm.initiator === this.props.unique_id ? <View style={styles.paymentButton}>
-                            <AwesomeButtonRick onPress={() => {
+                            <AwesomeButtonRick textColor={"black"} onPress={() => {
                                 this.RBSheet.open();
                             }} width={width * 0.85} type="secondary">Manage Payments / Deposit</AwesomeButtonRick>
                         </View> : <View style={styles.paymentButton}>
-                            <AwesomeButtonRick onPress={() => {
+                            <AwesomeButtonRick textColor={"black"} onPress={() => {
                                 this.RBSheetTwo.open();
                             }} width={width * 0.85} type="secondary">Check for deposited funds</AwesomeButtonRick>
                         </View>}

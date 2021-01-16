@@ -47,17 +47,18 @@ export default StyleSheet.create({
     overlayyy: {
         position: 'absolute', 
         top: 0, 
+        padding: 10,
         left: 0, 
         right: 0, 
         bottom: 0, 
         margin: 15,
         justifyContent: 'center', 
         alignItems: 'center',
-        backgroundColor: "rgba(0, 0, 0, 0.25)"
+        backgroundColor: "rgba(0, 0, 0, 0.45)"
     },
     item: {
         width: width - 70,
-        height: width - 175,
+        height: width - 125,
     },
     imageContainer: {
         flex: 1,

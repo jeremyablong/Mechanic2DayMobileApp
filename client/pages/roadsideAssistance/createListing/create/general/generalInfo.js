@@ -4,7 +4,7 @@ import GeneralInfoRoadsideAssistanceCreateHelper from "../../../../../components
 const GeneralInfoRoadsideAssistanceCreatePage = (props) => {
     return (
         <Fragment>
-            <RoadsideAssistanceInsuranceFormHelper props={props} />
+            <GeneralInfoRoadsideAssistanceCreateHelper props={props} />
         </Fragment>
     );
 }

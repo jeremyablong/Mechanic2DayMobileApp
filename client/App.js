@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from "react-redux";
+import axios from "axios";
+import { Config } from "react-native-config";
 import IntroSlider from "./components/intro/intro.js";
 import SignupPageOnePage from "./pages/signup/index.js";
 import VerifyCodeEmailPage from "./pages/signup/verifyEmailCode/verify.js";
@@ -67,20 +69,23 @@ import CredentialsCreatePage from "./pages/roadsideAssistance/createListing/crea
 import ManageListingsRoadsideAssistancePage from "./pages/roadsideAssistance/manage/main.js";
 import RoadsideAssistanceInsuranceFormPage from "./pages/roadsideAssistance/createListing/create/insurance/index.js";
 import GeneralInfoRoadsideAssistanceCreatePage from "./pages/roadsideAssistance/createListing/create/general/generalInfo.js";
-
-
-
+import PricingRoadsideAssistanceListingPage from "./pages/roadsideAssistance/createListing/create/pricing/pricing.js";
+import TowVehicleDetailsRoadsideAssistancePage from "./pages/roadsideAssistance/createListing/create/towTruckInfo/towVehicle.js";
+import BackgroundGeolocation from "react-native-background-geolocation";
 
 const Stack = createStackNavigator();
 
 const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
 
-
-
 class App extends Component {
 constructor(props) {
   super(props);
   
+
+  this.state = {
+    count: 0,
+    interval: 0
+  }
 }
 
   getStartingPage = () => {
@@ -123,7 +128,166 @@ constructor(props) {
       }
     }
   }
+  handleWalkingUpdate = (location) => {
+    console.log("walking", location);
+  }
+  handleDrivingLocationUpdate = (location) => {
+    console.log("handleDrivingLocationUpdate", location);
+
+    axios.post(`${Config.ngrok_url}/update/location/geo`, {
+      id: this.props.unique_id,
+      location
+    }).then((res) => {
+      if (res.data.message === "Successfully updated location") {
+        console.log(res.data);
+
+        this.setState({
+          count: 0
+        })
+      } else {
+        console.log("err", res.data);
+        this.setState({
+          count: 0
+        })
+      }
+    }).catch((err) => {
+      console.log(err);
+
+      this.setState({
+        count: 0
+      })
+    })
+  }
+  //  componentWillUnmount() {
+  //     BackgroundGeolocation.removeListeners();
+  // }
+  onLocation = (location) => {
+    console.log('[location] -', location);
+
+    console.log(location.coords.speed);
+
+    if (this.props.unique_id !== null) {
+      this.setState((prevState, props) => ({
+        count: prevState.count + 1
+      }), () => {
+        if (location.coords.speed < 4) {
+          // run only every 12 cycles
+          console.log("run only every 4 cycles")
+          if (this.state.count === 4) {
+            this.handleDrivingLocationUpdate(location);
+          }
+        } else if (4 <= location.coords.speed && location.coords.speed <= 9) {
+          // run only every 9 cycles
+          console.log("run only every 5 cycles")
+          if (this.state.count === 5) {
+            this.handleDrivingLocationUpdate(location);
+          }
+        } else if (10 <= location.coords.speed && location.coords.speed <= 15) {
+          console.log("run only every 6 cycles")
+          if (this.state.count === 6) {
+            this.handleDrivingLocationUpdate(location);
+          }
+          // run only every 8 cycles
+        } else if (16 <= location.coords.speed && location.coords.speed <= 25) {
+          console.log("run only every 7 cycles")
+          // run only every 6 cycles
+          if (this.state.count === 7) {
+            this.handleDrivingLocationUpdate(location);
+          }
+        } else {
+          console.log("run only every 8 cycles", this.state.count);
+  
+          if (this.state.count === 8) {
+            this.handleDrivingLocationUpdate(location);
+          }
+          // run only every 4 cycles
+        }
+      });
+    }
+  }
+  onError = (error) => {
+    console.warn('[location] ERROR -', error);
+  }
+  onActivityChange = (event) => {
+    console.log('[activitychange] -', event);  // eg: 'on_foot', 'still', 'in_vehicle'
+
+    switch (event.activity) {
+      case "still": 
+        // do nothing
+        this.setState({
+          interval: 0
+        })
+        break;
+      case "on_foot":
+        this.setState({
+          interval: 8
+        })
+        break;
+      case "in_vehicle": 
+        this.setState({
+          interval: 4
+        })
+      default:
+        break;
+    }
+  }
+  onProviderChange = (provider) => {
+    console.log('[providerchange] -', provider.enabled, provider.status);
+  }
+  onMotionChange = (event) => {
+    console.log('[motionchange] -', event.isMoving, event.location);
+  }
   async componentDidMount () {
+
+    // This handler fires whenever bgGeo receives a location update.
+    BackgroundGeolocation.onLocation(this.onLocation, this.onError);
+
+    // This handler fires when movement states changes (stationary->moving; moving->stationary)
+    BackgroundGeolocation.onMotionChange(this.onMotionChange);
+
+    // This event fires when a change in motion activity is detected
+    BackgroundGeolocation.onActivityChange(this.onActivityChange);
+
+    // This event fires when the user toggles location-services authorization
+    BackgroundGeolocation.onProviderChange(this.onProviderChange);
+
+    ////
+    // 2.  Execute #ready method (required)
+    //
+    BackgroundGeolocation.ready({
+      // Geolocation Config
+      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
+      distanceFilter: 10,
+      // Activity Recognition
+      stopTimeout: 1,
+      // Application config
+      debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+      stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
+      startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
+      // HTTP / SQLite config
+      url: 'http://yourserver.com/locations',
+      batchSync: false,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
+      autoSync: true,         // <-- [Default: true] Set true to sync each location to server as it arrives.
+      headers: {              // <-- Optional HTTP headers
+        "X-FOO": "bar"
+      },
+      params: {               // <-- Optional HTTP params
+        "auth_token": "maybe_your_server_authenticates_via_token_YES?"
+      }
+    }, (state) => {
+      
+      console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
+
+      if (!state.enabled) {
+        ////
+        // 3. Start tracking!
+        //
+        BackgroundGeolocation.start(function() {
+          console.log("- Start success");
+        });
+      }
+    });
 
     const fcmToken = await messaging().getToken();
 
@@ -179,7 +343,7 @@ constructor(props) {
     }
   }
   render () {
-    console.log("this.props APP.js", this.props);
+    console.log("this.state APP.js", this.state);
     return (
       <>
         <View style={{ flex: 1 }}> 
@@ -261,6 +425,8 @@ constructor(props) {
               <Stack.Screen name="roadside-assistance-display-listings" component={ManageListingsRoadsideAssistancePage} />
               <Stack.Screen name="roadside-assistance-insurance-details" component={RoadsideAssistanceInsuranceFormPage} />
               <Stack.Screen name="roadside-assistance-general-data" component={GeneralInfoRoadsideAssistanceCreatePage} />
+              <Stack.Screen name="roadside-assistance-pricing" component={PricingRoadsideAssistanceListingPage} />
+              <Stack.Screen name="roadside-assistance-vehicle-information-tow" component={TowVehicleDetailsRoadsideAssistancePage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />

@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMotionUsageDescription</key>
+	<string>Accelermeter use increases battery effienceny by inteliigently toggling location tracking</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Background tracking required</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -51,7 +57,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>We need to access your camera to upload pictures</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>We need to use your location to proivde better services</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need to access your microphone to record video content</string>
 	<key>NSPhotoLibraryUsageDescription</key>

@@ -22,15 +22,16 @@ export default StyleSheet.create({
         fontSize: 18
     },
     payment: {
-        color: "red",
+        color: "blue",
         fontSize: 30,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textDecorationLine: "underline"
     },
     paymentOutter: {
         fontSize: 30
     },
     midSizedCustomRed: {
-        color: "#8884FF", 
+        color: "#5D576B", 
         fontWeight: "bold", 
         marginTop: 15,
         fontSize: 34,
