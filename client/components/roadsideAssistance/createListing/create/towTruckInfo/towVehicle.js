@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { View, Image, Text, ScrollView } from 'react-native';
-import { Header, Left, Body, Button, Title, Subtitle, Text as NativeText, Picker, Form, Item, Label, Input } from 'native-base';
+import { View, Image, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Header, Left, Body, Button, Title, Subtitle, Text as NativeText, Picker, Form, Item, Label, Input, Right, Card, CardItem, List, ListItem } from 'native-base';
 import styles from './styles.js';
 import { Config } from "react-native-config";
 import { connect } from "react-redux";
 import axios from "axios";
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../../toastConfig.js";
+import uuid from "react-native-uuid";
 
 const colors = ["blue", "green", "beige", "brown", "black", "orange", "purple", "red", "yellow", "purple", "pink", "grey"];
 
@@ -28,7 +29,8 @@ constructor(props) {
         selectedTrim: "",
         selectedEngine: "",
         selectedColor: "",
-        manually: false
+        manually: false,
+        carList: []
     }
 }
     calculateMakes = () => {
@@ -98,9 +100,9 @@ constructor(props) {
         })
     }
     calculateReadiness = () => {
-        const { selectedYear, selectedMake, selectedModel, selectedTrim, selectedTransmission, selectedColor } = this.state;
+        const { carList } = this.state;
 
-        if ((typeof selectedYear !== "undefined" && selectedYear.length > 0) && (typeof selectedMake !== "undefined" && selectedMake.length > 0) && (typeof selectedModel !== "undefined" && selectedModel.length > 0) && (typeof selectedColor !== "undefined" && selectedColor.length > 0)) {
+        if (typeof carList !== "undefined" && carList.length > 0) {
             return false;
         } else {
             return true;
@@ -141,17 +143,12 @@ constructor(props) {
 
         const passed_data = this.props.props.route.params.listing;
 
-        const { selectedYear, selectedMake, selectedModel, selectedTrim, selectedTransmission, selectedColor } = this.state;
+        const { carList } = this.state;
 
         axios.post(`${Config.ngrok_url}/submit/vehicle/details/roadside/assistance`, {
             id: this.props.unique_id,
-            year: selectedYear, 
-            make: selectedMake, 
-            model: selectedModel, 
-            trim: selectedTrim, 
-            transmission: selectedTransmission,
-            passed_data_id: passed_data.id, 
-            vehicle_color: selectedColor
+            vehicle_list: carList,
+            passed_data_id: passed_data.id
         }).then((res) => {
             if (res.data.message === "Successfully updated listing vehicle information!") {
                 console.log(res.data);
@@ -185,9 +182,40 @@ constructor(props) {
             position: "top"
         })
     }
+    deleteItem = (passedCar) => {
+        this.setState({
+            carList: this.state.carList.filter((car) => {
+                if (car.id !== passedCar.id) {
+                    return car;
+                }
+            })
+        })
+    }
+    addToList = () => {
+        const { selectedYear, selectedMake, selectedModel, selectedColor, selectedTrim, selectedEngine, selectedTransmission } = this.state;
+        this.setState({
+            carList: [...this.state.carList, {
+                selected_year: selectedYear,
+                selected_make: selectedMake,
+                selected_model: selectedModel,
+                selected_color: selectedColor,
+                selected_trim: selectedTrim.length > 0 ? selectedTrim : null,
+                selected_engine: selectedEngine.length > 0 ? selectedEngine : null,
+                selected_transmission: selectedTransmission.length > 0 ? selectedTransmission : null,
+                id: uuid()
+            }],
+            selectedYear: "",
+            selectedModel: "",
+            selectedTrim: "",
+            selectedTransmission: "",
+            selectedEngine: "",
+            selectedColor: "",
+            selectedMake: ""
+        })
+    }
     renderScrollViewContent = () => {
 
-        const { engines, manually, transmissions, trims, makes, years, models } = this.state;
+        const { engines, manually, transmissions, trims, makes, years, models, selectedYear, selectedModel, selectedMake, selectedColor, carList, selectedEngine, selectedTransmission } = this.state;
 
         if (manually === false) {
             return (
@@ -334,16 +362,66 @@ constructor(props) {
                                 })} 
                             </Picker> : null}
                         </View>
-                        <View style={styles.centered}>
+                        <View style={[styles.centered, { marginBottom: 25 }]}>
                             <View style={styles.centered}>
                                 <Button warning onPress={() => {
                                     this.setState({
-                                        manually: true
+                                        manually: true,
+                                        selectedModel: "",
+                                        selectedTrim: "",
+                                        selectedTransmission: "",
+                                        selectedEngine: "",
                                     })
                                 }} style={styles.submitButton}>
                                     <NativeText style={{ fontWeight: "bold", color: "white" }}>I can't find my vehicle</NativeText>
                                 </Button>
                             </View>
+                        </View>
+                        {(typeof selectedYear !== "undefined" && selectedYear.length > 0) && (typeof selectedModel !== "undefined" && selectedModel.length > 0) && (selectedMake !== "undefined" && selectedMake.length > 0) && (typeof selectedColor !== "undefined" && selectedColor.length > 0) ? <View style={styles.centered}>
+                            <View style={[styles.centered, { marginTop: 20 }]}>
+                                <Button info onPress={() => {
+                                    this.addToList();
+                                }} style={styles.submitButton}>
+                                    <NativeText style={{ fontWeight: "bold", color: "white" }}>Submit Vehicle</NativeText>
+                                </Button>
+                            </View>
+                        </View> : null}
+                        <View style={styles.centered}>
+                            {typeof carList !== "undefined" && carList.length > 0 ? carList.map((car, index) => {
+                                return (
+                                    <Card style={styles.specialCard} key={index}>
+                                        <CardItem header bordered>
+                                            <Text>{`${car.selected_year} ${car.selected_make}`}</Text>
+                                            <Right><TouchableOpacity onPress={() => {
+                                                this.deleteItem(car);
+                                            }}><Image source={require("../../../../../assets/icons/trash.png")} style={{ maxWidth: 40, maxHeight: 40}} /></TouchableOpacity></Right>
+                                        </CardItem>
+                                        <CardItem bordered>
+                                        <Body>
+                                            <Text>
+                                                <List>
+                                                    <ListItem style={styles.listitem}>
+                                                        <Text>Model: {car.selected_model}</Text>
+                                                    </ListItem>
+                                                    {car.selected_engine != null ?<ListItem style={styles.listitem}>
+                                                        <Text>Engine: {car.selected_engine}</Text>
+                                                    </ListItem> : null}
+                                                    {car.selected_transmission !== null ? <ListItem style={styles.listitem}>
+                                                        <Text>Transmission: {car.selected_transmission}</Text>
+                                                    </ListItem> : null}
+                                                    {car.selected_trim !== null ? <ListItem style={styles.listitem}>
+                                                        <Text>Trim: {car.selected_trim}</Text>
+                                                    </ListItem> : null}
+                                                </List>
+                                            </Text>
+                                        </Body>
+                                        </CardItem>
+                                        <CardItem footer bordered>
+                                            <Text>Color: {car.selected_color}</Text>
+                                        </CardItem>
+                                    </Card>
+                                );
+                            }) : null}
                         </View>
                     </View>
             );
@@ -420,7 +498,7 @@ constructor(props) {
                             </Form> : null}
                         </View>
                        
-                        <View style={styles.centered}>
+                        <View style={[styles.centered, { marginBottom: 25 }]}>
                             <View style={styles.centered}>
                                 <Button warning onPress={() => {
                                     this.setState({
@@ -431,6 +509,52 @@ constructor(props) {
                             </Button>
                         </View>
                     </View>
+                    </View>
+                    {(typeof selectedYear !== "undefined" && selectedYear.length > 0) && (typeof selectedModel !== "undefined" && selectedModel.length > 0) && (selectedMake !== "undefined" && selectedMake.length > 0) && (typeof selectedColor !== "undefined" && selectedColor.length > 0) ? <View style={styles.centered}>
+                        <View style={[styles.centered, { marginTop: 20 }]}>
+                            <Button info onPress={() => {
+                                this.addToList();
+                            }} style={styles.submitButton}>
+                                <NativeText style={{ fontWeight: "bold", color: "white" }}>Submit Vehicle</NativeText>
+                            </Button>
+                        </View>
+                    </View> : null}
+                    <View style={styles.centered}>
+                    {typeof carList !== "undefined" && carList.length > 0 ? carList.map((car, index) => {
+                            return (
+                                <Card style={styles.specialCard} key={index}>
+                                    <CardItem header bordered>
+                                        <Text>{`${car.selected_year} ${car.selected_make}`}</Text>
+                                        <Right><TouchableOpacity onPress={() => {
+                                            this.deleteItem(car);
+                                        }}><Image source={require("../../../../../assets/icons/trash.png")} style={{ maxWidth: 40, maxHeight: 40}} /></TouchableOpacity></Right>
+                                    </CardItem>
+                                    <CardItem bordered>
+                                    <Body>
+                                        <Text>
+                                            <List>
+                                                <ListItem style={styles.listitem}>
+                                                    <Text>Model: {car.selected_model}</Text>
+                                                </ListItem>
+                                                {car.selected_engine != null ?<ListItem style={styles.listitem}>
+                                                    <Text>Engine: {car.selected_engine}</Text>
+                                                </ListItem> : null}
+                                                {car.selected_transmission !== null ? <ListItem style={styles.listitem}>
+                                                    <Text>Transmission: {car.selected_transmission}</Text>
+                                                </ListItem> : null}
+                                                {car.selected_trim !== null ? <ListItem style={styles.listitem}>
+                                                    <Text>Trim: {car.selected_trim}</Text>
+                                                </ListItem> : null}
+                                            </List>
+                                        </Text>
+                                    </Body>
+                                    </CardItem>
+                                    <CardItem footer bordered>
+                                        <Text>Color: {car.selected_color}</Text>
+                                    </CardItem>
+                                </Card>
+                            );
+                        }) : null}
                     </View>
                 </View>
             );
@@ -448,10 +572,17 @@ constructor(props) {
                             <Image source={require("../../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
                     </Left>
-                    <Body style={{ left: -80 }}>
+                    <Body style={{ left: 0 }}>
                         <Title>Tow Vehicle Info</Title>
                         <Subtitle>We need to collect your vehicle details...</Subtitle>
                     </Body>
+                    <Right>
+                        <Button transparent onPress={() => {
+                            
+                        }}>
+                            <Image source={require("../../../../../assets/icons/plus.png")} style={styles.headerIcon} />
+                        </Button>
+                    </Right>
                 </Header>
                 <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <ScrollView style={{ zIndex: 1 }} contentContainerStyle={{ paddingBottom: 100 }}>

@@ -40,7 +40,11 @@ constructor(props) {
             if (res.data.message === "Successfully deleted the desired card!") {
                 console.log(res.data);
 
-                this.props.props.navigation.push("payments-cards");
+                this.setState({
+                    deleteModal: false
+                }, () => {
+                    this.props.props.navigation.push("payments-cards");
+                })
             } else {
                 console.log("err", res.data);
             }

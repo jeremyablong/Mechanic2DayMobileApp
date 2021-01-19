@@ -222,6 +222,9 @@ constructor(props) {
                         </Form>
                     </View>
                     <View>
+                    <View style={styles.margin}>
+                        <Text style={{ fontSize: 18 }}>Please upload pictures of your insurance information</Text>
+                    </View>
                     <View style={styles.row}>
                         <View style={styles.column}>
                             <Button onPress={this.launchCamera} style={[styles.cameraButton, { marginRight: 5 }]} info>

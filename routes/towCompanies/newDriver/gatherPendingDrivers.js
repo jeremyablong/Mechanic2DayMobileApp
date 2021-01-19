@@ -7,35 +7,22 @@ const cors = require('cors');
 
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.post("/", (req, res) => {
+    router.get("/", (req, res) => {
 
         const database = db.db("<dbname>");
 
         const collection = database.collection("users");
 
-        const { id } = req.body;
+        const { id } = req.query;
 
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
-
-                delete user.phoneNumber;
-                delete user.address;
-                delete user.birthdate;
-                delete user.password;
-                delete user.email;
-                delete user.wholeAddress;
-                delete user.card_payment_methods;
-                // delete user.broken_vehicles_listings;
-                delete user.firebasePushNotificationToken;
-                delete user.notifications;
-                delete user.applied_jobs;
-                delete user.paypal_authorization;
-                delete user.phoneNumberAuth;
-                delete user.authyID;
+                
+                console.log("user", user);
 
                 res.json({
-                    message: "Gathered user's data!",
-                    user
+                    message: "Gathered Pending Drivers!",
+                    drivers: user.tow_truck_drivers
                 })
             } else {
                 res.json({

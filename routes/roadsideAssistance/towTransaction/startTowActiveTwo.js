@@ -4,7 +4,7 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-const { decrypt } = require("../../../../../crypto.js");
+
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
@@ -13,26 +13,32 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { id, card } = req.body;
-
-        console.log(card);
+        const { initial_location, id, roadside_service_required } = req.body;
 
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
 
-                for (let index = 0; index < user.card_payment_methods.length; index++) {
-                    const individual = user.card_payment_methods[index];
-                    if (decrypt(individual.card_number) === decrypt(card.card_number)) {
-                        user.card_payment_methods.splice(index, 1);
-
-                        collection.save(user);
-
-                        res.json({
-                            message: "Successfully deleted the desired card!",
-                            cards: user.card_payment_methods
-                        })
-                    }
+                const new_data = {
+                    initial_location, 
+                    initiator: id, 
+                    roadside_service_required,
+                    tow_required: false
                 }
+
+                if (user.towing_services_start) {
+                    user.towing_services_start = new_data;
+                } else {
+                    user["towing_services_start"] = new_data;
+                }
+
+                console.log("user.towing_services_start", user.towing_services_start);
+                
+                collection.save(user);
+
+                res.json({
+                    message: "Started tow process!",
+                    tow_services: user.towing_services_start
+                })
             } else {
                 res.json({
                     message: "Could not locate the appropriate user..."

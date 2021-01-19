@@ -17,37 +17,37 @@ constructor(props) {
         choices: [{
             towPrice: 49.99,
             tier: "Tier 1",
-            perMileFee: 2.49,
+            perMileFee: 0.49,
             index: 0
         }, {
             towPrice: 74.99,
-            perMileFee: 3.49,
+            perMileFee: 1.49,
             tier: "Tier 2",
             index: 1
         }, {
             towPrice: 99.99,
             tier: "Tier 3",
-            perMileFee: 4.49,
+            perMileFee: 2.49,
             index: 2
         }, {
             towPrice: 124.99,
             tier: "Tier 4",
-            perMileFee: 5.49,
+            perMileFee: 3.49,
             index: 3
         }, {
             towPrice: 149.99,
             tier: "Tier 5",
-            perMileFee: 6.49,
+            perMileFee: 4.49,
             index: 4
         }, {
             towPrice: 174.99,
             tier: "Tier 6",
-            perMileFee: 7.49,
+            perMileFee: 5.49,
             index: 5
         }, {
             towPrice: 199.99,
             tier: "Tier 7",
-            perMileFee: 8.49,
+            perMileFee: 6.49,
             index: 6
         }],
         selected: null,

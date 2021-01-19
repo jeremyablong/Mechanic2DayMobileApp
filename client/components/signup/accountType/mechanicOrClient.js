@@ -116,6 +116,19 @@ const CreateAccountTypeHelper = (props) => {
             console.log("Failed", "No token received");
         }
     }
+    const redirecToNextPageDriver = (selection) => {
+        console.log("redirecToNextPageDriver clicked");
+
+        props.authenticated({
+            ...props.previous,
+                accountType: selection,
+                page: 6
+        });
+
+        setTimeout(() => {
+            props.props.navigation.navigate("associate-to-tow-company");
+        }, 500);
+    }
     return (
         <Fragment>
             <ImageBackground source={require("../../../assets/images/white-wood.jpg")} style={styles.container}>
@@ -132,6 +145,17 @@ const CreateAccountTypeHelper = (props) => {
                             continueToNextPage("client");
                         }} style={styles.submitBtn}>
                             <NativeText style={{ color: "black" }}>I'm looking to repair my vehicle</NativeText>
+                        </Button>
+                        <Button bordered onPress={() => {
+                            // continueToNextPage("tow-truck-driver");
+                            redirecToNextPageDriver("tow-truck-driver");
+                        }} style={styles.submitBtn}>
+                            <NativeText style={{ color: "black" }}>I'm a tow truck driver</NativeText>
+                        </Button>
+                        <Button bordered dark onPress={() => {
+                            continueToNextPage("tow-truck-company");
+                        }} style={styles.submitBtn}>
+                            <NativeText style={{ color: "black" }}>I'm a tow truck company (businesses only)</NativeText>
                         </Button>
                     </View>
                     <View style={styles.bottom}>

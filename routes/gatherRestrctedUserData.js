@@ -29,6 +29,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 delete user.firebasePushNotificationToken;
                 delete user.notifications;
                 delete user.applied_jobs;
+                delete user.authyID;
+                delete user.paypal_authorization;
+                delete user.phoneNumberAuth;
 
                 res.json({
                     message: "Gathered user's data!",

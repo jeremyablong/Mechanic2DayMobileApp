@@ -6,22 +6,15 @@ const { height, width } = Dimensions.get("window");
 export default StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: '#DCDCDC',
-    },
-    accountImage: {
-        maxWidth: 125,
-        minWidth: 125, 
-        minHeight: 125,
-        maxHeight: 125
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
     },
     backBackground: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: "center",
+        paddingTop: 100,
         backgroundColor: "white",
-        height: height * 0.90,
+        height: height * 0.60,
         width,
         padding: 20,
         shadowColor: "black",
@@ -36,7 +29,13 @@ export default StyleSheet.create({
     },
     bottom: {
         position: "absolute",
-        bottom: 10
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        bottom: 10,
+        left: 0,
+        right: 0,
+        zIndex: -1
     },
     goBack: {
         fontSize: 22,
@@ -47,12 +46,21 @@ export default StyleSheet.create({
         fontSize: 22,
         textAlign: "center"
     },
-    submitBtn: {
-        minWidth: "100%",
-        justifyContent: "center",
-        marginTop: 20
-    },
     center: {
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
+    listItemTwo: {
+        backgroundColor: "white",
+        paddingTop: 5,
+        minHeight: 50
+    },
+    inputContainer: {
+        width: width * 0.90,
+        marginTop: 15
+    },
+    centered: {
         justifyContent: "center",
         alignItems: "center",
         alignContent: "center"

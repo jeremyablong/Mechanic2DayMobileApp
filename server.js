@@ -96,8 +96,13 @@ app.use("/update/pricing/services/roadside/assistance", require("./routes/roadsi
 app.use("/submit/vehicle/details/roadside/assistance", require("./routes/roadsideAssistance/create/vehicleDetails.js"));
 app.use("/gather/roadside/assistance/listings", require("./routes/roadsideAssistance/gather/gatherListingsAll.js"));
 app.use("/update/location/geo", require("./routes/location/updateUserLocation.js"));
-
-
+app.use("/gather/mechanics", require("./routes/mechanics/gatherAllMechanics.js"));
+app.use("/start/tow/service/start/finish", require("./routes/roadsideAssistance/towTransaction/startTowActiveOne.js"));
+app.use("/start/tow/service/start/finish/two", require("./routes/roadsideAssistance/towTransaction/startTowActiveTwo.js"));
+app.use("/take/payment/paypal/capture", require("./routes/paypal/tow/takePaymentInitial.js"));
+app.use("/gather/all/companies/display/tow", require("./routes/towCompanies/gatherAllTowCompanies.js"));
+app.use("/associate/and/notify/tow/company", require("./routes/towCompanies/newDriver/newDriverRequest.js"));
+app.use("/gather/tow/drivers/pending", require("./routes/towCompanies/newDriver/gatherPendingDrivers.js"));
 
 
 app.get('*', function(req, res) {

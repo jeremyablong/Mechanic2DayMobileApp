@@ -91,11 +91,6 @@ constructor(props) {
             } else {
                 return (
                     <Fragment>
-                        <ListItem button={true} onPress={() => {
-                            this.props.props.navigation.navigate("advertise-roadside-assistance-main");
-                        }} style={styles.listItem}>
-                        <Left><NativeText>Advertise Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
-                        </ListItem>
                         <ListItem style={styles.divider} itemDivider>
                         <Left><NativeText>ACCOUNT TYPE (CURRENT TYPE - CLIENT)</NativeText></Left> 
                         </ListItem>  
@@ -115,7 +110,9 @@ constructor(props) {
         }
     }
     renderConditional = () => {
-        if (this.state.mechanic) {
+        const { user } = this.state;
+        
+        if (user !== null) {
             return (
                 <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
                     <Content>
@@ -151,7 +148,16 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Active Jobs/Repairs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
-                            
+                            {user.accountType === "tow-truck-company" ? <ListItem button={true} onPress={() => {
+                            this.props.props.navigation.navigate("advertise-roadside-assistance-main");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Advertise Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem> : null}
+                            {user.accountType === "tow-truck-company" ?  <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.navigate("manage-tow-drivers");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Manage Tow Drivers</NativeText></Left><Right><Image source={require("../../../assets/icons/tow-truck.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem> : null}
                             {this.renderConditionalAuth()}
                             <ListItem style={styles.divider} itemDivider>
                             <Left><NativeText>REFERRALS & CREDITS</NativeText></Left> 
@@ -222,6 +228,7 @@ constructor(props) {
     render() {
         const firstName = "Jeremy";
 
+        console.log("this.state profile main.js", this.state);
         return (
             <Fragment>
                 <View style={styles.topContainer}>

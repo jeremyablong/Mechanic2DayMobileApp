@@ -13,29 +13,32 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { id } = req.body;
+        const { initial_location, id, tow_destination, tow_information } = req.body;
 
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
 
-                delete user.phoneNumber;
-                delete user.address;
-                delete user.birthdate;
-                delete user.password;
-                delete user.email;
-                delete user.wholeAddress;
-                delete user.card_payment_methods;
-                // delete user.broken_vehicles_listings;
-                delete user.firebasePushNotificationToken;
-                delete user.notifications;
-                delete user.applied_jobs;
-                delete user.paypal_authorization;
-                delete user.phoneNumberAuth;
-                delete user.authyID;
+                const new_data = {
+                    initial_location, 
+                    initiator: id, 
+                    tow_destination, 
+                    tow_desination_information: tow_information,
+                    tow_required: true
+                }
+
+                if (user.towing_services_start) {
+                    user.towing_services_start = new_data;
+                } else {
+                    user["towing_services_start"] = new_data;
+                }
+
+                console.log("user.towing_services_start", user.towing_services_start);
+                
+                collection.save(user);
 
                 res.json({
-                    message: "Gathered user's data!",
-                    user
+                    message: "Started tow process!",
+                    tow_services: user.towing_services_start
                 })
             } else {
                 res.json({

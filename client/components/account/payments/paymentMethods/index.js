@@ -124,13 +124,14 @@ constructor(props) {
                             <NativeText style={{ color: "darkblue" }}>Add payment method</NativeText>
                         </Left>
                     </ListItem>
+                    
                     {typeof cards !== "undefined" && cards.length > 0 ? cards.map((card, index) => {
                         console.log(card);
                         if (card.type === "master-card") {
                             return (
                                 <ListItem onPress={() => {
                                     this.props.props.navigation.push("view-individual-card-info", { card });
-                                }} button={true} style={styles.listItem} icon>
+                                }} button={true} style={styles.listItem}>
                                     <Left style={{ flexDirection: "row" }}>
                                         <TouchableOpacity onPress={() => {}}>
                                             <Image source={require("../../../../assets/icons/mastercard.png")} style={styles.paymentIcon} />
@@ -146,7 +147,7 @@ constructor(props) {
                             return (
                                 <ListItem onPress={() => {
                                     this.props.props.navigation.push("view-individual-card-info", { card });
-                                }} button={true} style={styles.listItem} icon>
+                                }} button={true} style={styles.listItem}>
                                     <Left style={{ flexDirection: "row" }}>
                                         <TouchableOpacity onPress={() => {}}>
                                             <Image source={require("../../../../assets/icons/visa.png")} style={styles.paymentIcon} />

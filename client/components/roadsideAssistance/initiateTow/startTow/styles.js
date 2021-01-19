@@ -8,9 +8,9 @@ export default StyleSheet.create({
         maxWidth: 35, 
         maxHeight: 35
     },
-    container: {    
+    container: {
         minHeight: height,
-        width,
+        width, 
         backgroundColor: "white"
     },
     centered: {
@@ -18,14 +18,23 @@ export default StyleSheet.create({
         alignItems: "center",
         alignContent: "center"
     },
-    margin: {
-        margin: 20
-    },
-    submitButton: {
+    customButton: {
         width: width * 0.75,
         justifyContent: "center"
     },
-    specialCard: {
-        minWidth: width * 0.85
+    margin: {
+        margin: 20
+    },
+    header: {
+        fontSize: 20
+    },
+    map: {
+        width: "100%",
+        height: height * 0.40,
+        marginTop: 20
+    },
+    topBottomMargin: {
+        marginTop: 15, 
+        marginBottom: 15
     }
 })

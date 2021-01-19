@@ -13,7 +13,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { id, year, make, model, trim, transmission, passed_data_id, vehicle_color } = req.body;
+        const { id, vehicle_list, passed_data_id } = req.body;
 
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
@@ -22,14 +22,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     const listing = user.roadside_assistance_listings[index];
                     if (listing.id === passed_data_id) {
 
-                        listing.tow_vehicle_info = {
-                            year: year.length > 0 ? year : null, 
-                            make: make.length > 0 ? make : null, 
-                            model: model.length > 0 ? model : null,  
-                            trim: trim.length > 0 ? trim : null, 
-                            transmission: transmission.length > 0 ? transmission : null, 
-                            color: vehicle_color
-                        };
+                        listing.tow_trucks_information = vehicle_list;
 
                         listing.page = "COMPLETE";
 

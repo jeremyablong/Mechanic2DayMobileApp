@@ -72,6 +72,10 @@ import GeneralInfoRoadsideAssistanceCreatePage from "./pages/roadsideAssistance/
 import PricingRoadsideAssistanceListingPage from "./pages/roadsideAssistance/createListing/create/pricing/pricing.js";
 import TowVehicleDetailsRoadsideAssistancePage from "./pages/roadsideAssistance/createListing/create/towTruckInfo/towVehicle.js";
 import BackgroundGeolocation from "react-native-background-geolocation";
+import StartTwoServicesOnePage from "./pages/roadsideAssistance/initiateTow/startTow/startOne.js";
+import AssociateDriverPage from "./pages/signup/associate/associateDriver.js";
+import TowCompanyManageDriversPage from "./pages/towCompany/manage/index.js";
+
 
 const Stack = createStackNavigator();
 
@@ -427,6 +431,9 @@ constructor(props) {
               <Stack.Screen name="roadside-assistance-general-data" component={GeneralInfoRoadsideAssistanceCreatePage} />
               <Stack.Screen name="roadside-assistance-pricing" component={PricingRoadsideAssistanceListingPage} />
               <Stack.Screen name="roadside-assistance-vehicle-information-tow" component={TowVehicleDetailsRoadsideAssistancePage} />
+              <Stack.Screen name="initialize-tow-two" component={StartTwoServicesOnePage} />
+              <Stack.Screen name="associate-to-tow-company" component={AssociateDriverPage} />
+              <Stack.Screen name="manage-tow-drivers" component={TowCompanyManageDriversPage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />

@@ -17,6 +17,14 @@
 		62E3042617028B5A2D41F406 /* libPods-client.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81F840DD4A80EEDBC386D0E0 /* libPods-client.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8C3C9422E802CA8F55F244FD /* libPods-client-clientTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F5111EDA0EE06C192C67B91 /* libPods-client-clientTests.a */; };
+		902C1E2625B4B55C00D937D2 /* multipleSimulators.config in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E2525B4B55C00D937D2 /* multipleSimulators.config */; };
+		902C1E2725B4B55C00D937D2 /* multipleSimulators.config in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E2525B4B55C00D937D2 /* multipleSimulators.config */; };
+		902C1E2825B4B55C00D937D2 /* multipleSimulators.config in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E2525B4B55C00D937D2 /* multipleSimulators.config */; };
+		902C1E2925B4B55C00D937D2 /* multipleSimulators.config in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E2525B4B55C00D937D2 /* multipleSimulators.config */; };
+		902C1E3325B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */; };
+		902C1E3425B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */; };
+		902C1E3525B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */; };
+		902C1E3625B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */; };
 		9087472625A17DB8005E82FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9087472525A17DB7005E82FE /* GoogleService-Info.plist */; };
 		9087472725A17DB8005E82FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9087472525A17DB7005E82FE /* GoogleService-Info.plist */; };
 		9087472825A17DB8005E82FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9087472525A17DB7005E82FE /* GoogleService-Info.plist */; };
@@ -70,6 +78,8 @@
 		81F840DD4A80EEDBC386D0E0 /* libPods-client.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-client.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		844987255FF040F88100137B /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		8875BE6083F83C71D52E44A0 /* libPods-client-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-client-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		902C1E2525B4B55C00D937D2 /* multipleSimulators.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = multipleSimulators.config; path = ../../../../.Trash/multipleSimulators.config; sourceTree = "<group>"; };
+		902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = multipleSimulatorStartup.sh; path = ../../../../.Trash/multipleSimulatorStartup.sh; sourceTree = "<group>"; };
 		9087472525A17DB7005E82FE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9087482F25A18C4A005E82FE /* client.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = client.entitlements; path = client/client.entitlements; sourceTree = "<group>"; };
 		95BDAD25A1A30FF8AFF8C20F /* Pods-client-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-client-tvOS.release.xcconfig"; path = "Target Support Files/Pods-client-tvOS/Pods-client-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -182,6 +192,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */,
+				902C1E2525B4B55C00D937D2 /* multipleSimulators.config */,
 				13B07FAE1A68108700A75B9A /* client */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* clientTests */,
@@ -279,6 +291,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				3A9DF7A6FDFFB8E91125685B /* [CP] Copy Pods Resources */,
 				0B964943D909AAA37C6446E0 /* [CP-User] [RNFB] Core Configuration */,
+				902C1E3B25B4B5EB00D937D2 /* multiple simulators */,
 			);
 			buildRules = (
 			);
@@ -381,6 +394,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				902C1E2725B4B55C00D937D2 /* multipleSimulators.config in Resources */,
+				902C1E3425B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */,
 				9087472725A17DB8005E82FE /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,6 +404,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				902C1E2625B4B55C00D937D2 /* multipleSimulators.config in Resources */,
+				902C1E3325B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				9087472625A17DB8005E82FE /* GoogleService-Info.plist in Resources */,
@@ -399,8 +416,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				902C1E2825B4B55C00D937D2 /* multipleSimulators.config in Resources */,
 				2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */,
 				9087472825A17DB8005E82FE /* GoogleService-Info.plist in Resources */,
+				902C1E3525B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +427,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				902C1E2925B4B55C00D937D2 /* multipleSimulators.config in Resources */,
+				902C1E3625B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */,
 				9087472925A17DB8005E82FE /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -604,6 +625,24 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		902C1E3B25B4B5EB00D937D2 /* multiple simulators */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "multiple simulators";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "custom_sim=`xcrun simctl list | grep ‘multiple simulators’ | awk -F’[()]’ ‘{print $2}’`\nif [ ! -z “${custom_sim}” ] && [ “${TARGET_DEVICE_IDENTIFIER}” = “${custom_sim}” ]; then\n/bin/sh multipleSimulatorsStartup.sh &\nfi\n";
 		};
 		B8DC4B9C6EE80E009A172BDD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

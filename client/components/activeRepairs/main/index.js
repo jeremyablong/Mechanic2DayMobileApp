@@ -138,7 +138,7 @@ constructor(props) {
                 </Header>
                 <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 125 }}>
                 {typeof accepted_jobs !== "undefined" && accepted_jobs.length === 0 && ready === true ? <View style={{ margin: 20 }}>
-                    <Text style={styles.headHead}>You currently do NOT have any pending or open jobs. Apply for some more jobs to get the ball rolling!</Text>
+                    <Text style={[styles.headHead, { fontSize: 18 }]}>You currently do NOT have any pending or open jobs. Apply for some more jobs to get the ball rolling!</Text>
                 </View> : null}
                 {typeof accepted_jobs !== "undefined" && accepted_jobs.length > 0 && ready === true ? <View style={{ margin: 20 }}>
                     <Text style={styles.headHead}>These are your currently OPEN and ACTIVE jobs!</Text>
