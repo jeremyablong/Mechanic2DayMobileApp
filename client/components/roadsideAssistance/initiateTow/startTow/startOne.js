@@ -204,18 +204,31 @@ constructor(props) {
             }
         }
     }
-    handleCapturePayment = () => {
-        console.log("handleCapturePayment clicked");
+    initiateTowAndContinue = () => {
+        console.log("initiateTowAndContinue clicked");
 
-        // axios.post(`${Config.ngrok_url}/take/payment/paypal/capture`).then((res) => {
-        //     if (res.data.message === "") {
-        //         console.log(res.data);
-        //     } else {
-        //         console.log("Err", res.data);
-        //     }
-        // }).catch((err) => {
-        //     console.log(err);
-        // })
+        const { data } = this.state;
+
+        axios.post(`${Config.ngrok_url}/intiate/tow/add/to/queue`, {
+            initial_location: data.initial_location,
+            tow_desination_information: data.tow_desination_information,
+            tow_desination_street_address: data.tow_destination,
+            id: this.props.unique_id,
+            roadside_service_required: data.roadside_service_required,
+            tow_required: data.tow_required
+        }).then((res) => {
+            if (res.data.message === "Successfully executed logic!") {
+                console.log(res.data);
+
+                const { updated_order } = res.data;
+
+                this.props.props.navigation.navigate("waiting-room-roadside-assistance", { order: updated_order });
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
     renderConditional = () => {
         const { data, routes, location } = this.state;
@@ -241,8 +254,19 @@ constructor(props) {
                     <View style={styles.topBottomMargin}>
                         <Text>Depature Time: {moment(departure).format("MMMM Do YYYY, h:mm:ss a")}</Text>
                         <Text style={{ marginTop: 10 }}>Arrival Time: {moment(arrival).format("MMMM Do YYYY, h:mm:ss a")}</Text>
+                        <Text style={{ marginTop: 10, fontStyle: 'italic', marginTop: 15 }}>Times are a rough estimate and do not include time until tow truck arrives.</Text>
                     </View>
                     {this.renderMap()}
+
+                    <View style={[styles.centered, { marginTop: 25 }]}>
+                        <View style={styles.centered}>
+                            <Button info onPress={() => {
+                                this.initiateTowAndContinue();
+                            }} style={styles.customButton}>
+                                <NativeText style={{ fontWeight: "bold", color: "white" }}>Initiate Tow Assistance</NativeText>
+                            </Button>
+                        </View>
+                    </View>
                 </View>
             );
         } else {
@@ -270,7 +294,7 @@ constructor(props) {
                     <View style={[styles.centered, { marginTop: 25 }]}>
                         <View style={styles.centered}>
                             <Button info onPress={() => {
-                                this.handleCapturePayment();
+                                this.initiateTowAndContinue();
                             }} style={styles.customButton}>
                                 <NativeText style={{ fontWeight: "bold", color: "white" }}>Initiate Roadside Assistance</NativeText>
                             </Button>
@@ -334,4 +358,9 @@ constructor(props) {
         )
     }
 }
-export default StartTwoServicesOneHelper;
+const mapStateToProps = (state) => {
+    return {
+        unique_id: state.auth.authenticated.unique_id
+    }
+}
+export default connect(mapStateToProps, { })(StartTwoServicesOneHelper);

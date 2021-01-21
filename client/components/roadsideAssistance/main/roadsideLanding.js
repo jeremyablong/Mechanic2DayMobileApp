@@ -22,6 +22,7 @@ import { Config } from "react-native-config";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Switch } from 'react-native-switch';
 import Autocomplete from "react-native-autocomplete-input";
+import _ from "lodash";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,6 +42,7 @@ constructor(props) {
         towNeeded: true,
         selected: null,
         searchValue: "",
+        user: null,
         results: [],
         hideOrNot: false,
         full: null,
@@ -158,6 +160,25 @@ constructor(props) {
                         ready: true
                     })
                 })
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+
+                console.log(res.data);
+
+                const { user } = res.data;
+
+                this.setState({
+                    user
+                })
+            } else {
+                console.log("err", res.data);
             }
         }).catch((err) => {
             console.log(err);
@@ -483,7 +504,7 @@ constructor(props) {
         }
     }
     render() {
-        const { towDesination, selected, myLocation, serviceRequired } = this.state;
+        const { towDesination, selected, myLocation, serviceRequired, user } = this.state;
         console.log("this.state. roadsideLanding.js state", this.state);
         return (
             <Fragment>
@@ -519,13 +540,17 @@ constructor(props) {
                             }} />;
                         })}
                     </MapView> : null}
-                    <View style={styles.marginAbsolute}>
+                    {_.has(this.props.authenticated, "fullName") ? <View style={styles.marginAbsolute}>
                         <View style={styles.centered}>
                             <AwesomeButtonRick textColor={"black"} onPress={() => {
-                                this.RBSheet.open();
+                                if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
+                                    this.props.props.navigation.navigate("waiting-room-roadside-assistance");
+                                } else {
+                                    this.RBSheet.open();
+                                }
                             }} width={width * 0.75} type="secondary">Get immediate assistance</AwesomeButtonRick>
                         </View>
-                    </View>
+                    </View> : null}
                     <View style={styles.bottomContainer}>
                         <Carousel 
                             containerStyle={styles.sliderSlider}
@@ -596,7 +621,8 @@ const mapStateToProps = (state) => {
     return {
         accountType: state.auth.authenticated.accountType,
         fullName: state.auth.authenticated.fullName,
-        unique_id: state.auth.authenticated.unique_id
+        unique_id: state.auth.authenticated.unique_id,
+        authenticated: state.auth.authenticated
     };
 }
 export default connect(mapStateToProps, { })(RoadsideAssistanceLandingHelper);

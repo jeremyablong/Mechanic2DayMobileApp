@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from "react-native";
-import { Spinner } from 'native-base';
+import {
+    BarIndicator
+} from 'react-native-indicators';
 
 class Loading extends Component {
 constructor () {
@@ -12,8 +14,10 @@ constructor () {
 }
 	render() {
 		return (
-			<View>
-				<Spinner style={{ width: 200, height: 200, marginLeft: 100, marginTop: 300, justifyContent: "center", alignItems: "center" }} color='blue' />
+			<View style={{ justifyContent: 'center', alignItems: "center", alignContent: "center" }}>
+				<View style={{ justifyContent: 'center', alignItems: "center", alignContent: "center" }}>
+					<BarIndicator count={14} color='blue' />
+				</View>
 			</View>
 		);
 	}

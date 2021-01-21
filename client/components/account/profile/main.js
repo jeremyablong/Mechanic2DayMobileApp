@@ -148,6 +148,11 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Active Jobs/Repairs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
+                            {user.accountType === "tow-truck-driver" ? <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("tow-truck-driver-online-homepage");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Go ONLINE & more...</NativeText></Left><Right><Image source={require("../../../assets/icons/online.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem> : null}
                             {user.accountType === "tow-truck-company" ? <ListItem button={true} onPress={() => {
                             this.props.props.navigation.navigate("advertise-roadside-assistance-main");
                             }} style={styles.listItem}>
@@ -226,8 +231,6 @@ constructor(props) {
         }
     }
     render() {
-        const firstName = "Jeremy";
-
         console.log("this.state profile main.js", this.state);
         return (
             <Fragment>
@@ -236,7 +239,7 @@ constructor(props) {
                         {this.renderProfilePic()}
                     </View>
                     <View style={styles.nameContainer}>
-                        <Text style={styles.name}>{firstName}</Text>
+                        <Text style={styles.name}>{this.props.fullName}</Text>
                         <TouchableOpacity onPress={() => {
                             this.props.props.navigation.push("view-public-profile-page");
                         }}>
@@ -256,11 +259,13 @@ const mapStateToProps = (state) => {
     if (state.accountType.type) {
         return {
             accountType: state.accountType.type.type,
-            unique_id: state.auth.authenticated.unique_id
+            unique_id: state.auth.authenticated.unique_id,
+            fullName: state.auth.authenticated.fullName
         };
     } else {
         return {
             accountType: null,
+            fullName: state.auth.authenticated.fullName,
             unique_id: state.auth.authenticated.unique_id
         };
     }

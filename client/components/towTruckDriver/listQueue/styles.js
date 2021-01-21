@@ -18,7 +18,8 @@ export default StyleSheet.create({
         alignItems: "center",
         alignContent: "center"
     },
-    margin: {
-        margin: 20
+    customButton: {
+        width: width * 0.85,
+        justifyContent: "center"
     }
 })

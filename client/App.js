@@ -75,7 +75,9 @@ import BackgroundGeolocation from "react-native-background-geolocation";
 import StartTwoServicesOnePage from "./pages/roadsideAssistance/initiateTow/startTow/startOne.js";
 import AssociateDriverPage from "./pages/signup/associate/associateDriver.js";
 import TowCompanyManageDriversPage from "./pages/towCompany/manage/index.js";
-
+import WaitingRoomRoadsideAssistancePage from "./pages/roadsideAssistance/initiateTow/waitingRoom/wait.js";
+import TowTruckDriverHomepagePage from "./pages/towTruckDriver/homepage/index.js";
+import ListQueuePage from "./pages/towTruckDriver/listQueue/listQueue.js";
 
 const Stack = createStackNavigator();
 
@@ -434,6 +436,9 @@ constructor(props) {
               <Stack.Screen name="initialize-tow-two" component={StartTwoServicesOnePage} />
               <Stack.Screen name="associate-to-tow-company" component={AssociateDriverPage} />
               <Stack.Screen name="manage-tow-drivers" component={TowCompanyManageDriversPage} />
+              <Stack.Screen name="waiting-room-roadside-assistance" component={WaitingRoomRoadsideAssistancePage} />
+              <Stack.Screen name="tow-truck-driver-online-homepage" component={TowTruckDriverHomepagePage} />
+              <Stack.Screen name="list-roadside-assistance-queue" component={ListQueuePage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />

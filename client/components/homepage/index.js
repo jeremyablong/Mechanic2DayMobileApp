@@ -14,7 +14,8 @@ import HomepageInfoHelper from "./info/info.js";
 import { connect } from "react-redux";
 import { checkToNavigatePushNotification } from "../../actions/push-notifications/push.js";
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
-
+import { Config } from "react-native-config";
+import axios from "axios";
 
 const { width, height } = Dimensions.get("window");
 
@@ -97,7 +98,8 @@ constructor(props) {
             index: 12,
             data: "body-work"
         }],
-        searchValuePane: ""
+        searchValuePane: "",
+        user: null
     }
 }
     _renderItem = ({item, index}) => {
@@ -125,7 +127,84 @@ constructor(props) {
             })
         }
     }
+    componentDidMount() {
+        if (this.props.unique_id !== null && typeof this.props.unique_id !== "undefined") {
+            axios.post(`${Config.ngrok_url}/gather/general/info`, {
+                id: this.props.unique_id
+            }).then((res) => {
+                if (res.data.message === "Found user!") {
+                    console.log(res.data);
+
+                    const { user } = res.data;
+
+                    this.setState({
+                        user
+                    })
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+    }
+    renderButtonsConditionally = () => {
+        const { user } = this.state;
+
+        if (user !== null && user.accountType) {
+            console.log("user.accountType", user.accountType);
+            switch (user.accountType) {
+                case "tow-truck-driver":
+                    return (
+                        <Fragment>
+                            <Button info onPress={() => {
+                                this.props.props.navigation.navigate("tow-truck-driver-online-homepage");
+                            }} style={styles.customButtonFive}>
+                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Go ONLINE and more!</NativeText>
+                            </Button>
+                        </Fragment>
+                    );
+                    break;
+                case "client":
+                    return (
+                        <Fragment>
+                            <Button info onPress={() => {
+                                this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                            }} style={styles.customButtonFive}>
+                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
+                            </Button>
+                        </Fragment>
+                    );
+                    break;
+                case "mechanic":
+                    return (
+                        <Fragment>
+                            <Button info onPress={() => {
+                                this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                            }} style={styles.customButtonFive}>
+                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
+                            </Button>
+                        </Fragment>
+                    );
+                    break;
+                case "tow-truck-company":
+                    return (
+                        <Fragment>
+                            <Button info onPress={() => {
+                                this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                            }} style={styles.customButtonFive}>
+                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
+                            </Button>
+                        </Fragment>
+                    );
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
     render () {
+        console.log("homepage index.js state", this.state);
         return (
             <Fragment>
                 {this.constantRender()}
@@ -171,11 +250,7 @@ constructor(props) {
                         <View style={styles.mainContent}>
                             <View style={[styles.centered, { marginBottom: 25 }]}>
                             <View style={styles.centered}>
-                                <Button info onPress={() => {
-                                    this.props.props.navigation.navigate("roadside-assistance-main-landing");
-                                }} style={styles.customButtonFive}>
-                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
-                                </Button>
+                                {this.renderButtonsConditionally()}
                             </View>
                             </View>
                             <View>
@@ -244,7 +319,8 @@ const mapStateToProps = (state) => {
     console.log(state);
     return {
         redirect: state.redirect_push.redirect.redirect,
-        route: state.redirect_push.redirect.route
+        route: state.redirect_push.redirect.route,
+        unique_id: state.auth.authenticated.unique_id
     }
 }
 export default connect(mapStateToProps, { checkToNavigatePushNotification })(HomepageMainHelper);

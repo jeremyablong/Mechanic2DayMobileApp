@@ -52,7 +52,7 @@ const CreateAccountTypeHelper = (props) => {
                     props.finishedSignup(true);
 
                     setTimeout(() => {
-                        props.props.navigation.navigate("homepage-main");
+                        props.props.navigation.push("homepage-main");
                     },  500);
                 } else {
                     console.log("err", res.data);
@@ -100,7 +100,7 @@ const CreateAccountTypeHelper = (props) => {
                     props.finishedSignup(true);
 
                     setTimeout(() => {
-                        props.props.navigation.navigate("homepage-main");
+                        props.props.navigation.push("homepage-main");
                     },  500);
                 } else {
                     console.log("err", res.data);
@@ -144,7 +144,7 @@ const CreateAccountTypeHelper = (props) => {
                         <Button bordered dark onPress={() => {
                             continueToNextPage("client");
                         }} style={styles.submitBtn}>
-                            <NativeText style={{ color: "black" }}>I'm looking to repair my vehicle</NativeText>
+                            <NativeText style={{ color: "black" }}>I need a repair OR roadside assistance</NativeText>
                         </Button>
                         <Button bordered onPress={() => {
                             // continueToNextPage("tow-truck-driver");

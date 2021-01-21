@@ -31,7 +31,7 @@ export default StyleSheet.create({
         fontSize: 20
     },
     name: {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: "bold"
     },  
     profilePic: {

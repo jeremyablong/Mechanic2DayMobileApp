@@ -103,7 +103,13 @@ app.use("/take/payment/paypal/capture", require("./routes/paypal/tow/takePayment
 app.use("/gather/all/companies/display/tow", require("./routes/towCompanies/gatherAllTowCompanies.js"));
 app.use("/associate/and/notify/tow/company", require("./routes/towCompanies/newDriver/newDriverRequest.js"));
 app.use("/gather/tow/drivers/pending", require("./routes/towCompanies/newDriver/gatherPendingDrivers.js"));
-
+app.use("/approve/driver/for/team", require("./routes/towCompanies/newDriver/approveDriver.js"));
+app.use("/intiate/tow/add/to/queue", require("./routes/roadsideAssistance/initiate/startTowAndAddToQueue.js"));
+app.use("/add/to/queue", require("./routes/roadsideAssistance/initiate/addToQueue.js"));
+app.use("/gather/requested/tow/information", require("./routes/roadsideAssistance/queue/gatherRequestInfo.js"));
+app.use("/gather/queued/jobs", require("./routes/roadsideAssistance/queue/gatherQueuedJobs.js"));
+app.use("/assign/driver/roadside/assistance", require("./routes/roadsideAssistance/towTransaction/assignDriverAndNotify.js"));
+app.use("/update/both/users/start/tow", require("./routes/roadsideAssistance/towTransaction/startTow.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

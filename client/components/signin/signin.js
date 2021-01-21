@@ -52,7 +52,7 @@ const SigninHelper = props => {
                 props.finishedSignup(true);
 
                 setTimeout(() => {
-                    props.props.navigation.navigate("homepage-main");
+                    props.props.navigation.push("homepage-main");
                 },  500);
             } else {
                 Toast.show({
@@ -102,7 +102,7 @@ const SigninHelper = props => {
                                 props.finishedSignup(true);
             
                                 setTimeout(() => {
-                                    props.props.navigation.navigate("homepage-main");
+                                    props.props.navigation.push("homepage-main");
                                 },  750);
                             } else {
                                 console.log("Err", res.data);
@@ -152,7 +152,7 @@ const SigninHelper = props => {
                                 props.finishedSignup(true);
             
                                 setTimeout(() => {
-                                    props.props.navigation.navigate("homepage-main");
+                                    props.props.navigation.push("homepage-main");
                                 },  750);
                             } else {
                                 console.log("Err", res.data);
