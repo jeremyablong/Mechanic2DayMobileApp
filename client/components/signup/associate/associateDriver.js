@@ -65,7 +65,8 @@ constructor(props) {
                 phoneNumber: previous.phoneNumber ? previous.phoneNumber : "",
                 email: previous.email ? previous.email : "",
                 wholeAddress: previous.wholeAddress,
-                accountType: previous.accountType
+                accountType: previous.accountType,
+                active_employee: false
             }).then((response) => {
                 if (response.data.message === "Successfully registered new user!") {
                     console.log(response.data);
@@ -122,7 +123,8 @@ constructor(props) {
                 email: previous.email ? previous.email : "",
                 wholeAddress: previous.wholeAddress,
                 accountType: previous.accountType,
-                firebasePushNotificationToken: fcmToken
+                firebasePushNotificationToken: fcmToken,
+                active_employee: false
             }).then((response) => {
                 if (response.data.message === "Successfully registered new user!") {
                     console.log(response.data);

@@ -78,6 +78,7 @@ import TowCompanyManageDriversPage from "./pages/towCompany/manage/index.js";
 import WaitingRoomRoadsideAssistancePage from "./pages/roadsideAssistance/initiateTow/waitingRoom/wait.js";
 import TowTruckDriverHomepagePage from "./pages/towTruckDriver/homepage/index.js";
 import ListQueuePage from "./pages/towTruckDriver/listQueue/listQueue.js";
+import ManageActiveJobClaimPage from "./pages/towTruckDriver/activeClaim/active.js";
 
 const Stack = createStackNavigator();
 
@@ -439,6 +440,7 @@ constructor(props) {
               <Stack.Screen name="waiting-room-roadside-assistance" component={WaitingRoomRoadsideAssistancePage} />
               <Stack.Screen name="tow-truck-driver-online-homepage" component={TowTruckDriverHomepagePage} />
               <Stack.Screen name="list-roadside-assistance-queue" component={ListQueuePage} />
+              <Stack.Screen name="tow-activated-map-view" component={ManageActiveJobClaimPage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />

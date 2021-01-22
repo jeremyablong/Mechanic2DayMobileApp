@@ -15,6 +15,9 @@ import {
     BarIndicator
 } from 'react-native-indicators';
 import _ from "lodash";
+import Dialog from "react-native-dialog";
+import geodist from 'geodist';
+
 
 class ListQueueHelper extends Component {
 constructor(props) {
@@ -23,39 +26,110 @@ constructor(props) {
     this.state = {
         results: [],
         ready: false,
-        selected: null
+        selected: null,
+        user: null,
+        isVisible: false
     }
 }
     componentDidMount() {
+        
+        const promiseee = new Promise((resolve, reject) => {
+            axios.post(`${Config.ngrok_url}/gather/general/info`, {
+                id: this.props.unique_id
+            }).then((res) => {
+                if (res.data.message === "Found user!") {
+                    console.log(res.data);
+    
+                    const { user } = res.data;
+    
+                    this.setState({
+                        user
+                    }, () => {
+                        resolve();
+                    })
+                } else {
+                    console.log("errrrroorrr", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        })
 
-        axios.get(`${Config.ngrok_url}/gather/queued/jobs`).then((res) => {
-            console.log(res.data);
+        promiseee.then(() => {
+            const { user } = this.state;
 
-            const { results } = res.data;
+            axios.get(`${Config.ngrok_url}/gather/queued/jobs`).then((res) => {
+                console.log(res.data);
+    
+                const { results } = res.data;
+    
+                for (let index = 0; index < results.length; index++) {
+                    const result = results[index];
 
-            for (let index = 0; index < results.length; index++) {
-                const result = results[index];
-                
-                axios.post(`${Config.ngrok_url}/gather/breif/data/two`, {
-                    id: result.requested_by
-                }).then((response) => {
-                    if (response.data.message === "Gathered user's data!") {
-                        console.log("USER", response.data);
+                    if (_.has(result.initial_location, "position")) {
+                        if (geodist({lat: user.current_location.coords.latitude, lon: user.current_location.coords.longitude}, {lat: result.initial_location.position.lat, lon: result.initial_location.position.lon}) < 50) {
+                            console.log("LESS than 50 miles away!! TRUE CHUNK");
 
-                        const { user } = response.data;
-
-                        result.profile_picture = user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg";
-
-                        result.fullName = user.fullName;
-
-
-                        if (_.has(result.initial_location, "position")) {
-
-                            result.pickup_location = result.initial_location.address.freeformAddress;
-
-                            this.setState({
-                                results: [...this.state.results, result]
-                            }, () => {
+                            axios.post(`${Config.ngrok_url}/gather/breif/data/two`, {
+                                id: result.requested_by
+                            }).then((response) => {
+                                if (response.data.message === "Gathered user's data!") {
+                                    console.log("USER", response.data);
+            
+                                    const { user } = response.data;
+            
+                                    result.profile_picture = user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg";
+            
+                                    result.fullName = user.fullName;
+            
+            
+                                    if (_.has(result.initial_location, "position")) {
+            
+                                        result.pickup_location = result.initial_location.address.freeformAddress;
+            
+                                        this.setState({
+                                            results: [...this.state.results, result]
+                                        }, () => {
+                                            if ((results.length - 1) === index) {
+                                                this.setState({
+                                                    ready: true
+                                                })
+                                            }
+                                        })
+                                    } else {
+                                        axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${result.initial_location.latitude},${result.initial_location.longitude}.json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`).then((resp) => {
+                                            console.log("resp.data", resp.data);
+            
+                                            const { addresses } = resp.data;
+            
+            
+                                            result.pickup_location = addresses[0].address.freeformAddress;
+                                            
+                                            this.setState({
+                                                results: [...this.state.results, result]
+                                            }, () => {
+                                                if ((results.length - 1) === index) {
+                                                    this.setState({
+                                                        ready: true
+                                                    })
+                                                }
+                                            })
+                                        }).catch((err) => {
+                                            console.log(err);
+                                        })
+                                    }
+                                } else {
+                                    console.log("Err", res.data);
+            
+                                    if ((results.length - 1) === index) {
+                                        this.setState({
+                                            ready: true
+                                        })
+                                    }
+                                }
+                            }).catch((err) => {
+                                console.log(err);
+            
                                 if ((results.length - 1) === index) {
                                     this.setState({
                                         ready: true
@@ -63,48 +137,99 @@ constructor(props) {
                                 }
                             })
                         } else {
-                            axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${result.initial_location.latitude},${result.initial_location.longitude}.json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`).then((resp) => {
-                                console.log("resp.data", resp.data);
+                            console.log("MORE than 50 miles away... TRUE CHUNK");
 
-                                const { addresses } = resp.data;
-
-
-                                result.pickup_location = addresses[0].address.freeformAddress;
-                                
+                            if ((results.length - 1) === index) {
                                 this.setState({
-                                    results: [...this.state.results, result]
-                                }, () => {
+                                    ready: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (geodist({lat: user.current_location.coords.latitude, lon: user.current_location.coords.longitude}, {lat: result.initial_location.latitude, lon: result.initial_location.longitude}) < 50) {
+                            console.log("LESS than 50 miles away!! ELSE CHUNK");
+
+                            axios.post(`${Config.ngrok_url}/gather/breif/data/two`, {
+                                id: result.requested_by
+                            }).then((response) => {
+                                if (response.data.message === "Gathered user's data!") {
+                                    console.log("USER", response.data);
+            
+                                    const { user } = response.data;
+            
+                                    result.profile_picture = user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg";
+            
+                                    result.fullName = user.fullName;
+            
+            
+                                    if (_.has(result.initial_location, "position")) {
+            
+                                        result.pickup_location = result.initial_location.address.freeformAddress;
+            
+                                        this.setState({
+                                            results: [...this.state.results, result]
+                                        }, () => {
+                                            if ((results.length - 1) === index) {
+                                                this.setState({
+                                                    ready: true
+                                                })
+                                            }
+                                        })
+                                    } else {
+                                        axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${result.initial_location.latitude},${result.initial_location.longitude}.json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`).then((resp) => {
+                                            console.log("resp.data", resp.data);
+            
+                                            const { addresses } = resp.data;
+            
+            
+                                            result.pickup_location = addresses[0].address.freeformAddress;
+                                            
+                                            this.setState({
+                                                results: [...this.state.results, result]
+                                            }, () => {
+                                                if ((results.length - 1) === index) {
+                                                    this.setState({
+                                                        ready: true
+                                                    })
+                                                }
+                                            })
+                                        }).catch((err) => {
+                                            console.log(err);
+                                        })
+                                    }
+                                } else {
+                                    console.log("Err", res.data);
+            
                                     if ((results.length - 1) === index) {
                                         this.setState({
                                             ready: true
                                         })
                                     }
-                                })
+                                }
                             }).catch((err) => {
                                 console.log(err);
+            
+                                if ((results.length - 1) === index) {
+                                    this.setState({
+                                        ready: true
+                                    })
+                                }
                             })
-                        }
-                    } else {
-                        console.log("Err", res.data);
-
-                        if ((results.length - 1) === index) {
-                            this.setState({
-                                ready: true
-                            })
+                        } else {
+                            // do nothing
+                            console.log("MORE than 50 miles away... ELSE CHUNK");
+                            // check if end of loop
+                            if ((results.length - 1) === index) {
+                                this.setState({
+                                    ready: true
+                                })
+                            }
                         }
                     }
-                }).catch((err) => {
-                    console.log(err);
-
-                    if ((results.length - 1) === index) {
-                        this.setState({
-                            ready: true
-                        })
-                    }
-                })
-            }
-        }).catch((err) => {
-            console.log(err);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
         })
     }
     startJobAndContinue = () => {
@@ -119,7 +244,7 @@ constructor(props) {
             if (res.data.message === "Updated both users and started transaction!") {
                 console.log(res.data);
 
-                // this.props.props.navigation.navigate("tow-activated-map-view");
+                this.props.props.navigation.replace("tow-activated-map-view");
             } else {
                 console.log("err", res.data);
             }
@@ -149,7 +274,7 @@ constructor(props) {
         }
     }
     render() {
-        const { results, ready } = this.state;
+        const { results, ready, user, isVisible } = this.state;
 
         console.log(this.state);
         return (
@@ -168,7 +293,28 @@ constructor(props) {
                     </Body>
                     <Right />
                 </Header>
+                <View style={{ flex: 1 }}>
+                    <Dialog.Container visible={isVisible}>
+                    <Dialog.Title>You already have an ACTIVE open incomplete job!</Dialog.Title>
+                    <Dialog.Description>
+                        Do you want to redirect to the active listing or stay on this page?
+                    </Dialog.Description>
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            isVisible: false
+                        })
+                    }} label="STAY" />
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            isVisible: false
+                        }, () => {
+                            this.props.props.navigation.push("tow-activated-map-view");
+                        })
+                    }} label="REDIRECT ME" />
+                    </Dialog.Container>
+                </View>
                 <ScrollView contentContainerStyle={{ paddingBottom: 125 }} style={styles.container}>
+                    <Text style={styles.lessThan}>We only show listings <Text style={{ fontSize: 18, color: "black", fontWeight: "bold" }}>WITHIN 50 MILES</Text> of your location... Anything greateer than 50 miles will be delagated to closer drivers.</Text>
                     <List>
                         {typeof results !== "undefined" && results.length > 0 && ready === true ? results.map((result, index) => {
                             if (result.tow_required === true) {
@@ -231,7 +377,6 @@ constructor(props) {
                             </View>
                         </View>}  
                     </List>
-                    
                 </ScrollView>
                 <RBSheet
                     ref={ref => {
@@ -250,9 +395,23 @@ constructor(props) {
                         <Button success onPress={() => {
                             this.RBSheet.close();
 
-                            setTimeout(() => {
-                                this.startJobAndContinue();
-                            }, 500);
+                            if (user !== null && _.has(user, "active_roadside_assistance_jobs") && user.active_roadside_assistance_jobs.active === false) {
+
+                                setTimeout(() => {
+                                    
+                                    this.startJobAndContinue();
+
+                                    console.log("start");
+                                }, 500);
+                            } else {
+                                console.log("already on a job...");
+
+                                setTimeout(() => {
+                                    this.setState({
+                                        isVisible: true
+                                    })
+                                }, 1000);
+                            }
                         }} style={styles.customButton}>
                             <NativeText style={{ color: "white", fontWeight: "bold" }}>Accept Job & Start</NativeText>
                         </Button>

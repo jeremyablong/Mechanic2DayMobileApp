@@ -53,14 +53,24 @@ constructor(props) {
                         </ListItem>
                         <ListItem button={true} onPress={() => {}}>
                             <Left>
-                                <NativeText>Change Driver Settings</NativeText>
+                                <NativeText>Change driver settings</NativeText>
+                            </Left>
+                            <Right>
+                                <Icon name="arrow-forward" />
+                            </Right>
+                        </ListItem>
+                        <ListItem button={true} onPress={() => {
+                            this.props.props.navigation.push("tow-activated-map-view");
+                        }}>
+                            <Left>
+                                <NativeText style={{ color: "blue", fontWeight: "bold" }}>Manage an active tow/job</NativeText>
                             </Left>
                             <Right>
                                 <Icon name="arrow-forward" />
                             </Right>
                         </ListItem>
                         <ListItem button={true} onPress={() => {}} itemDivider>
-                            <NativeText>Payment Settings</NativeText>
+                            <NativeText>Payment settings</NativeText>
                         </ListItem>  
                         <ListItem button={true} onPress={() => {}}>
                             <Left>
@@ -80,12 +90,12 @@ constructor(props) {
                         </ListItem>
                         <ListItem button={true} onPress={() => {}} itemDivider>
                             <Left>
-                                <NativeText>Profile/Settings</NativeText>
+                                <NativeText>Profile/settings</NativeText>
                             </Left>
                         </ListItem>  
                         <ListItem button={true} onPress={() => {}}>
                             <Left>
-                                <NativeText>Manage Tow Driver Settings</NativeText>
+                                <NativeText>Manage tow driver settings</NativeText>
                             </Left>
                             <Right>
                                 <Icon name="arrow-forward" />

@@ -54,7 +54,7 @@ constructor(props) {
     
                                     driver_array.push(driver);
     
-                                    if ((drivers.length - 1) === index) {
+                                    if (driver_array.length === drivers.length) {
                                         resolve(driver_array);
                                     }
                                 } else { 

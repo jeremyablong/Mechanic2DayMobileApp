@@ -18,14 +18,16 @@ export default StyleSheet.create({
         alignItems: "center",
         alignContent: "center"
     },
-    customButton: {
-        width: width * 0.85,
-        justifyContent: "center"
+    absolutelyCentered: {
+        marginTop: 15
     },
-    lessThan: {
-        fontSize: 16, 
-        color: "darkblue", 
-        textAlign: "center", 
-        margin: 20
+    map: {
+        width,
+        height: "100%",
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0
     }
 })

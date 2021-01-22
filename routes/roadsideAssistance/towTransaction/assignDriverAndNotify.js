@@ -17,7 +17,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         console.log("REQUEST BODY,", req.body);
 
-        collection.find({}).toArray((err, results) => {
+        collection.remove({ id: selected.id }, (err, results) => {
             if (err) {
 
                 console.log(err);
@@ -30,32 +30,22 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                 console.log("results", results);
 
-                const removedArray = results.filter((item) => {
-                    if (item.id !== selected.id) {
-                        return item;
-                    }
-                });
-
                 axios.post(`${config.get("ngrok_url")}/update/both/users/start/tow`, {
                     signed_in_user_id: id,
                     other_user_id: selected.requested_by,
                     selected
-                }).then((res) => {
-                    if (res.data.message === "Successfully executed logic!") {
+                }).then((responseeeee) => {
+                    if (responseeeee.data.message === "Successfully executed logic!") {
                         // don't console log - cluttering server console
+                        res.json({
+                            message: "Updated both users and started transaction!",
+                            results
+                        })
                     } else {
-                        console.log("err", res.data);
+                        console.log("err", responseeeee.data);
                     }
                 }).catch((err) => {
                     console.log(err);
-                })
-
-                console.log("after array", removedArray);
-
-
-                res.json({
-                    message: "Updated both users and started transaction!",
-                    results
                 })
             }
         })

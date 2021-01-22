@@ -22,6 +22,9 @@ const UserSchema =  new mongoose.Schema({
     phoneNumber: {
         type: Array
     },
+    active_employee: {
+        type: Boolean
+    },
     email: {
         type: String
     },
