@@ -118,7 +118,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                         if (user.notifications) {
                                             user.notifications.push(custom_notification);
                                         } else {
-                                            user["notifications"] = custom_notification;
+                                            user["notifications"] = [custom_notification];
                                         }
                     
                                         collection.save(user);

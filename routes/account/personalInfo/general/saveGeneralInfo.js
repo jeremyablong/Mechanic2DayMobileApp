@@ -19,7 +19,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             if (user) {
 
                 if (fullName.length > 0) {
-                    user.fullName = fullName.toLowerCase();
+                    user.preferred_name = fullName.toLowerCase();
                 }
                 if (email.length > 0) {
                     user.email = email.toLowerCase();

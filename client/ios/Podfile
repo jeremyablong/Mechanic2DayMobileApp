@@ -22,7 +22,7 @@ target 'client' do
   pod 'Firebase/Messaging'
 
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
-
+  
   target 'clientTests' do
     inherit! :complete
     # Pods for testing

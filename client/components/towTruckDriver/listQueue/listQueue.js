@@ -17,6 +17,7 @@ import {
 import _ from "lodash";
 import Dialog from "react-native-dialog";
 import geodist from 'geodist';
+import Modal from 'react-native-modal';
 
 
 class ListQueueHelper extends Component {
@@ -28,7 +29,8 @@ constructor(props) {
         ready: false,
         selected: null,
         user: null,
-        isVisible: false
+        isVisible: false,
+        isVisibleTwo: false
     }
 }
     componentDidMount() {
@@ -279,6 +281,7 @@ constructor(props) {
         console.log(this.state);
         return (
             <View>
+                
                 <Header>
                     <Left>
                         <Button onPress={() => {
@@ -312,6 +315,26 @@ constructor(props) {
                         })
                     }} label="REDIRECT ME" />
                     </Dialog.Container>
+                </View>
+                <View style={styles.centered}>
+                    <Modal isVisible={this.state.isVisibleTwo}>
+                        <View style={[styles.centered, { flex: 1, backgroundColor: "white", padding: 20, maxHeight: 300 }]}>
+                        <Text style={styles.headModal}>You <Text style={{ color: "red", fontWeight: "bold" }}>MUST</Text> be approved before taking jobs...!</Text>
+                        <Text style={[styles.subModal, { marginTop: 15 }]}>You need to be approved by your related company before taking gigs..</Text>
+                        <View style={{ marginTop: 20 }} />
+                        <View style={styles.centered}>
+                            <View style={styles.centered}>
+                                <Button danger onPress={() => {
+                                    this.setState({
+                                        isVisibleTwo: false
+                                    })
+                                }} style={styles.buttonButton}>
+                                    <NativeText style={{ color: "white", fontWeight: "bold" }}>Cancel/Exit</NativeText>
+                                </Button>
+                            </View>
+                        </View>
+                        </View>
+                    </Modal>
                 </View>
                 <ScrollView contentContainerStyle={{ paddingBottom: 125 }} style={styles.container}>
                     <Text style={styles.lessThan}>We only show listings <Text style={{ fontSize: 18, color: "black", fontWeight: "bold" }}>WITHIN 50 MILES</Text> of your location... Anything greateer than 50 miles will be delagated to closer drivers.</Text>
@@ -378,6 +401,7 @@ constructor(props) {
                         </View>}  
                     </List>
                 </ScrollView>
+                
                 <RBSheet
                     ref={ref => {
                         this.RBSheet = ref;
@@ -393,22 +417,37 @@ constructor(props) {
                     >
                     <View style={styles.centered}>
                         <Button success onPress={() => {
+
                             this.RBSheet.close();
 
-                            if (user !== null && _.has(user, "active_roadside_assistance_jobs") && user.active_roadside_assistance_jobs.active === false) {
+                            if (user !== null && user.active_employee === true) {
+                                if (_.has(user, "active_roadside_assistance_jobs")) {
+                                    if (user.active_roadside_assistance_jobs.active === false) {
 
-                                setTimeout(() => {
-                                    
+                                        setTimeout(() => {
+                                            
+                                            this.startJobAndContinue();
+
+                                            console.log("start");
+                                        }, 500);
+                                    } else {
+                                        console.log("already on a job...");
+
+                                        setTimeout(() => {
+                                            this.setState({
+                                                isVisible: true
+                                            })
+                                        }, 1000);
+                                    }
+                                } else {
                                     this.startJobAndContinue();
 
-                                    console.log("start");
-                                }, 500);
+                                    console.log("Start job else");
+                                }
                             } else {
-                                console.log("already on a job...");
-
                                 setTimeout(() => {
                                     this.setState({
-                                        isVisible: true
+                                        isVisibleTwo: true
                                     })
                                 }, 1000);
                             }

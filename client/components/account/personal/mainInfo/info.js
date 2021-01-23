@@ -350,12 +350,12 @@ constructor(props) {
                     <View style={styles.stackedContainer}>
                         <Form>
                             <Item stackedLabel last>
-                            <Label>Full Name</Label>
+                            <Label>Preferred Name</Label>
                             <Input value={this.state.fullName} onChangeText={(value) => {
                                 this.setState({
                                     fullName: value
                                 })
-                            }} placeholderTextColor={"grey"} placeholder={user !== null ? user.fullName : "-------"} />
+                            }} placeholderTextColor={"grey"} placeholder={user !== null && user.preferred_name ? user.preferred_name : "-------"} />
                             </Item>
                             
                             <View style={styles.pickerContainer}>

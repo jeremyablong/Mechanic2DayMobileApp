@@ -43,6 +43,9 @@ allprojects {
            // Required for react-native-background-fetch
            url("${project(':react-native-background-fetch').projectDir}/libs")
         }
+        maven {
+            url "http://tokbox.bintray.com/maven"
+        }
 
         google()
         jcenter()

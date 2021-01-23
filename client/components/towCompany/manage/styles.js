@@ -20,5 +20,17 @@ export default StyleSheet.create({
     },
     margin: {
         margin: 20
+    },
+    topText: {
+        fontSize: 18, 
+        fontWeight: "bold", 
+        color: "blue", 
+        marginTop: 15, 
+        textAlign: "center"
+    },
+    hr: {
+        borderBottomColor: "#e8e8e8",
+        borderBottomWidth: 10,
+        paddingTop: 75
     }
 })

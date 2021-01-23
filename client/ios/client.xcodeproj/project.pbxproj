@@ -25,6 +25,10 @@
 		902C1E3425B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */; };
 		902C1E3525B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */; };
 		902C1E3625B4B56600D937D2 /* multipleSimulatorStartup.sh in Resources */ = {isa = PBXBuildFile; fileRef = 902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */; };
+		902C20E025BB910100D937D2 /* void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902C20DF25BB910100D937D2 /* void.swift */; };
+		902C20E125BB910100D937D2 /* void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902C20DF25BB910100D937D2 /* void.swift */; };
+		902C20E225BB910100D937D2 /* void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902C20DF25BB910100D937D2 /* void.swift */; };
+		902C20E325BB910100D937D2 /* void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902C20DF25BB910100D937D2 /* void.swift */; };
 		9087472625A17DB8005E82FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9087472525A17DB7005E82FE /* GoogleService-Info.plist */; };
 		9087472725A17DB8005E82FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9087472525A17DB7005E82FE /* GoogleService-Info.plist */; };
 		9087472825A17DB8005E82FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9087472525A17DB7005E82FE /* GoogleService-Info.plist */; };
@@ -80,6 +84,11 @@
 		8875BE6083F83C71D52E44A0 /* libPods-client-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-client-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		902C1E2525B4B55C00D937D2 /* multipleSimulators.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = multipleSimulators.config; path = ../../../../.Trash/multipleSimulators.config; sourceTree = "<group>"; };
 		902C1E3225B4B56600D937D2 /* multipleSimulatorStartup.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = multipleSimulatorStartup.sh; path = ../../../../.Trash/multipleSimulatorStartup.sh; sourceTree = "<group>"; };
+		902C20CE25BB90C400D937D2 /* client-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "client-Bridging-Header.h"; sourceTree = "<group>"; };
+		902C20CF25BB90C400D937D2 /* clientTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "clientTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		902C20D025BB90C400D937D2 /* client-tvOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "client-tvOS-Bridging-Header.h"; sourceTree = "<group>"; };
+		902C20D125BB90C400D937D2 /* client-tvOSTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "client-tvOSTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		902C20DF25BB910100D937D2 /* void.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = void.swift; sourceTree = "<group>"; };
 		9087472525A17DB7005E82FE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9087482F25A18C4A005E82FE /* client.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = client.entitlements; path = client/client.entitlements; sourceTree = "<group>"; };
 		95BDAD25A1A30FF8AFF8C20F /* Pods-client-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-client-tvOS.release.xcconfig"; path = "Target Support Files/Pods-client-tvOS/Pods-client-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -165,6 +174,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				902C20DF25BB910100D937D2 /* void.swift */,
 			);
 			name = client;
 			sourceTree = "<group>";
@@ -201,6 +211,10 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				F09E03F5CB29A82CEA49442F /* Pods */,
 				F360E8B0C4EB410E8150CC57 /* Resources */,
+				902C20CE25BB90C400D937D2 /* client-Bridging-Header.h */,
+				902C20CF25BB90C400D937D2 /* clientTests-Bridging-Header.h */,
+				902C20D025BB90C400D937D2 /* client-tvOS-Bridging-Header.h */,
+				902C20D125BB90C400D937D2 /* client-tvOSTests-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -351,18 +365,21 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						LastSwiftMigration = 1230;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 4344J49FTN;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1230;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 1230;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E48F1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 1230;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
@@ -734,6 +751,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* clientTests.m in Sources */,
+				902C20E125BB910100D937D2 /* void.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,6 +761,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				902C20E025BB910100D937D2 /* void.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,6 +770,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */,
+				902C20E225BB910100D937D2 /* void.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -759,6 +779,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DCD954D1E0B4F2C00145EB5 /* clientTests.m in Sources */,
+				902C20E325BB910100D937D2 /* void.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -782,7 +803,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 62BC58B4BCFC38D52EF140F3 /* Pods-client-clientTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -797,6 +820,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "clientTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/client.app/client";
 			};
 			name = Debug;
@@ -805,7 +831,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E0C72B3067638AF43D9FD6F4 /* Pods-client-clientTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = clientTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -817,6 +845,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "clientTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/client.app/client";
 			};
 			name = Release;
@@ -840,6 +870,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_NAME:rfc1034identifier).example.native.reactjs.org";
 				PRODUCT_NAME = client;
+				SWIFT_OBJC_BRIDGING_HEADER = "client-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -864,6 +895,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_NAME:rfc1034identifier).example.native.reactjs.org";
 				PRODUCT_NAME = client;
+				SWIFT_OBJC_BRIDGING_HEADER = "client-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -876,6 +908,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -892,6 +925,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.client-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "client-tvOS-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -904,6 +940,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -920,6 +957,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.client-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "client-tvOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -929,8 +968,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 683F846914BD90B01F7DCD03 /* Pods-client-tvOSTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -947,6 +988,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.client-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "client-tvOSTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/client-tvOS.app/client-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
@@ -956,8 +1000,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7933F3829A331691E7C191D2 /* Pods-client-tvOSTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -974,6 +1020,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.client-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "client-tvOSTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/client-tvOS.app/client-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};

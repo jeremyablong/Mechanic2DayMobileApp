@@ -79,6 +79,8 @@ import WaitingRoomRoadsideAssistancePage from "./pages/roadsideAssistance/initia
 import TowTruckDriverHomepagePage from "./pages/towTruckDriver/homepage/index.js";
 import ListQueuePage from "./pages/towTruckDriver/listQueue/listQueue.js";
 import ManageActiveJobClaimPage from "./pages/towTruckDriver/activeClaim/active.js";
+import ActiveProposalRoadsideAssistanceInProgressPage from "./pages/roadsideAssistance/active/activeClaim.js";
+import IndividualListingTowCompanyPage from "./pages/roadsideAssistance/individual/index.js";
 
 const Stack = createStackNavigator();
 
@@ -164,6 +166,12 @@ constructor(props) {
         count: 0
       })
     })
+
+    if (this.state.count >= 10) {
+      this.setState({
+        count: 0
+      })
+    }
   }
   //  componentWillUnmount() {
   //     BackgroundGeolocation.removeListeners();
@@ -177,37 +185,43 @@ constructor(props) {
       this.setState((prevState, props) => ({
         count: prevState.count + 1
       }), () => {
-        if (location.coords.speed < 4) {
-          // run only every 12 cycles
-          console.log("run only every 4 cycles")
-          if (this.state.count === 4) {
-            this.handleDrivingLocationUpdate(location);
-          }
-        } else if (4 <= location.coords.speed && location.coords.speed <= 9) {
-          // run only every 9 cycles
-          console.log("run only every 5 cycles")
-          if (this.state.count === 5) {
-            this.handleDrivingLocationUpdate(location);
-          }
-        } else if (10 <= location.coords.speed && location.coords.speed <= 15) {
-          console.log("run only every 6 cycles")
-          if (this.state.count === 6) {
-            this.handleDrivingLocationUpdate(location);
-          }
-          // run only every 8 cycles
-        } else if (16 <= location.coords.speed && location.coords.speed <= 25) {
-          console.log("run only every 7 cycles")
-          // run only every 6 cycles
-          if (this.state.count === 7) {
-            this.handleDrivingLocationUpdate(location);
-          }
+        if (this.state.count >= 10) {
+          this.setState({
+            count: 0
+          })
         } else {
-          console.log("run only every 8 cycles", this.state.count);
-  
-          if (this.state.count === 8) {
-            this.handleDrivingLocationUpdate(location);
+          if (location.coords.speed < 4) {
+            // run only every 12 cycles
+            console.log("run only every 4 cycles")
+            if (this.state.count === 4) {
+              this.handleDrivingLocationUpdate(location);
+            }
+          } else if (4 <= location.coords.speed && location.coords.speed <= 9) {
+            // run only every 9 cycles
+              console.log("run only every 5 cycles")
+            if (this.state.count === 5) {
+              this.handleDrivingLocationUpdate(location);
+            }
+          } else if (10 <= location.coords.speed && location.coords.speed <= 15) {
+            console.log("run only every 6 cycles")
+            if (this.state.count === 6) {
+              this.handleDrivingLocationUpdate(location);
+            }
+            // run only every 8 cycles
+          } else if (16 <= location.coords.speed && location.coords.speed <= 25) {
+            console.log("run only every 7 cycles")
+            // run only every 6 cycles
+            if (this.state.count === 7) {
+              this.handleDrivingLocationUpdate(location);
+            }
+          } else {
+            console.log("run only every 8 cycles", this.state.count);
+    
+            if (this.state.count === 8) {
+              this.handleDrivingLocationUpdate(location);
+            }
+            // run only every 4 cycles
           }
-          // run only every 4 cycles
         }
       });
     }
@@ -441,11 +455,13 @@ constructor(props) {
               <Stack.Screen name="tow-truck-driver-online-homepage" component={TowTruckDriverHomepagePage} />
               <Stack.Screen name="list-roadside-assistance-queue" component={ListQueuePage} />
               <Stack.Screen name="tow-activated-map-view" component={ManageActiveJobClaimPage} />
+              <Stack.Screen name="in-progress-roadside-assistance" component={ActiveProposalRoadsideAssistanceInProgressPage} />
+              <Stack.Screen name="individual-listing-tow-company" component={IndividualListingTowCompanyPage} />
             </Stack.Navigator>
           </NavigationContainer>
           <Toast ref={(ref) => Toast.setRef(ref)} />
           </UserInactivity>
-        </View>
+        </View> 
       </>
     );
  }

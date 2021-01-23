@@ -28,6 +28,7 @@
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.4.17",
     "nodemon": "^2.0.6",
+    "opentok": "^2.10.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",

@@ -61,9 +61,11 @@ constructor(props) {
         active: 0
     }
 }
-    _renderItem ({item, index}, parallaxProps) {
+    _renderItem = ({item, index}, parallaxProps) => {
         return (
-            <View key={index} style={styles.item}>
+            <TouchableOpacity onPress={() => {
+                this.props.props.navigation.push("individual-listing-tow-company", { company: item });
+            }} key={index} style={styles.item}>
                 <ParallaxImage
                     source={{ uri: item.company_image }}
                     containerStyle={styles.imageContainer}
@@ -90,7 +92,7 @@ constructor(props) {
                         />
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     }
     componentDidMount() {
@@ -545,6 +547,8 @@ constructor(props) {
                             <AwesomeButtonRick textColor={"black"} onPress={() => {
                                 if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
                                     this.props.props.navigation.navigate("waiting-room-roadside-assistance");
+                                } else if (user.towing_services_start.page === "mapview-in-progress") {
+                                    this.props.props.navigation.navigate("in-progress-roadside-assistance");
                                 } else {
                                     this.RBSheet.open();
                                 }

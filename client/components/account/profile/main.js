@@ -158,6 +158,11 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Advertise Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}
+                            {user.accountType === "client" ? <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/tow-truck.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem> : null}
                             {user.accountType === "tow-truck-company" ?  <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.navigate("manage-tow-drivers");
                             }} style={styles.listItem}>

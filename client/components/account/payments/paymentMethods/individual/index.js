@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { Header, Left, Button, Title, Right, Text as NativeText, ListItem } from 'native-base';
+import { Header, Left, Button, Title, Right, Text as NativeText, ListItem, List } from 'native-base';
 import styles from './styles.js';
 import Config from "react-native-config";
 import { connect } from "react-redux";
@@ -94,37 +94,39 @@ constructor(props) {
                             <Title style={{ paddingTop: 10 }}>Credit Card</Title>
                         </Left>
                     </Header>
-                    <ListItem onPress={() => {
-                        
-                    }} button={true} style={styles.listItem} icon>
-                        <Left style={{ flexDirection: "row" }}>
-                            <TouchableOpacity onPress={() => {}}>
-                                <Image source={card.type === "master-card" ? require("../../../../../assets/icons/mastercard.png") : require("../../../../../assets/icons/visa.png")} style={styles.paymentIcon} />
-                            </TouchableOpacity>
-                            <NativeText style={{ marginLeft: 20 }}>{card.type === "master-card" ? "Master-Card" : "Visa"} {card.last_four}</NativeText>
-                        </Left>
-                    </ListItem>
-                    <ListItem style={styles.listItem}>
-                        <Left style={{ flexDirection: "row" }}>
-                            <NativeText>Set as default</NativeText>
-                        </Left>
-                        <Right>
-                        <View style={{ marginRight: 20 }}>
-                            <Switch
-                                value={this.state.switch}
-                                onValueChange={(val) => {
-                                    if (this.state.switch === false) {
-                                        this.handleChangeSwitch();
-                                    }
-                                }} 
-                                disabled={this.state.switch}
-                                activeText={'On'}
-                                inActiveText={'Off'}
-                                circleSize={30}
-                            />
-                        </View>
-                        </Right>
-                    </ListItem>
+                    <List>
+                        <ListItem onPress={() => {
+                            
+                        }} button={true} style={styles.listItem}>
+                            <Left style={{ flexDirection: "row" }}>
+                                <TouchableOpacity onPress={() => {}}>
+                                    <Image source={card.type === "master-card" ? require("../../../../../assets/icons/mastercard.png") : require("../../../../../assets/icons/visa.png")} style={styles.paymentIcon} />
+                                </TouchableOpacity>
+                                <NativeText style={{ marginLeft: 20 }}>{card.type === "master-card" ? "Master-Card" : "Visa"} {card.last_four}</NativeText>
+                            </Left>
+                        </ListItem>
+                        <ListItem style={styles.listItem}>
+                            <Left style={{ flexDirection: "row" }}>
+                                <NativeText>Set as default</NativeText>
+                            </Left>
+                            <Right>
+                            <View style={{ marginRight: 20 }}>
+                                <Switch
+                                    value={this.state.switch}
+                                    onValueChange={(val) => {
+                                        if (this.state.switch === false) {
+                                            this.handleChangeSwitch();
+                                        }
+                                    }} 
+                                    disabled={this.state.switch}
+                                    activeText={'On'}
+                                    inActiveText={'Off'}
+                                    circleSize={30}
+                                />
+                            </View>
+                            </Right>
+                        </ListItem>
+                    </List>
                     <View style={styles.deleteContainer}>
                         <TouchableOpacity onPress={() => {
                             this.setState({

@@ -57,6 +57,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         // other user
                         if (user.unique_id === selected.user_id) {
                             user.employed_by = id;
+                            user.active_employee = true;
     
                             console.log("AFTER!", user);
 

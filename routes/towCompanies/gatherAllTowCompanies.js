@@ -22,7 +22,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     err
                 })
             } else {
-                console.log("results", results);
 
                 const new_results = results.filter((item) => {
                     if (item.live === true && item.page === "COMPLETE") {

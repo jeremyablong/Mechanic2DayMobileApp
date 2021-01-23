@@ -18,6 +18,20 @@ export default StyleSheet.create({
         alignItems: "center",
         alignContent: "center"
     },
+    buttonButton: {
+        width: width * 0.75,
+        justifyContent: "center"
+    },
+    headModal: {
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    subModal: {
+        fontSize: 15,
+        fontWeight: "bold",
+        textAlign: "center"
+    },
     customButton: {
         width: width * 0.85,
         justifyContent: "center"

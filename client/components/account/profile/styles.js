@@ -44,7 +44,7 @@ export default StyleSheet.create({
         marginLeft: 20
     },
     nameContainer: {
-        marginTop: 30,
+        marginTop: 35,
         marginLeft: 20
     },
     divider: {

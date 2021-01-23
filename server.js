@@ -110,6 +110,10 @@ app.use("/gather/requested/tow/information", require("./routes/roadsideAssistanc
 app.use("/gather/queued/jobs", require("./routes/roadsideAssistance/queue/gatherQueuedJobs.js"));
 app.use("/assign/driver/roadside/assistance", require("./routes/roadsideAssistance/towTransaction/assignDriverAndNotify.js"));
 app.use("/update/both/users/start/tow", require("./routes/roadsideAssistance/towTransaction/startTow.js"));
+app.use("/gather/user/location/in/transit", require("./routes/roadsideAssistance/active/snagLocationTowTruckTransit.js"));
+app.use("/notifiy/of/arrival/tow/driver", require("./routes/towDrivers/notify/notifyOtherUserArrival.js"));
+app.use("/notify/other/user/arrival/tow", require("./routes/towDrivers/notify/notifyUser.js"));
+
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
