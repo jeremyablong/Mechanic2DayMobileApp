@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Image, ScrollView, Animated, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, Image, ScrollView, Animated, TouchableOpacity, Dimensions, Linking } from "react-native";
 import styles from "./styles.js";
 import { Header, Left, Body, Right, Button, Title, Text as NativeText, Subtitle, List, ListItem, Icon, Textarea , Input, Item, Label, Form } from 'native-base';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -8,6 +8,8 @@ import axios from "axios";
 import { Config } from "react-native-config";
 import RBSheet from "react-native-raw-bottom-sheet";
 import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+import Dialog from "react-native-dialog";
+import _ from "lodash";
 
 const { height, width } = Dimensions.get("window");
 
@@ -24,7 +26,9 @@ constructor(props) {
         towDriverLocation: null,
         privateMessage: "",
         privateTitle: "",
-        polyline: []
+        polyline: [],
+        isVisibleConfirmation: false,
+        roadside_assistance_company: null
     }
 }
     componentDidMount() {
@@ -35,6 +39,22 @@ constructor(props) {
                 console.log(res.data);
 
                 const { user } = res.data;
+
+                axios.post(`${Config.ngrok_url}/gather/breif/data/two/custom`, {
+                    id: user.towing_services_start.tow_driver_infomation.unique_id
+                }).then((res) => {
+                    if (res.data.message === "Gathered user's data!") {
+                        console.log(res.data);
+
+                        this.setState({
+                            roadside_assistance_company: res.data.company
+                        })
+                    } else {
+                        console.log("ERR: ", res.data);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
 
                 const tow_driver_unique_id = user.towing_services_start.tow_driver_infomation.unique_id;
 
@@ -131,12 +151,27 @@ constructor(props) {
             console.log(err);
         })
     }
+    confirmDriverHasArrived = () => {
+        console.log("confirmDriverHasArrived clicked.");
+
+        axios.post(`${Config.ngrok_url}/second/step/confirm/drivers/arrival`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Both users have confirmed the arrival!") {
+                console.log(res.data);
+            } else {
+                console.log("ERR: ", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     renderConditional = () => {
         const { user, region, towDriverLocation, polyline } = this.state;
         
         if (user !== null && typeof polyline !== 'undefined' && polyline.length > 0) {
             return (
-                <Fragment>
+                <View style={{ flex: 1 }}>
                     <MapView
                         style={styles.map}
                         showsUserLocation={true}
@@ -174,7 +209,18 @@ constructor(props) {
                             </View>
                         </TouchableOpacity>
                     </View>
-                </Fragment>
+                    <View style={styles.atTheBottom}>
+                        <View style={styles.centered}>
+                            <View style={styles.centered}>
+                                <AwesomeButtonBlue backgroundShadow={"lightblue"} width={width * 0.75} type={"primary"} textColor={"white"} onPress={() => {
+                                    this.setState({
+                                        isVisibleConfirmation: true
+                                    })
+                                }}>Confirm driver has arrived</AwesomeButtonBlue>
+                            </View>
+                        </View>
+                    </View>
+                </View>
             );
         }
     }
@@ -186,8 +232,15 @@ constructor(props) {
     sendPrivateMessage = () => {
         console.log("sendPrivateMessage");
     }
+    contactTowCompany = () => {
+        console.log("contactTowCompany clicked");
+
+        Linking.openURL(`tel:${this.state.roadside_assistance_company.company_phone_number}`)
+    }
     render() {
         console.log("activeClaim.js state", this.state);
+
+        const { roadside_assistance_company } = this.state;
         return (
             <Fragment>
                 <Header>
@@ -212,6 +265,26 @@ constructor(props) {
                 </Header>
                 <View style={styles.container}>
                     {this.renderConditional()}
+                </View>
+                <View>
+                    <Dialog.Container visible={this.state.isVisibleConfirmation}>
+                    <Dialog.Title>Confirm the driver has arrived</Dialog.Title>
+                    <Dialog.Description>
+                       Are you sure you meant to click this button? Only continue if the driver is "on-site".
+                    </Dialog.Description>
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            isVisibleConfirmation: false
+                        })
+                    }} label="Cancel" />
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            isVisibleConfirmation: false
+                        }, () => {
+                            this.confirmDriverHasArrived();
+                        })
+                    }} label="Driver is here!" />
+                    </Dialog.Container>
                 </View>
                 <RBSheet    
                     animated={new Animated.Value(0)}
@@ -274,14 +347,14 @@ constructor(props) {
                     }}
                 >
                     <Fragment>
-                        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+                        {roadside_assistance_company !== null ? <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                             <View style={styles.container}>
                             <View style={styles.header}>
                                 <View style={styles.absolutePosition}>
                                     <TouchableOpacity onPress={() => {
                                         this.RBSheetTHREE.close();
                                     }}>
-                                        <Image source={require("../../../assets/icons/x.png")} style={styles.headerIcon} />
+                                        <Image source={require("../../../assets/icons/x.png")} style={[styles.headerIcon, { tintColor: "white" }]} />
                                     </TouchableOpacity>
                                 </View>
                                 <Text style={styles.headerTitle}>
@@ -290,38 +363,99 @@ constructor(props) {
                             </View>
 
                             <View style={styles.postContent}>
-                                <Text style={styles.postTitle}>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+                                <Text style={[styles.postTitle, { marginBottom: 15 }]}>
+                                    Driver is employed by {roadside_assistance_company.company_name}.
                                 </Text>
-
+                                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Tow Company Service Rates</Text>
                                 <Text style={styles.postDescription}>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. 
-                                    Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-                                    Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. 
+                                    Tire Change: ${roadside_assistance_company.services.change_tire_cost} {"\n"}
+                                    Gas Delivery: ${roadside_assistance_company.services.gas_delivery_cost} {"\n"}
+                                    Jumpstart Services: ${roadside_assistance_company.services.jumpstart_cost} {"\n"}
+                                    Stuck Vehicle Removal: ${roadside_assistance_company.services.remove_stuck_vehicle} {"\n"}
+                                    Unlock Door(s) Service: ${roadside_assistance_company.services.unlock_locked_door_cost}
                                 </Text>
-
-                                <Text style={styles.tags}>
-                                    Lorem, ipsum, dolor, sit, amet, consectetuer, adipiscing, elit. 
+                                <View style={styles.hr}/>
+                                <Text style={styles.postDescription}>
+                                    Flat Rate Assistance Fee: ${roadside_assistance_company.standard_tow_fees.tow_price} {roadside_assistance_company.standard_tow_fees.currency} {"\n"}
+                                    Cost Per Mile: ${roadside_assistance_company.standard_tow_fees.per_mile_fee} {roadside_assistance_company.standard_tow_fees.currency} {"\n"}
                                 </Text>
-
+                                <Text style={styles.postTitle}>
+                                    Company Name: <Text style={{ color: "darkblue" }}>{roadside_assistance_company.company_name}</Text>
+                                </Text>
+                                
                                 <Text style={styles.date}>
-                                    2017-11-27 13:03:01
+                                    Company Page Posted On {roadside_assistance_company.date}
                                 </Text>
 
                                 <View style={styles.profile}>
                                     <Image style={styles.avatar}
-                                    source={{uri: 'https://bootdey.com/img/Content/avatar/avatar1.png'}}/>
+                                    source={{ uri: roadside_assistance_company.company_image }}/>
 
-                                    <Text style={styles.name}>
-                                        Johan Doe
-                                    </Text>
+                                    <AwesomeButtonBlue style={{ marginLeft: 10 }} type={"secondary"} width={width * 0.60} onPress={this.contactTowCompany}>Contact Tow Co.</AwesomeButtonBlue>
                                 </View>
-                                <TouchableOpacity style={styles.shareButton}>
-                                    <Text style={styles.shareButtonText}>Like</Text>  
-                                </TouchableOpacity> 
+                                <View style={{ marginTop: 15, marginBottom: 15 }}>
+                                    
+                                </View>
+                                <Text style={[styles.postTitle, { marginTop: 30 }]}>Operational Hours</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", width, height: 75 }}>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left" }}>Sunday open: {"\n"}{roadside_assistance_company.operational_hours.sunday_opening}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left", marginLeft: -10 }}>Sunday close: {"\n"}{roadside_assistance_company.operational_hours.sunday_closing}</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", width, height: 75 }}>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left" }}>Monday open: {"\n"}{roadside_assistance_company.operational_hours.monday_opening}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left", marginLeft: -10 }}>Monday close: {"\n"}{roadside_assistance_company.operational_hours.monday_closing}</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", width, height: 75 }}>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left" }}>Tuesday open: {"\n"}{roadside_assistance_company.operational_hours.tuesday_opening}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left", marginLeft: -10 }}>Tuesday close: {"\n"}{roadside_assistance_company.operational_hours.tuesday_closing}</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", width, height: 75 }}>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left" }}>Wednesday open: {"\n"}{roadside_assistance_company.operational_hours.wednesday_opening}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left", marginLeft: -10 }}>Wednesday close: {"\n"}{roadside_assistance_company.operational_hours.wendesday_closing}</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", width, height: 75 }}>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left" }}>Thursday open: {"\n"}{roadside_assistance_company.operational_hours.thursday_opening}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left", marginLeft: -10 }}>Thursday close: {"\n"}{roadside_assistance_company.operational_hours.thursday_closing}</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", width, height: 75 }}>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left" }}>Friday open: {"\n"}{roadside_assistance_company.operational_hours.friday_opening}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left", marginLeft: -10 }}>Friday close: {"\n"}{roadside_assistance_company.operational_hours.friday_closing}</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", width, height: 75 }}>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left" }}>Saturday open: {"\n"}{roadside_assistance_company.operational_hours.saturday_opening}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "column", width: width * 0.50 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: "bold", textAlign: "left", marginLeft: -10 }}>Saturday close: {"\n"}{roadside_assistance_company.operational_hours.saturday_closing}</Text>
+                                    </View>
+                                </View>
                             </View>
                             </View>
-                        </ScrollView>
+                        </ScrollView> : null}
                     </Fragment>
                 </RBSheet>
                 <RBSheet    
@@ -360,7 +494,7 @@ constructor(props) {
                                 </Button>
                             </Left>
                             <Body>
-                                <NativeText>Trip Details (arrival ETA, details, driver info & more...)</NativeText>
+                                <NativeText>View Tow Co. Information</NativeText>
                             </Body>
                             <Right>
                                 <Icon name="arrow-forward" />

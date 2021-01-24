@@ -505,6 +505,19 @@ constructor(props) {
             );
         }
     }
+    calculateText = () => {
+        const { user } = this.state;
+
+        if (user !== null) {
+            if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
+                return "Pickup where you left off";   
+            } else if (user.towing_services_start.page === "mapview-in-progress") {
+                return "Continue with active claim";
+            } else {
+                return "Get immediate assistance";
+            }
+        }
+    }
     render() {
         const { towDesination, selected, myLocation, serviceRequired, user } = this.state;
         console.log("this.state. roadsideLanding.js state", this.state);
@@ -552,7 +565,7 @@ constructor(props) {
                                 } else {
                                     this.RBSheet.open();
                                 }
-                            }} width={width * 0.75} type="secondary">Get immediate assistance</AwesomeButtonRick>
+                            }} width={width * 0.75} type="secondary">{this.calculateText()}</AwesomeButtonRick>
                         </View>
                     </View> : null}
                     <View style={styles.bottomContainer}>

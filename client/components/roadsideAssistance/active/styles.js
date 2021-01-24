@@ -1,5 +1,4 @@
-import React from "react";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 
 const { height, width } = Dimensions.get("window");
 
@@ -17,7 +16,7 @@ export default StyleSheet.create({
     },  
     absolutePosition: {
         position: "absolute",
-        top: 30, 
+        bottom: 30, 
         left: 10
     },
     marginCentered: {
@@ -29,6 +28,12 @@ export default StyleSheet.create({
     headerIconThree: {
         maxWidth: 60, 
         maxHeight: 60
+    },
+    hr: {
+        marginTop: 15, 
+        marginBottom: 15, 
+        borderBottomColor: "grey", 
+        borderBottomWidth: 2
     },
     textInput: {
         borderWidth: 2, 
@@ -56,7 +61,7 @@ export default StyleSheet.create({
         marginTop: 10
     },
     container: {
-        minHeight: height,
+        minHeight: height - (Platform === "ios" ? 64 : 58),
         width, 
         backgroundColor: "white"
     },
@@ -111,17 +116,29 @@ export default StyleSheet.create({
     header:{
         padding:30,
         alignItems: 'center',
-        backgroundColor: "#00BFFF",
+        backgroundColor: "darkblue",
+    },
+    atTheBottom: {
+        bottom: 55,
+        position: "absolute",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        left: 0,
+        right: 0
     },
     headerTitle:{
         fontSize:30,
         color:"#FFFFFF",
         marginTop:10,
+        textAlign: "center",
+        fontWeight: "bold"
     },
     name:{
         fontSize:22,
-        color:"#FFFFFF",
+        color:"darkblue",
         fontWeight:'600',
+        marginLeft: 15
     },
     postContent: {
         flex: 1,
@@ -154,13 +171,6 @@ export default StyleSheet.create({
         flexDirection: 'row',
         marginTop:20
     },
-    name:{
-        fontSize:22,
-        color:"#00BFFF",
-        fontWeight:'600',
-        alignSelf:'center',
-        marginLeft:10
-    }, 
     shareButton: {
         marginTop:10,
         height:45,
@@ -168,10 +178,10 @@ export default StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius:30,
-        backgroundColor: "#00BFFF",
+        backgroundColor: "darkblue",
     },
     shareButtonText:{
-        color: "#FFFFFF",
+        color: "white",
         fontSize:20,
     }
 })

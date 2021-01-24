@@ -311,7 +311,11 @@ constructor(props) {
                         this.setState({
                             isVisible: false
                         }, () => {
-                            this.props.props.navigation.push("tow-activated-map-view");
+                            if (user.active_roadside_assistance_jobs.current_page === "actively-on-site") {
+                                this.props.props.navigation.push("settings-active-roadside-assistance-manage");
+                            } else {
+                                this.props.props.navigation.push("tow-activated-map-view");
+                            }
                         })
                     }} label="REDIRECT ME" />
                     </Dialog.Container>

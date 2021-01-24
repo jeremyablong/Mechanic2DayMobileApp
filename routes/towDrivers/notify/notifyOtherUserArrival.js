@@ -9,7 +9,7 @@ const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.post("/", (req, res) => {
+    router.post("/", (req, responseeeeee) => {
 
         const database = db.db("<dbname>");
 
@@ -30,19 +30,28 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 }).then((res) => {
                     if (res.data.message === "Notified!") {
                         console.log("success!");
+
+                        user.active_roadside_assistance_jobs.arrived = true;
+                        user.active_roadside_assistance_jobs.completed_job = false;
+                        user.active_roadside_assistance_jobs.payment_recieved = false;
+                        user.active_roadside_assistance_jobs.confirmed_onsite = true;
+                        user.active_roadside_assistance_jobs.agree_job_completed = false;
+                        user.active_roadside_assistance_jobs.current_page = "actively-on-site";
+
+                        collection.save(user);
+
+                        responseeeeee.json({
+                            message: "Notified other user successfully!",
+                            user
+                        })
                     } else {
                         console.log("Err", res.data);
                     }
                 }).catch((err) => {
                     console.log(err);
                 })
-
-                res.json({
-                    message: "Notified other user successfully!",
-                    user
-                })
             } else {
-                res.json({
+                responseeeeee.json({
                     message: "Could not locate the appropriate user..."
                 })
             }

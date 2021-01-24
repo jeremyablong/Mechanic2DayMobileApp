@@ -7,17 +7,40 @@ import {
   } from 'react-native';
 import styles from "./styles.js";
 import { Header, Left, Body, Right, Title, Subtitle, Button, Text as NativeText, List, ListItem, Icon } from 'native-base';
-
+import { connect } from 'react-redux';
+import axios from "axios";
+import { Config } from "react-native-config";
 
 class TowTruckDriverHomepageHelper extends Component {
 constructor(props) {
     super(props);
 
     this.state = {
-        data: []
+        data: [],
+        user: null
     }
 }
+    componentDidMount() {
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+                console.log("Ta-dah!:", res.data);
+
+                const { user } = res.data;
+
+                this.setState({
+                    user
+                })
+            } else {
+                console.log("Errr", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     render() {
+        const { user } = this.state;
         return (
             <View>
                 <Header>
@@ -60,10 +83,14 @@ constructor(props) {
                             </Right>
                         </ListItem>
                         <ListItem button={true} onPress={() => {
-                            this.props.props.navigation.push("tow-activated-map-view");
+                            if (user.active_roadside_assistance_jobs.current_page === "actively-on-site") {
+                                this.props.props.navigation.push("settings-active-roadside-assistance-manage");
+                            } else {
+                                this.props.props.navigation.push("tow-activated-map-view");
+                            }
                         }}>
                             <Left>
-                                <NativeText style={{ color: "blue", fontWeight: "bold" }}>Manage an active tow/job</NativeText>
+                                <NativeText numberOfLines={2} style={{ color: "blue", fontWeight: "bold" }}>Manage an active tow/job {"\n"}<Text style={{ color: "black" }}>This is for active/current jobs</Text></NativeText>
                             </Left>
                             <Right>
                                 <Icon name="arrow-forward" />
@@ -115,4 +142,9 @@ constructor(props) {
         )
     }
 }
-export default TowTruckDriverHomepageHelper;
+const mapStateToProps = (state) => {
+    return {
+        unique_id: state.auth.authenticated.unique_id
+    }
+}
+export default connect(mapStateToProps, { })(TowTruckDriverHomepageHelper);

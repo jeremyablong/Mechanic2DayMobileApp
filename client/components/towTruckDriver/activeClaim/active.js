@@ -13,6 +13,8 @@ import geodist from "geodist";
 import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../toastConfig.js";
+import Dialog from "react-native-dialog";
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -28,7 +30,8 @@ constructor(props) {
         routes: null,
         passed: "",
         myLocation: null,
-        isVisible: false
+        isVisible: false,
+        isVisibleConfirm: false
     }
 }
     componentDidMount() {
@@ -148,6 +151,8 @@ constructor(props) {
                     }).then((res) => {
                         if (res.data.message === "Notified other user successfully!") {
                             console.log(res.data);
+
+                            this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
                         } else {
                             console.log("Err", res.data);
                         }
@@ -169,6 +174,8 @@ constructor(props) {
                     }).then((res) => {
                         if (res.data.message === "Notified other user successfully!") {
                             console.log(res.data);
+
+                            this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
                         } else {
                             console.log("Err", res.data);
                         }
@@ -225,7 +232,11 @@ constructor(props) {
                         </View>
                     </View>
                     <View style={styles.bottomBottom}>
-                        <AwesomeButtonBlue width={width * 0.75} type={"secondary"} onPress={this.notfiyOfArrival}>I have arrived</AwesomeButtonBlue>
+                        <AwesomeButtonBlue width={width * 0.75} type={"secondary"} onPress={() => {
+                            this.setState({
+                                isVisibleConfirm: true
+                            })
+                        }}>I have arrived</AwesomeButtonBlue>
                     </View>
                 </View>
             );
@@ -278,6 +289,7 @@ constructor(props) {
     }
     render() {
         console.log("activeClaim active.js", this.state);
+        const { isVisibleConfirm } = this.state;
         return (
             <Fragment>
                 <Header>
@@ -315,6 +327,26 @@ constructor(props) {
                         </View>
                         </View>
                     </Modal>
+                </View>
+                <View>
+                    <Dialog.Container visible={isVisibleConfirm}>
+                    <Dialog.Title>Are you with the client?</Dialog.Title>
+                    <Dialog.Description>
+                        Are you sure you meant to click - "I've arrived"? If so please continue...
+                    </Dialog.Description>
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            isVisibleConfirm: false
+                        })
+                    }} label="Cancel" />
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            isVisibleConfirm: false
+                        }, () => {
+                            this.notfiyOfArrival();
+                        })
+                    }} label="I've Arrived!" />
+                    </Dialog.Container>
                 </View>
                 <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <View style={styles.container}>

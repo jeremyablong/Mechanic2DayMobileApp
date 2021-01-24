@@ -113,6 +113,9 @@ app.use("/update/both/users/start/tow", require("./routes/roadsideAssistance/tow
 app.use("/gather/user/location/in/transit", require("./routes/roadsideAssistance/active/snagLocationTowTruckTransit.js"));
 app.use("/notifiy/of/arrival/tow/driver", require("./routes/towDrivers/notify/notifyOtherUserArrival.js"));
 app.use("/notify/other/user/arrival/tow", require("./routes/towDrivers/notify/notifyUser.js"));
+app.use("/second/step/confirm/drivers/arrival", require("./routes/roadsideAssistance/active/confirmDriversArrival.js"));
+app.use("/gather/breif/data/two/custom", require("./routes/roadsideAssistance/active/gatherRestrictedUserDataThree.js"));
+app.use("/gather/co/information", require("./routes/roadsideAssistance/active/gatherCoInfo.js"));
 
 
 app.get('*', function(req, res) {

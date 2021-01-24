@@ -35,8 +35,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     system_date: Date.now(),
                     date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                     data: {
-                        title: null,
-                        body: null
+                        title: `Your tow roadside assistance driver - ${fullName} - has arrived at your location!`,
+                        body: `Your roadside assistance agent has arrived! If you can't find them - give them a call or message them...`
                     },
                     from: other_user_id,
                     link: "notifications"
@@ -63,7 +63,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         user["notifications"] = [nofitication_addition];
                     }
 
-                    // collection.save(user);
+                    user.towing_services_start.order_status = "on-site";
+                    user.towing_services_start.arrived = false;
+                    user.towing_services_start.payment_recieved = false;
+                    user.towing_services_start.confirmed_onsite = false;
+                    user.towing_services_start.agree_job_completed = false;
+                    
+                    collection.save(user);
 
                     responseeeeeeeeee.json({
                         message: "Notified!"
