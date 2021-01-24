@@ -154,12 +154,18 @@ constructor(props) {
     confirmDriverHasArrived = () => {
         console.log("confirmDriverHasArrived clicked.");
 
+        const { towTruckDriverInfo } = this.state;
+
         axios.post(`${Config.ngrok_url}/second/step/confirm/drivers/arrival`, {
-            id: this.props.unique_id
+            id: this.props.unique_id,
+            other_user_id: towTruckDriverInfo.unique_id
         }).then((res) => {
             if (res.data.message === "Both users have confirmed the arrival!") {
                 console.log(res.data);
-            } else {
+
+                this.props.props.navigation.replace("driver-has-arrived-manage-listing-depatarture");
+                
+            } else if (res.data.message === "User has NOT yet marked that they've arrived...") {
                 console.log("ERR: ", res.data);
             }
         }).catch((err) => {

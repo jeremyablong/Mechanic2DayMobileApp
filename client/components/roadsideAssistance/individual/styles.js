@@ -44,7 +44,7 @@ export default StyleSheet.create({
     innerTag: {
         color: "black", 
         fontWeight: "bold", 
-        fontSize: 22
+        fontSize: 18
     },
     driverHeader: {
         textDecorationLine: "underline",

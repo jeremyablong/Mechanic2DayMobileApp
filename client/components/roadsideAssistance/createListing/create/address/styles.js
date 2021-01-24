@@ -17,6 +17,11 @@ export default StyleSheet.create({
         fontSize: 16,
         marginTop: 20
     },
+    spinnerTextStyle: {
+        color: "white", 
+        fontWeight: "bold", 
+        textAlign: "center"
+    },
     buttonCustom: {
         width: width * 0.45,
         justifyContent: "center",

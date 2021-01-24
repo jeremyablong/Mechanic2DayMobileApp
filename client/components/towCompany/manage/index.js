@@ -7,6 +7,8 @@ import { Config } from "react-native-config";
 import { connect } from "react-redux";
 import Dialog from "react-native-dialog";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -177,6 +179,15 @@ constructor(props) {
                     </Right>
                 </Header>
                 <ScrollView contentContainerStyle={{ paddingBottom: 125 }} style={styles.container}>
+                    <View style={styles.centered}>
+                        <View style={styles.centered}>
+                            <View style={{ marginTop: 20, marginBottom: 20 }}>
+                                <AwesomeButtonBlue onPress={() => {
+                                    this.props.props.navigation.navigate("advertise-roadside-assistance-main");
+                                }} width={width * 0.90} type={"secondary"}>List your company today!</AwesomeButtonBlue>
+                            </View>
+                        </View>
+                    </View>
                     <Text style={styles.topText}>Pending drivers...</Text>
                     {typeof drivers !== "undefined" && drivers.length > 0 ? drivers.map((driver, index) => {
                         if (driver.approved === false) {
@@ -238,7 +249,15 @@ constructor(props) {
                     <View style={{ marginTop: 30 }}/>
                 </SkeletonPlaceholder></View>}
                     <View style={styles.hr} />
-                    {error === true ? <View style={styles.margin}><Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 30, textAlign: "center" }}>There are currently no pending requests to join your team...</Text><View style={styles.hr} /></View> : null}
+                    {error === true ? <View style={styles.margin}>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 30, textAlign: "center" }}>There are currently no pending requests to join your team...</Text>
+                    <View style={{ marginTop: 20 }}>
+                        <AwesomeButtonBlue onPress={() => {
+                            this.props.props.navigation.navigate("advertise-roadside-assistance-main");
+                        }} width={width * 0.90} type={"secondary"}>List your company today!</AwesomeButtonBlue>
+                    </View>
+                    <View style={styles.hr} />
+                    </View> : null}
                     
                     <Text style={styles.topText}>Already approved drivers...</Text>
                     {typeof drivers !== "undefined" && drivers.length > 0 ? drivers.map((driver, index) => {

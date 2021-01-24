@@ -513,6 +513,8 @@ constructor(props) {
                 return "Pickup where you left off";   
             } else if (user.towing_services_start.page === "mapview-in-progress") {
                 return "Continue with active claim";
+            } else if (user.towing_services_start.page === "final-manage-dropoff") {
+                return "Finish Roadside Assistance Job";
             } else {
                 return "Get immediate assistance";
             }
@@ -562,6 +564,8 @@ constructor(props) {
                                     this.props.props.navigation.navigate("waiting-room-roadside-assistance");
                                 } else if (user.towing_services_start.page === "mapview-in-progress") {
                                     this.props.props.navigation.navigate("in-progress-roadside-assistance");
+                                } else if (user.towing_services_start.page === "final-manage-dropoff") {
+                                    this.props.props.navigation.navigate("driver-has-arrived-manage-listing-depatarture");
                                 } else {
                                     this.RBSheet.open();
                                 }

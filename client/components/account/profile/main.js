@@ -143,10 +143,15 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Notifications</NativeText></Left><Right><Image source={require("../../../assets/icons/bell.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
+                            {user.accountType === "client" ? <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("providers-listing-homepage");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>List your vehicle for repair</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem> : null}
                             <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.push("active-jobs");
                             }} style={styles.listItem}>
-                            <Left><NativeText>Active Jobs/Repairs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
+                            <Left><NativeText>Mechanics - active repair jobs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             {user.accountType === "tow-truck-driver" ? <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.push("tow-truck-driver-online-homepage");

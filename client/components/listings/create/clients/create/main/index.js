@@ -176,7 +176,7 @@ constructor(props) {
                             <AwesomeButtonRick width={width * 0.80} backgroundShadow={"#E8CEE4"} onPress={() => {
                                 this.props.props.navigation.navigate("list-vehicle-start");
                             }} type="secondary">
-                                <Text>List Another Vehicle</Text>
+                                <Text style={{ fontWeight: "bold" }}>List your vehicle for repair</Text>
                             </AwesomeButtonRick>
                            
                         </View>
@@ -316,7 +316,7 @@ constructor(props) {
                                     </SkeletonPlaceholder.Item>
                                 </SkeletonPlaceholder.Item>
                                 </SkeletonPlaceholder>}
-                            <View style={{ margin: 0 }}>
+                            <View style={{ margin: 0, marginTop: 40 }}>
                                 <Text style={styles.activeListingText}>Innactive Listings</Text>
                                 <Text>Inactive listings are listings that are old, removed or deleted.</Text>
                                 <View style={{ marginTop: 15 }} />

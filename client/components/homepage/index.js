@@ -169,9 +169,9 @@ constructor(props) {
                     return (
                         <Fragment>
                             <Button info onPress={() => {
-                                this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                                this.props.props.navigation.navigate("providers-listing-homepage");
                             }} style={styles.customButtonFive}>
-                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
+                                <NativeText style={{ color: "white", fontWeight: "bold" }}>List your vehicle for repair</NativeText>
                             </Button>
                         </Fragment>
                     );

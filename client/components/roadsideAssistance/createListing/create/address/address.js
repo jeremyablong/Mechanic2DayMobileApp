@@ -8,7 +8,7 @@ import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/ric
 import { Config } from 'react-native-config';
 import { connect } from "react-redux";
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const { width, height } = Dimensions.get("window");
 
@@ -23,7 +23,8 @@ constructor(props) {
         selected: null,
         full: null,
         picture: null, 
-        pictureDisplay: null
+        pictureDisplay: null,
+        spinner: false
     }
 }
     launchCameraRoll = () => {
@@ -67,23 +68,47 @@ constructor(props) {
 
         const { full, picture } = this.state;
 
-        axios.post(`${Config.ngrok_url}/start/listing/location/roadside/assistance`, {
-            location: full,
-            id: this.props.unique_id,
-            company_image: picture
-        }).then((res) => {
-            if (res.data.message === "Successfully updated and generated roadside assistance listing!") {
-                console.log(res.data);
-                
-                const { listing } = res.data;
+        this.setState({
+            spinner: true
+        }, () => {
+            axios.post(`${Config.ngrok_url}/start/listing/location/roadside/assistance`, {
+                location: full,
+                id: this.props.unique_id,
+                company_image: picture
+            }).then((res) => {
+                if (res.data.message === "Successfully updated and generated roadside assistance listing!") {
+                    console.log(res.data);
+                    
+                    const { listing } = res.data;
+    
+                    this.setState({
+                        spinner: false
+                    }, () => {
+                        this.props.props.navigation.replace("roadside-assistance-create-credentials", { listing });
+                    })
+                } else {
+                    console.log("err", res.data);
 
-                this.props.props.navigation.replace("roadside-assistance-create-credentials", { listing });
-            } else {
-                console.log("err", res.data);
-            }
-        }).catch((err) => {
-            console.log(err);
+                    this.setState({
+                        spinner: false
+                    })
+                }
+            }).catch((err) => {
+                console.log(err);
+
+                this.setState({
+                    spinner: false
+                })
+            })
         })
+
+        if (this.state.spinner === true) {
+            setTimeout(() => {
+                this.setState({
+                    spinner: false
+                })
+            }, 15000)
+        }
     }
     handleSearch = () => {
         const configggg = {
@@ -124,6 +149,12 @@ constructor(props) {
                         <Subtitle>Create roadside assistance listing</Subtitle>
                     </Body>
                 </Header>
+                <Spinner
+                    visible={this.state.spinner}
+                    textContent={'Uploading content, please wait while we process your request...'}
+                    overlayColor={"rgba(0, 0, 0, 0.675)"}
+                    textStyle={styles.spinnerTextStyle}
+                />
                 <ScrollView contentContainerStyle={{ paddingBottom: 175 }} style={styles.container}>
                     <View style={styles.margin}>
                         <Text style={styles.header}>Tell us more about your roadside assistance company</Text>

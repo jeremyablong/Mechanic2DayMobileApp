@@ -164,6 +164,10 @@ constructor(props) {
                         page: 2
                     });
 
+                    this.setState({
+                        email: ""
+                    })
+
                     setTimeout(() => {
                         this.props.props.navigation.navigate("email-verification-code");
                     },  500);
@@ -196,6 +200,10 @@ constructor(props) {
                         unformatted: phoneNumber.trim(),
                         page: 2,
                         authyID: res.data.authyID
+                    })
+
+                    this.setState({
+                        phoneNumber: ""
                     })
 
                     setTimeout(() => {
@@ -265,6 +273,7 @@ constructor(props) {
                                     <PhoneInput 
                                         ref={this.phoneInput}
                                         containerStyle={styles.inputPhone}
+                                        value={this.state.phoneNumber}
                                         defaultValue={this.state.phoneNumber}
                                         defaultCode="US"
                                         layout="first"
@@ -301,7 +310,7 @@ constructor(props) {
                                     <Form>
                                         <Item floatingLabel>
                                         <Label>Email Address</Label>
-                                        <Input style={styles.customInput} onChangeText={(value) => {
+                                        <Input style={styles.customInput} value={this.state.email} onChangeText={(value) => {
                                             this.setState({
                                                 email: value
                                             })

@@ -12,5 +12,20 @@ export default StyleSheet.create({
         height: height - (Platform === "ios" ? 64 : 56),
         width, 
         backgroundColor: "white"
+    },
+    margin: {
+        margin: 20
+    },
+    header: {
+        fontSize: 22, 
+        fontWeight: "bold",
+        textDecorationLine: "underline",
+        marginBottom: 10
+    },
+    hr: {
+        marginTop: 10,
+        marginBottom: 10,
+        borderBottomColor: "lightgrey",
+        borderBottomWidth: 2
     }
 })
