@@ -4,31 +4,41 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-
+const moment = require("moment");
+const { v4: uuidv4 } = require('uuid');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.get("/", (req, res) => {
+    router.post("/", (req, res) => {
 
         const database = db.db("<dbname>");
 
         const collection = database.collection("users");
 
-        const { company_id, company_name } = req.query;
+        const { id, company_id } = req.body;
+
+        console.log(req.body);
 
         collection.findOne({ unique_id: company_id }).then((user) => {
             if (user) {
 
-                console.log("EMPLOYED BY THIS COMPANY ----- ", user);
-
-                for (let index = 0; index < user.roadside_assistance_listings.length; index++) {
-                    const element = user.roadside_assistance_listings[index];
-                    if (element.company_name === company_name) {
-                        res.json({
-                            message: "Gathered company information!",
-                            company: element
-                        })
-                    }
+                if (user.tow_truck_drivers) {
+                    user.tow_truck_drivers.push({
+                        user_id: id,
+                        approved: false
+                    });
+                } else {
+                    user["tow_truck_drivers"] = [{
+                        user_id: id,
+                        approved: false
+                    }];
                 }
+
+                collection.save(user);
+
+                res.json({
+                    message: "Associated and notified tow company of your request!",
+                    user
+                })
             } else {
                 res.json({
                     message: "Could not locate the appropriate user..."

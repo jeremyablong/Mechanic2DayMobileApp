@@ -15,12 +15,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const { id, passed_id, drivers } = req.body;
 
+        console.log(req.body);
+
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
 
                 if (user.roadside_assistance_listings) {
                     for (let index = 0; index < user.roadside_assistance_listings.length; index++) {
                         const listinggg = user.roadside_assistance_listings[index];
+
+                        console.log("listing", listinggg);
 
                         if (listinggg.id === passed_id) {
 

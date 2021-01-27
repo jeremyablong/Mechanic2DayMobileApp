@@ -1,55 +1,30 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styles from "./styles.js";
-import { ScrollView, View, Text, ImageBackground } from "react-native";
+import { ScrollView, View, Text, ImageBackground, TouchableOpacity } from "react-native";
 import { AirbnbRating } from 'react-native-ratings';
+import axios from "axios";
+import { Config } from "react-native-config";
 
 const DesignedBoxScroll = (props) => {
-    const [ data, setData ] = useState([{
-        name: "Toms Towing",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 29.99,
-        rating: 4.27
-    }, {
-        name: "Johnny Tow",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 19.99,
-        rating: 5
-    }, {
-        name: "Tow Talent Inc.",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 24.99,
-        rating: 2.4
-    }, {
-        name: "Handle Me Tows",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 60.99,
-        rating: 4.5
-    }, {
-        name: "Jack Pack Tows",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 54.99,
-        rating: 1.7
-    }, {
-        name: "Tow Tow's!",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 99.99,
-        rating: 1.2
-    }, {
-        name: "Towed Back Inc.",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 39.99,
-        rating: 4.1
-    }, {
-        name: "Showrtons Auto",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 24.99,
-        rating: 3.9
-    }, {
-        name: "Auto Savior Inc.",
-        background: "https://picsum.photos/300/300",
-        roadside_cost: 19.99,
-        rating: 3.3
-    }]);
+    const [ data, setData ] = useState([]);
+
+    useEffect(() => {
+        console.log("mounted.");
+
+        axios.get(`${Config.ngrok_url}/gather/roadside/assistance/listings`).then((res) => {
+            if (res.data.message === "Successfully gathered roadside listings!") {
+                console.log(res.data);
+
+                const { listings } = res.data;
+
+                setData(listings);
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }, [])
     return (
         <Fragment>
             <View style={styles.container}>
@@ -62,22 +37,30 @@ const DesignedBoxScroll = (props) => {
                     </View>
                     <View style={{ flex: 1 }}>
                         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={styles.scrollViewTwo} contentContainerStyle={styles.contentContainerTwo}>
-                            {data.map((user, index) => {
+                            {data.map((roadside, index) => {
+                                console.log("roadside ACCOUNT", roadside);
                                 return (
-                                    <ImageBackground key={index} source={{ uri: user.background }} style={styles.innerContainerTwo}>
-                                        <View style={styles.innerBox}>
-                                            <Text style={styles.mainTextTwo}>Company: {user.name}</Text>
-                                            <Text style={styles.mainTextTwo}>Call Fee: ${user.roadside_cost.toString()}</Text>
-                                            <AirbnbRating
-                                                count={5}
-                                                defaultRating={user.rating}
-                                                size={20} 
-                                                isDisabled={true} 
-                                                selectedColor={"gold"} 
-                                                showRating={false}
-                                            />
-                                        </View>
-                                    </ImageBackground>
+                                    <TouchableOpacity key={index} onPress={() => {
+                                        props.props.navigation.push("individual-listing-tow-company", { company: roadside });
+                                    }}>
+                                        <ImageBackground key={index} source={{ uri: roadside.company_image }} style={styles.innerContainerTwo}>
+                                            <View style={styles.innerBox}>
+                                            <View style={styles.centered}>
+                                                    <Text style={styles.mainTextTwo}>Company: <Text style={{ color: "#FDE2FF" }}>{roadside.company_name}</Text></Text>
+                                                    <Text style={styles.mainTextTwo}>Tier: <Text style={{ color: "#FDE2FF" }}>{roadside.standard_tow_fees.tier}</Text></Text>
+                                                    <Text style={styles.mainTextTwo}>Standard Tow Fee: <Text style={{ color: "#FDE2FF" }}>${roadside.standard_tow_fees.tow_price.toString()}</Text></Text>
+                                            </View>
+                                                <AirbnbRating
+                                                    count={5}
+                                                    defaultRating={Math.floor(Math.random() * 5) + 1}
+                                                    size={20} 
+                                                    isDisabled={true} 
+                                                    selectedColor={"gold"} 
+                                                    showRating={false}
+                                                />
+                                            </View>
+                                        </ImageBackground>
+                                    </TouchableOpacity>
                                 );
                             })}
                         </ScrollView>

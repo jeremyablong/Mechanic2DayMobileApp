@@ -66,7 +66,9 @@ constructor(props) {
                 email: previous.email ? previous.email : "",
                 wholeAddress: previous.wholeAddress,
                 accountType: previous.accountType,
-                active_employee: false
+                active_employee: false,
+                company_id: this.state.full.poster,
+                company_name: this.state.full.company_name
             }).then((response) => {
                 if (response.data.message === "Successfully registered new user!") {
                     console.log(response.data);
@@ -124,7 +126,9 @@ constructor(props) {
                 wholeAddress: previous.wholeAddress,
                 accountType: previous.accountType,
                 firebasePushNotificationToken: fcmToken,
-                active_employee: false
+                active_employee: false,
+                company_id: this.state.full.poster,
+                company_name: this.state.full.company_name
             }).then((response) => {
                 if (response.data.message === "Successfully registered new user!") {
                     console.log(response.data);

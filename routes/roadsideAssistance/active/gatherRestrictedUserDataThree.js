@@ -13,7 +13,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { id } = req.body;
+        const { id, company_name } = req.body;
 
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
@@ -35,13 +35,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                 axios.get(`${config.get("ngrok_url")}/gather/co/information`, {
                     params: {
-                        company_id: user.employed_by
+                        company_id: user.employed_by,
+                        company_name
                     }
                 }).then((res) => {
                     if (res.data.message === "Gathered company information!") {
 
                         const { company } = res.data;
-                        
+
                         responseeeeee.json({
                             message: "Gathered user's data!",
                             company

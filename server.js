@@ -116,7 +116,10 @@ app.use("/notify/other/user/arrival/tow", require("./routes/towDrivers/notify/no
 app.use("/second/step/confirm/drivers/arrival", require("./routes/roadsideAssistance/active/confirmDriversArrival.js"));
 app.use("/gather/breif/data/two/custom", require("./routes/roadsideAssistance/active/gatherRestrictedUserDataThree.js"));
 app.use("/gather/co/information", require("./routes/roadsideAssistance/active/gatherCoInfo.js"));
-
+app.use("/notify/business/activate/account", require("./routes/towDrivers/notify/notifiyEmployerActivate.js"));
+app.use("/associate/with/tow/truck/company", require("./routes/towDrivers/associate/associateWithCo.js"));
+app.use("/associate/user/tow/company/send/request", require("./routes/towCompanies/newDriver/associateDriverRequest.js"));
+app.use("/mark/tow/driver/trip/complete", require("./routes/towDrivers/complete/markTripAsComplete.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
@@ -169,7 +172,15 @@ if (process.env.NODE_ENV === "production") {
 io.on("connection", socket => {
 
 	console.log("New client connected");
-  
+
+	socket.on("approved-driver-arrival", (data) => {
+		console.log("JACKPOT!:", data);
+		io.sockets.emit("arrived", data);
+	})
+	socket.on("delivered-successfully", (data) => {
+		console.log("JACKPOT TWO DELIVERED!:", data);
+		io.sockets.emit("delivered", data);
+	});
 	socket.on("disconnect", () => console.log("Client disconnected"));
 });
 

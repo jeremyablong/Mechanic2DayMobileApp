@@ -14,7 +14,7 @@ const axios = require('axios');
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
 
-        const { firebasePushNotificationToken, accountType, address, active_employee, authyID, birthdate, gender, unformatted, fullName, password, wholeAddress, phoneNumber, email } = req.body;
+        const { firebasePushNotificationToken, company_name, accountType, address, company_id, active_employee, authyID, birthdate, gender, unformatted, fullName, password, wholeAddress, phoneNumber, email } = req.body;
 
         if (phoneNumber !== "undefined" && phoneNumber.length > 0) {
 
@@ -28,6 +28,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 fullName, 
                 active_employee,
                 password,  
+                company_id,
+                company_name,
                 phoneNumber: [{
                     number: phoneNumber,
                     id: uuidv4(),
@@ -93,6 +95,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 fullName, 
                 active_employee,
                 password,  
+                company_id,
+                company_name,
                 email,
                 register_system_date: Date.now(),
                 register_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),

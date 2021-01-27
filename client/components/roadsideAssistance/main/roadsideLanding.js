@@ -511,9 +511,9 @@ constructor(props) {
         if (user !== null) {
             if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
                 return "Pickup where you left off";   
-            } else if (user.towing_services_start.page === "mapview-in-progress") {
+            } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "mapview-in-progress") {
                 return "Continue with active claim";
-            } else if (user.towing_services_start.page === "final-manage-dropoff") {
+            } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
                 return "Finish Roadside Assistance Job";
             } else {
                 return "Get immediate assistance";
@@ -528,7 +528,7 @@ constructor(props) {
                 <Header>
                     <Left>
                         <Button onPress={() => {
-                            this.props.props.navigation.goBack();
+                            this.props.props.navigation.push("homepage-main");
                         }} transparent>
                             <Image source={require("../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
@@ -557,14 +557,14 @@ constructor(props) {
                             }} />;
                         })}
                     </MapView> : null}
-                    {_.has(this.props.authenticated, "fullName") ? <View style={styles.marginAbsolute}>
+                    {user !== null && _.has(this.props.authenticated, "fullName") && user.accountType !== "tow-truck-driver" ? <View style={styles.marginAbsolute}>
                         <View style={styles.centered}>
                             <AwesomeButtonRick textColor={"black"} onPress={() => {
                                 if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
                                     this.props.props.navigation.navigate("waiting-room-roadside-assistance");
-                                } else if (user.towing_services_start.page === "mapview-in-progress") {
+                                } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "mapview-in-progress") {
                                     this.props.props.navigation.navigate("in-progress-roadside-assistance");
-                                } else if (user.towing_services_start.page === "final-manage-dropoff") {
+                                } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
                                     this.props.props.navigation.navigate("driver-has-arrived-manage-listing-depatarture");
                                 } else {
                                     this.RBSheet.open();

@@ -50,7 +50,9 @@ const FooterHelper = (props) => {
                 <Footer>
                     <FooterTab>
                         <Button onPress={() => {
-                            props.props.navigation.push("homepage-main");
+                            if (route.name !== "homepage-main") {
+                                props.props.navigation.push("homepage-main");
+                            }
                         }} badge vertical>
                         <Badge style={styles.badge}><Text>2</Text></Badge>
                             <Image source={require("../../assets/icons/home.png")} style={styles.menuIcon} />

@@ -251,11 +251,11 @@ constructor(props) {
                     <View style={styles.hr} />
                     {error === true ? <View style={styles.margin}>
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 30, textAlign: "center" }}>There are currently no pending requests to join your team...</Text>
-                    <View style={{ marginTop: 20 }}>
+                    {/* <View style={{ marginTop: 20 }}>
                         <AwesomeButtonBlue onPress={() => {
                             this.props.props.navigation.navigate("advertise-roadside-assistance-main");
                         }} width={width * 0.90} type={"secondary"}>List your company today!</AwesomeButtonBlue>
-                    </View>
+                    </View> */}
                     <View style={styles.hr} />
                     </View> : null}
                     

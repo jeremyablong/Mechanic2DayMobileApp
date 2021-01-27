@@ -16,6 +16,8 @@ import { checkToNavigatePushNotification } from "../../actions/push-notification
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
 import { Config } from "react-native-config";
 import axios from "axios";
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -168,11 +170,13 @@ constructor(props) {
                 case "client":
                     return (
                         <Fragment>
-                            <Button info onPress={() => {
+                            <AwesomeButtonBlue onPress={() => {
                                 this.props.props.navigation.navigate("providers-listing-homepage");
-                            }} style={styles.customButtonFive}>
-                                <NativeText style={{ color: "white", fontWeight: "bold" }}>List your vehicle for repair</NativeText>
-                            </Button>
+                            }} width={width * 0.85} type={"primary"}>List your vehicle for repair</AwesomeButtonBlue>
+                            <View style={{ marginTop: 20 }} />
+                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
+                                this.props.props.navigation.push("roadside-assistance-main-landing");
+                            }}>Get roadside assistance</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
@@ -190,11 +194,13 @@ constructor(props) {
                 case "tow-truck-company":
                     return (
                         <Fragment>
-                            <Button info onPress={() => {
+                            <AwesomeButtonBlue onPress={() => {
+                                this.props.props.navigation.navigate("advertise-roadside-assistance-main");
+                            }} width={width * 0.85} type={"primary"}>Advertise Roadside Assistance</AwesomeButtonBlue>
+                            <View style={{ marginTop: 20 }} />
+                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
                                 this.props.props.navigation.navigate("manage-tow-drivers");
-                            }} style={styles.customButtonFive}>
-                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Manage Tow Drivers/Employees</NativeText>
-                            </Button>
+                            }}>Manage Tow Drivers/Employees</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;

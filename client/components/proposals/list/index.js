@@ -248,7 +248,9 @@ constructor(props) {
                                         <NativeText note numberOfLines={1}>{proposal.description}</NativeText>
                                     </Body>
                                     <Right>
-                                        <Button transparent>
+                                        <Button onPress={() => {
+                                            this.props.props.navigation.navigate("proposals-individual-view", { proposal });
+                                        }} transparent>
                                         <NativeText>View</NativeText>
                                         </Button>
                                     </Right>

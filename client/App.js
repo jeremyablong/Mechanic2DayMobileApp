@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Dimensions, Text, Image } from 'react-native';
 import { connect } from "react-redux";
 import axios from "axios";
 import { Config } from "react-native-config";
@@ -83,6 +83,12 @@ import ActiveProposalRoadsideAssistanceInProgressPage from "./pages/roadsideAssi
 import IndividualListingTowCompanyPage from "./pages/roadsideAssistance/individual/index.js";
 import ManageActiveJobRoadsideAssistanceManageJobPage from "./pages/towTruckDriver/manage/manageActiveJob.js";
 import ManageUponArrivalDeparturePage from "./pages/roadsideAssistance/manage/manageUponArrival/manageUponArrival.js";
+import AssociateWithTowCompanyPage from "./pages/towTruckDriver/associateTowCo/associate.js";
+import Modal from 'react-native-modal';
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
+
+const { width, height } = Dimensions.get("window");
 
 const Stack = createStackNavigator();
 
@@ -95,6 +101,7 @@ constructor(props) {
 
   this.state = {
     count: 0,
+    showModalOne: false,
     interval: 0
   }
 }
@@ -365,6 +372,18 @@ constructor(props) {
       return false;
     }
   }
+  renderSockets = () => {
+    socket.on("delivered", (data) => {
+        if (data.delivered === true && data.user_id === this.props.unique_id) {
+
+            console.log("delivered!!!!!");
+
+            this.setState({
+              showModalOne: true
+            })
+        }
+    })
+}
   render () {
     console.log("this.state APP.js", this.state);
     return (
@@ -461,8 +480,23 @@ constructor(props) {
               <Stack.Screen name="individual-listing-tow-company" component={IndividualListingTowCompanyPage} />
               <Stack.Screen name="settings-active-roadside-assistance-manage" component={ManageActiveJobRoadsideAssistanceManageJobPage} />
               <Stack.Screen name="driver-has-arrived-manage-listing-depatarture" component={ManageUponArrivalDeparturePage} />
+              <Stack.Screen name="associate-with-tow-company" component={AssociateWithTowCompanyPage} />
             </Stack.Navigator>
           </NavigationContainer>
+
+          {this.renderSockets()}
+          <Modal isVisible={this.state.showModalOne}>
+          <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 350, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
+            <Image source={require("./assets/icons/gps-2.png")} style={{ maxWidth: 75, maxHeight: 75 }} />
+            <Text style={{ marginBottom: 25, fontWeight: "bold", textAlign: "center", fontSize: 18, marginTop: 15 }}>You roadside assistance agent marked your trip as complete! Please verify and confirm this change.</Text>
+            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+            <AwesomeButtonBlue type={"secondary"} width={width * 0.75} onPress={() => {
+              this.setState({
+                showModalOne: false
+              })
+            }} textColor={"black"}>Close/exit</AwesomeButtonBlue>
+          </View>
+        </Modal>
           <Toast ref={(ref) => Toast.setRef(ref)} />
           </UserInactivity>
         </View> 

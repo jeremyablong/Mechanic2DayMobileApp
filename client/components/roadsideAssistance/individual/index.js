@@ -65,7 +65,7 @@ constructor(props) {
                     </Body>
                     <Right>
                         <Button onPress={() => {
-                            this.props.props.navigation.navigate("advertise-create-address-preview");
+                            // this.props.props.navigation.navigate("advertise-create-address-preview");
                         }} transparent>
                             <Image source={require("../../../assets/icons/plus.png")} style={styles.headerIcon} />
                         </Button>

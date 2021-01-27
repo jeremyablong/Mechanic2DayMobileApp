@@ -317,8 +317,10 @@ constructor(props) {
                                 </SkeletonPlaceholder.Item>
                                 </SkeletonPlaceholder>}
                             <View style={{ margin: 0, marginTop: 40 }}>
-                                <Text style={styles.activeListingText}>Innactive Listings</Text>
-                                <Text>Inactive listings are listings that are old, removed or deleted.</Text>
+                                <View style={{ margin: 20 }}>
+                                    <Text style={styles.activeListingText}>Innactive Listings</Text>
+                                    <Text>Inactive listings are listings that are old, removed or deleted.</Text>
+                                </View>
                                 <View style={{ marginTop: 15 }} />
                                 {user !== null && _.has(user, "broken_vehicles_listings") ? user.broken_vehicles_listings.map((listing, index) => {
                                     if (listing.live === false) {

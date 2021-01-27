@@ -606,7 +606,7 @@ constructor(props) {
                                 <Text style={{ fontSize: 16 }}>1 Mechanic</Text>
                             </View>
                             <View style={styles.columnCustomSmaller}>
-                                <Image source={{ uri: other_user.profilePics[other_user.profilePics.length - 1].full_url }} style={styles.iconLarger} />
+                                <Image source={{ uri: other_user.profilePics.length > 0 ? other_user.profilePics[other_user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg" }} style={styles.iconLarger} />
                             </View>
                             <View style={styles.hr} />
                         </View>
@@ -682,7 +682,7 @@ constructor(props) {
                             }
                         }}
                     >
-                        <ScrollView style={styles.container}>
+                        <ScrollView contentContainerStyle={{ paddingBottom: 125 }} style={styles.container}>
                             <View style={{ margin: 20 }}>
                                 {!itemmm.paypal_order_id ? <Fragment><Text style={styles.mainPaymentText}>Make Payment</Text>
                                 <Text style={{ marginBottom: 15 }}>You will now need to deposit funds into the 3-step payment system. The account user that has listed a vehicle for repair will deposit funds and only when both parties agree that the repair was done and confirmed will the payment be released to the mechanic hired for the job.</Text></Fragment> : <View style={{ margin: 20 }}>
@@ -744,7 +744,7 @@ constructor(props) {
                             <View style={styles.centered}>
                                 <AwesomeButtonRick onPress={() => {
                                     this.RBSheet.close();
-                                }} width={width * 0.90} type="primary">Close Pane</AwesomeButtonRick>
+                                }} width={width * 0.90} textColor={"white"} type="primary">Close Pane</AwesomeButtonRick>
                             </View>
                         </View>
                     </RBSheet>
@@ -785,7 +785,7 @@ constructor(props) {
                                     </View>
                                 </View>
                             </View> : <View style={{ margin: 20 }}>
-                                <Text style={styles.biggerText}>The other user has not initiated payment yet. Once the user initiates payment you will be able to reject or accept the payment and see more details at that point.</Text>
+                                <Text style={[styles.biggerText, { marginTop: 20 }]}>The other user has not initiated payment yet. Once the user initiates payment you will be able to reject or accept the payment and see more details at that point.</Text>
                             </View>}
                             {itemmm.paypal_order_id && (itemmm.other_user_agrees_completion === false || !itemmm.other_user_agrees_completion) ? <View style={styles.centered}>
                                 <View style={styles.centered}>
@@ -931,25 +931,31 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
     console.log("state state", state);
-    if (Object.keys(state.auth.authenticated.paypal_authorization).length > 0) {
-        return {
-            unique_id: state.auth.authenticated.unique_id,
-            accountType: state.auth.authenticated.accountType,
-            paypalToken: state.auth.authenticated.paypal_authorization,
-            email: state.auth.authenticated.paypal_payment_address,
-            fullName: state.auth.authenticated.fullName,
-            authenticateddd: state.auth.authenticated,
-            paypal_access_token: state.auth.authenticated.paypal_authorization.access_token
-        }   
+    if (Object.keys(state.auth.authenticated).length > 0) {
+        if (Object.keys(state.auth.authenticated.paypal_authorization).length > 0) {
+            return {
+                unique_id: state.auth.authenticated.unique_id,
+                accountType: state.auth.authenticated.accountType,
+                paypalToken: state.auth.authenticated.paypal_authorization,
+                email: state.auth.authenticated.paypal_payment_address,
+                fullName: state.auth.authenticated.fullName,
+                authenticateddd: state.auth.authenticated,
+                paypal_access_token: state.auth.authenticated.paypal_authorization.access_token
+            }   
+        } else {
+            return {
+                unique_id: state.auth.authenticated.unique_id,
+                accountType: state.auth.authenticated.accountType,
+                paypalToken: state.auth.authenticated.paypal_authorization,
+                email: state.auth.authenticated.paypal_payment_address,
+                fullName: state.auth.authenticated.fullName,
+                authenticateddd: state.auth.authenticated,
+                paypal_access_token: null
+            }
+        }
     } else {
         return {
-            unique_id: state.auth.authenticated.unique_id,
-            accountType: state.auth.authenticated.accountType,
-            paypalToken: state.auth.authenticated.paypal_authorization,
-            email: state.auth.authenticated.paypal_payment_address,
-            fullName: state.auth.authenticated.fullName,
-            authenticateddd: state.auth.authenticated,
-            paypal_access_token: null
+            
         }
     }
 }

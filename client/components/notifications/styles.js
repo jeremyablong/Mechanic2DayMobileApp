@@ -37,12 +37,12 @@ export default StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#8884FF"
+        color: "black"
     },
     title: {
         fontSize: 22,
         fontWeight: "bold",
-        color: "#8884FF",
+        color: "black",
         textAlign: 'center',
         marginBottom: 14,
         textDecorationLine: "underline"

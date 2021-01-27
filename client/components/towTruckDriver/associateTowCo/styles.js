@@ -11,7 +11,8 @@ export default StyleSheet.create({
     container: {
         minHeight: height,
         width, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: -1
     },
     centered: {
         justifyContent: "center",
@@ -21,19 +22,24 @@ export default StyleSheet.create({
     margin: {
         margin: 20
     },
-    p: {
-        fontSize: 18,
-        textAlign: "center"
-    },
-    hr: {
-        borderBottomColor: "lightgrey",
-        borderBottomWidth: 2,
-        marginTop: 15, 
-        marginBottom: 15 
-    },
-    headerMain: {
+    errorText: {
+        color: "darkred",
         textAlign: "center",
-        fontSize: 24,
+        fontSize: 18
+    },
+    inputContainer: {
+        width: width * 0.90,
+        marginTop: 15
+    },
+    mainText: {
+        marginBottom: 15,
+        fontSize: 18, 
         fontWeight: "bold"
+    },
+    customButton: {
+        width: width * 0.75,
+        justifyContent: "center",
+        marginTop: 20, 
+        marginBottom: 40
     }
 })

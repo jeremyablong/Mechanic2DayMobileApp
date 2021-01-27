@@ -4,25 +4,23 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-const axios = require('axios');
 const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
-
+const axios = require('axios');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.post("/", (req, responseeeeeeeeee) => {
+    router.post("/", (req, responseeeeeeee) => {
 
         const database = db.db("<dbname>");
 
         const collection = database.collection("users");
 
-        const { id, fullName, profilePic, other_user_id } = req.body;
+        const { id, company_id, profile_pic, fullName } = req.body;
 
-        collection.findOne({ unique_id: id }).then((user) => {
+        collection.findOne({ unique_id: company_id }).then((user) => {
             if (user) {
 
-                console.log("This is the NOTFIEEEEE user....:", user); 
-
+                // this is the COMPANY user
                 const configgg = {
                     headers: {
                         "Authorization": `key=${config.get("firebaseCloudMessagingServerKey")}`,
@@ -30,56 +28,50 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     }
                 }
 
-                const nofitication_addition = {
+                const notification_data = {
                     id: uuidv4(),
                     system_date: Date.now(),
                     date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                     data: {
-                        title: `Your tow roadside assistance driver - ${fullName} - has arrived at your location!`,
-                        body: `Your roadside assistance agent has arrived! If you can't find them - give them a call or message them...`
+                        title: `${fullName} is requesting that you approve their account so they can start driving for your tow/roadside assistance company!`,
+                        body: `${fullName} wants to be approved to drive for your company. Please manage this request.`
                     },
-                    from: other_user_id,
+                    from: id,
                     link: "notifications"
-                }
+                };
 
                 axios.post("https://fcm.googleapis.com/fcm/send", {
                     "to": user.firebasePushNotificationToken,
                     "notification": {
-                        "title": `Your tow roadside assistance driver - ${fullName} - has arrived at your location!`,
-                        "body": `Your roadside assistance agent has arrived! If you can't find them - give them a call or message them...`,
+                        "title": `${fullName} is requesting that you approve their account so they can start driving for your tow/roadside assistance company!`,
+                        "body": `${fullName} wants to be approved to drive for your company. Please manage this request.`,
                         "mutable_content": true,
                         "sound": "Tri-tone"
                     },
                 "data": {
-                        "url": profilePic !== null ? profilePic : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
+                        "url": profile_pic !== null ? profile_pic : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
                         "dl": "notifications"
                     }
                 }, configgg).then((res) => {
+
                     console.log(res.data);
 
                     if (user.notifications) {
-                        user.notifications.push(nofitication_addition);
+                        user.notifications.push(notification_data);
                     } else {
-                        user["notifications"] = [nofitication_addition];
+                        user["notifications"] = [notification_data];
                     }
 
-                    user.towing_services_start.order_status = "on-site";
-                    user.towing_services_start.arrived = false;
-                    user.towing_services_start.payment_recieved = false;
-                    user.towing_services_start.confirmed_onsite = false;
-                    user.towing_services_start.agree_job_completed = false;
-                    
                     collection.save(user);
 
-                    responseeeeeeeeee.json({
-                        message: "Notified!",
-                        other_user: user
+                    responseeeeeeee.json({
+                        message: "Successfully notified employer!"
                     })
                 }).catch((err) => {
                     console.log(err);
                 })
             } else {
-                responseeeeeeeeee.json({
+                responseeeeeeee.json({
                     message: "Could not locate the appropriate user..."
                 })
             }

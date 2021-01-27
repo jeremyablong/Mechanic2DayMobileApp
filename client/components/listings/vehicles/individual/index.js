@@ -19,6 +19,9 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../toastConfig.js";
 import { CalendarList } from 'react-native-calendars';
 import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+import Dialog from "react-native-dialog";
+
+
 
 const { width, height  } = Dimensions.get('window');
 
@@ -137,7 +140,8 @@ constructor(props) {
         coverLetter: "",
         applied: false,
         times: [],
-        selectedTime: "" 
+        selectedTime: "",
+        showDialog: false
     } 
 }
     _renderItem = ({item, index}) => {
@@ -402,7 +406,13 @@ constructor(props) {
                             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Place a bid!</Text>
                             <Text>Here at MechanicToday we use a bid style system for pricing. We allow all mechanics to place a bid which allows the person with the vehicle in need of repair to selectivly choose the right mechanic in their budget and get quality service simultaniously!</Text>
                             {this.state.applied === false ? <AwesomeButtonRick width={width * 0.75} style={{ marginTop: 15 }} onPress={() => {
-                                this.RBSheetTwo.open();
+                                if (this.props.paypal !== null && typeof this.props.paypal === "string") {
+                                    this.RBSheetTwo.open();
+                                } else {
+                                    this.setState({
+                                        showDialog: true
+                                    })
+                                }
                             }} type="secondary">PLACE A BID</AwesomeButtonRick> : null}
                         </View>
                         <View style={styles.hrTwo} />
@@ -986,6 +996,26 @@ constructor(props) {
                 </View>
             </ScrollView>
             <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
+            <View>
+                <Dialog.Container visible={this.state.showDialog}>
+                <Dialog.Title>You must have a paypal email on file before applying</Dialog.Title>
+                <Dialog.Description>
+                    Would you like to redirect to enter your paypal information? You MUST enter your paypal information before placing a bid.
+                </Dialog.Description>
+                <Dialog.Button onPress={() => {
+                    this.setState({
+                        showDialog: false
+                    })
+                }} label="Cancel" />
+                <Dialog.Button onPress={() => {
+                    this.setState({
+                        showDialog: false
+                    }, () => {
+                        this.props.props.navigation.navigate("create-payment-paypal");
+                    })
+                }} label="REDIRECT" />
+                </Dialog.Container>
+            </View>
             <RBSheet
                 ref={ref => {
                     this.RBSheetTwo = ref;
@@ -1154,14 +1184,16 @@ const mapStateToProps = (state) => {
             authenticated: true,
             unique_id: state.auth.authenticated.unique_id,
             fullName: state.auth.authenticated.fullName,
-            authenticateddd: state.auth.authenticated
+            authenticateddd: state.auth.authenticated,
+            paypal: state.auth.authenticated.paypal_payment_address
         };
     } else {
         return {
             authenticated: false,
             unique_id: state.auth.authenticated.unique_id,
             fullName: state.auth.authenticated.fullName,
-            authenticateddd: {}
+            authenticateddd: {},
+            paypal: null
         }
     }
 } 

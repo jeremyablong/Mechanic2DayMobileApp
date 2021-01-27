@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import styles from './styles.js';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { Button, Left, Header, Title, Text as NativeText, ListItem, Icon, Body, Right } from "native-base";
+import { Button, Left, Header, Title, Text as NativeText, ListItem, Icon, Body, Right, List } from "native-base";
 import axios from "axios";
 import { Config } from "react-native-config";
 import ReadMore from 'react-native-read-more-text';
@@ -60,7 +60,7 @@ constructor(props) {
             if (res.data.message === "Succesfully notfied other un-selected users and notified selected user!") {
                 console.log(res.data);
 
-                this.props.props.navigation.push("proposals");
+                this.props.props.navigation.push("homepage-main");
             } else {
                 console.log("Err", res.data);
             }
@@ -87,7 +87,7 @@ constructor(props) {
             if (res.data.message === "Successfully deleted proposal!") {
                 console.log(res.data);
 
-                this.props.props.navigation.push("proposals");
+                this.props.props.navigation.push("homepage-main");
             } else {
                 console.log("Err", res.data);
             }
@@ -143,48 +143,50 @@ constructor(props) {
                         <View style={styles.hr} />
                         <Text style={styles.marginTopMid}>You'll need to pay the below total which includes service fee's, taxes and warrenty guarentees</Text>
                         <Text style={[styles.header, { marginTop: 10, color: "#8884FF", marginBottom: 15, textDecorationLine: "underline" }]}>${total.toFixed(2)}</Text>
-                        <ListItem icon>
-                            <Left>
-                            <Button transparent>
-                                <Image source={require("../../../assets/icons/cash.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
-                            </Button>
-                            </Left>
-                            <Body>
-                            <Text>Base repair price</Text>
-                            </Body>
-                            <Right>
-                            <Text>${initial.toFixed(2)}</Text>
-                            <Icon active name="arrow-forward" />
-                            </Right>
-                        </ListItem>
-                        <ListItem icon>
-                            <Left>
-                            <Button transparent>
-                                <Image source={require("../../../assets/icons/fee.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
-                            </Button>
-                            </Left>
-                            <Body>
-                            <Text>Service fee's</Text>
-                            </Body>
-                            <Right>
-                            <Text>${Math.floor(initial * 0.20).toFixed(2)}</Text>
-                            <Icon active name="arrow-forward" />
-                            </Right>
-                        </ListItem>
-                        <ListItem icon>
-                            <Left>
-                            <Button transparent>
-                                <Image source={require("../../../assets/icons/taxes.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
-                            </Button>
-                            </Left>
-                            <Body>
-                            <Text>Taxes & associated fee's</Text>
-                            </Body>
-                            <Right>
-                            <Text>${(initial * 0.03).toFixed(2)}</Text>
-                            <Icon active name="arrow-forward" />
-                            </Right>
-                        </ListItem>
+                        <List>
+                            <ListItem icon>
+                                <Left>
+                                <Button transparent>
+                                    <Image source={require("../../../assets/icons/cash.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
+                                </Button>
+                                </Left>
+                                <Body>
+                                <Text>Base repair price</Text>
+                                </Body>
+                                <Right>
+                                <Text>${initial.toFixed(2)}</Text>
+                                <Icon active name="arrow-forward" />
+                                </Right>
+                            </ListItem>
+                            <ListItem icon>
+                                <Left>
+                                <Button transparent>
+                                    <Image source={require("../../../assets/icons/fee.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
+                                </Button>
+                                </Left>
+                                <Body>
+                                <Text>Service fee's</Text>
+                                </Body>
+                                <Right>
+                                <Text>${Math.floor(initial * 0.20).toFixed(2)}</Text>
+                                <Icon active name="arrow-forward" />
+                                </Right>
+                            </ListItem>
+                            <ListItem icon>
+                                <Left>
+                                <Button transparent>
+                                    <Image source={require("../../../assets/icons/taxes.png")} style={{ maxWidth: 25, maxHeight: 25 }} />
+                                </Button>
+                                </Left>
+                                <Body>
+                                <Text>Taxes & associated fee's</Text>
+                                </Body>
+                                <Right>
+                                <Text>${(initial * 0.03).toFixed(2)}</Text>
+                                <Icon active name="arrow-forward" />
+                                </Right>
+                            </ListItem>
+                        </List>
                         <View style={styles.hr} />
                         <Text style={styles.marginTopMid}>We do not allow taking payments outside of our platform. Taking payments outside of the MechanicToday platform will result in both parties being permanatly terminated and REVOCATION of any funds in both parties accounts. We also hold the right to pursue legal action contingent upon the price of the repair.</Text>
                         <Text></Text>

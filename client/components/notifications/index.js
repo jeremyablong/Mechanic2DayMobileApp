@@ -280,7 +280,7 @@ constructor(props) {
                            
                         </View>
                         <View style={styles.bottomLeft}>
-                            <Text style={styles.name}>Notification initiator: {selected.fullName}</Text>
+                            <Text style={styles.name}>Notification initiator: <Text style={{ color: "#8884FF" }}>{selected.fullName}</Text></Text>
                         </View>
                     </Fragment>
                 </RBSheet> : null}

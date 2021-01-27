@@ -10,6 +10,10 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
 import Dialog from "react-native-dialog";
 import _ from "lodash";
+import io from 'socket.io-client';
+
+const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
+
 
 const { height, width } = Dimensions.get("window");
 
@@ -41,7 +45,8 @@ constructor(props) {
                 const { user } = res.data;
 
                 axios.post(`${Config.ngrok_url}/gather/breif/data/two/custom`, {
-                    id: user.towing_services_start.tow_driver_infomation.unique_id
+                    id: user.towing_services_start.tow_driver_infomation.unique_id,
+                    company_name: user.towing_services_start.assigned_company
                 }).then((res) => {
                     if (res.data.message === "Gathered user's data!") {
                         console.log(res.data);
@@ -163,8 +168,15 @@ constructor(props) {
             if (res.data.message === "Both users have confirmed the arrival!") {
                 console.log(res.data);
 
-                this.props.props.navigation.replace("driver-has-arrived-manage-listing-depatarture");
-                
+                socket.emit("approved-driver-arrival", {
+                    approved: true,
+                    user_id: towTruckDriverInfo.unique_id
+                })
+
+                setTimeout(() => {
+                    this.props.props.navigation.replace("driver-has-arrived-manage-listing-depatarture");
+                }, 1500);
+
             } else if (res.data.message === "User has NOT yet marked that they've arrived...") {
                 console.log("ERR: ", res.data);
             }

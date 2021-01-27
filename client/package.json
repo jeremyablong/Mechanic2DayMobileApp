@@ -60,6 +60,7 @@
     "react-native-parallax-scroll-view": "^0.21.3",
     "react-native-permissions": "^3.0.0",
     "react-native-phone-number-input": "^2.0.0",
+    "react-native-popover-view": "^3.1.1",
     "react-native-progress": "^4.1.2",
     "react-native-qrcode-scanner": "^1.6.0",
     "react-native-ratings": "^7.3.0",

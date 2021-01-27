@@ -99,7 +99,7 @@ constructor(props) {
 
                         <View style={styles.profile}>
                             <Image style={styles.avatar}
-                            source={{uri: other_user.profilePics[other_user.profilePics.length - 1].full_url }}/>
+                            source={{uri: other_user.profilePics.length > 0 ? other_user.profilePics[other_user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg" }}/>
 
                             <Text style={styles.name}>
                                 {other_user.fullName}

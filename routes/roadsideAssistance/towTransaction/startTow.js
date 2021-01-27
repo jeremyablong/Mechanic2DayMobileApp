@@ -50,7 +50,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             if (user.active_roadside_assistance_job) {
                                 user.active_roadside_assistance_job = additional_new_data;
                             } else {
-                                user["active_roadside_assistance_jobs"] = additional_new_data;
+                                user["active_roadside_assistance_job"] = additional_new_data;
                             }
     
                             console.log("------- This is the signed-in user (the tow truck driver user after updates) ------- ", user);
@@ -80,6 +80,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                         birthdate: userrr.birthdate,
                                         starting_location: userrr.current_location
                                     };
+
+                                    user.towing_services_start.assigned_company = userrr.company_name;
 
                                     const custom_notification = {
                                         id: uuidv4(),

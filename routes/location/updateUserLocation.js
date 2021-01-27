@@ -4,6 +4,7 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
+const toobusy = require('toobusy-js');
 
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
@@ -15,23 +16,31 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const { id, location } = req.body;
 
-        collection.findOne({ unique_id: id }).then((user) => {
+        collection.findOne({ unique_id: id }).then(async (user) => {
             if (user) {
 
-                if (user.current_location) {
-                    user.current_location = location;
+                if (toobusy()) {
+                    console.log("TOO BUSY!!!!");
+
+                    res.json({
+                        message: "NODE server is TOO BUSY at the moment. Try again later."
+                    })
                 } else {
-                    user["current_location"] = location;
+                    if (user.current_location) {
+                        user.current_location = location;
+                    } else {
+                        user["current_location"] = location;
+                    }
+    
+                    console.log("current_location", user.current_location);
+    
+                    collection.save(user);
+     
+                    res.json({
+                        message: "Successfully updated location",
+                        user
+                    })
                 }
-
-                console.log("current_location", user.current_location);
-
-                collection.save(user);
- 
-                res.json({
-                    message: "Successfully updated location",
-                    user
-                })
             } else {
                 res.json({
                     message: "Could not locate the appropriate user..."

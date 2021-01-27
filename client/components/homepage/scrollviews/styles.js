@@ -26,12 +26,16 @@ export default StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center"
     },
+    centered: {
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center"
+    },
     innerBox: {
-        backgroundColor: "rgba(0, 0, 0, 0.4)",
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
         height: "100%",
         width: "100%",
         justifyContent: "center",
-        alignItems: "center",
         alignContent: "center",
         flex: 1,
         borderRadius: 20

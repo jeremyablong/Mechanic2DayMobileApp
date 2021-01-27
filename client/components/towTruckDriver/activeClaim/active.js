@@ -14,6 +14,9 @@ import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../toastConfig.js";
 import Dialog from "react-native-dialog";
+import io from 'socket.io-client';
+
+const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
 
 
 const { width, height } = Dimensions.get("window");
@@ -64,10 +67,10 @@ constructor(props) {
                         longitude: user.current_location.coords.longitude
                     }
                 })
-                if (_.has(user.active_roadside_assistance_jobs, "pickup_location")) {
+                if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
                     // tow REQUIRED
-                    if (_.has(user.active_roadside_assistance_jobs.pickup_location, "verticalAccuracy")) {
-                        axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${user.active_roadside_assistance_jobs.pickup_location.latitude},${user.active_roadside_assistance_jobs.pickup_location.longitude}/json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`, config).then((res) => {
+                    if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
+                        axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${user.active_roadside_assistance_job.pickup_location.latitude},${user.active_roadside_assistance_job.pickup_location.longitude}/json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`, config).then((res) => {
                             console.log("MAGICAL SHIT:", res.data);
                             
                             const { routes } = res.data;
@@ -80,8 +83,8 @@ constructor(props) {
                         }).catch((err) => {
                             console.log(err);
                         })
-                    } else if (_.has(user.active_roadside_assistance_jobs.pickup_location, "position")) {
-                        axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${user.active_roadside_assistance_jobs.pickup_location.position.lat},${user.active_roadside_assistance_jobs.pickup_location.position.lon}/json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`, config).then((res) => {
+                    } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
+                        axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${user.active_roadside_assistance_job.pickup_location.position.lat},${user.active_roadside_assistance_job.pickup_location.position.lon}/json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`, config).then((res) => {
                             console.log("MAGICAL SHIT:", res.data);
                             
                             const { routes } = res.data;
@@ -108,10 +111,10 @@ constructor(props) {
 
         const { user } = this.state;
 
-        if (_.has(user.active_roadside_assistance_jobs, "pickup_location")) {
+        if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
             // tow REQUIRED
-            if (_.has(user.active_roadside_assistance_jobs.pickup_location, "verticalAccuracy")) {
-                const URL = `https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=${user.active_roadside_assistance_jobs.pickup_location.latitude},${user.active_roadside_assistance_jobs.pickup_location.longitude}`;
+            if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
+                const URL = `https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=${user.active_roadside_assistance_job.pickup_location.latitude},${user.active_roadside_assistance_job.pickup_location.longitude}`;
 
                 Linking.canOpenURL(URL).then(supported => {
                     if (!supported) {
@@ -121,8 +124,8 @@ constructor(props) {
                     }
                 }).catch(err => console.error('An error occurred', err));
                 
-            } else if (_.has(user.active_roadside_assistance_jobs.pickup_location, "position")) {
-                const URL = `https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=${user.active_roadside_assistance_jobs.pickup_location.position.lat},${user.active_roadside_assistance_jobs.pickup_location.position.lon}`;
+            } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
+                const URL = `https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=${user.active_roadside_assistance_job.pickup_location.position.lat},${user.active_roadside_assistance_job.pickup_location.position.lon}`;
 
                 Linking.canOpenURL(URL).then(supported => {
                     if (!supported) {
@@ -139,22 +142,32 @@ constructor(props) {
 
         const { myLocation, user } = this.state;
 
-        if (_.has(user.active_roadside_assistance_jobs, "pickup_location")) {
+        if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
             // tow REQUIRED
-            if (_.has(user.active_roadside_assistance_jobs.pickup_location, "verticalAccuracy")) {
-                console.log("ONE:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_jobs.pickup_location.latitude, lon: user.active_roadside_assistance_jobs.pickup_location.longitude }));
+            if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
+                console.log("ONE:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }));
 
-                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_jobs.pickup_location.latitude, lon: user.active_roadside_assistance_jobs.pickup_location.longitude }) <= 1.5) {
+                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }) <= 1.5) {
                     axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
                         id: this.props.unique_id,
                         location: myLocation
                     }).then((res) => {
-                        if (res.data.message === "Notified other user successfully!") {
+                        if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
+
                             console.log(res.data);
 
                             this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
-                        } else {
+
+                        } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
                             console.log("Err", res.data);
+
+                            Toast.show({
+                                text1: "The other driver has not confirmed your arrival yet...",
+                                text2: "The other driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                visibilityTime: 5500,
+                                position: "bottom",
+                                type: "info"
+                            })
                         }
                     }).catch((err) => {
                         console.log(err);
@@ -164,20 +177,29 @@ constructor(props) {
                         isVisible: true
                     })
                 }
-            } else if (_.has(user.active_roadside_assistance_jobs.pickup_location, "position")) {
-                console.log("TWO:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_jobs.pickup_location.position.lat, lon: user.active_roadside_assistance_jobs.pickup_location.position.lon }));
+            } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
+                console.log("TWO:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }));
 
-                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_jobs.pickup_location.position.lat, lon: user.active_roadside_assistance_jobs.pickup_location.position.lon }) <= 1.5) {
+                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }) <= 1.5) {
                     axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
                         id: this.props.unique_id,
                         location: myLocation
                     }).then((res) => {
-                        if (res.data.message === "Notified other user successfully!") {
+                        if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
                             console.log(res.data);
 
                             this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
-                        } else {
+
+                        } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
                             console.log("Err", res.data);
+
+                            Toast.show({
+                                text1: "The other driver has not confirmed your arrival yet...",
+                                text2: "The other driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                visibilityTime: 5500,
+                                position: "bottom",
+                                type: "info"
+                            })
                         }
                     }).catch((err) => {
                         console.log(err);
@@ -256,28 +278,38 @@ constructor(props) {
             );
         }
     }
+    renderSocketsWeb = () => {
+        socket.on("arrived", (data) => {
+            if (data.approved === true && data.user_id === this.props.unique_id) {
+
+                console.log("approved!!!!!");
+
+                this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
+            }
+        })
+    }
     renderMarker = () => {
         const { user } = this.state;
 
-        if (_.has(user.active_roadside_assistance_jobs, "pickup_location")) {
-            if (_.has(user.active_roadside_assistance_jobs.pickup_location, "verticalAccuracy")) {
+        if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
+            if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
                 return (
                     <Marker 
                         coordinate={{ 
-                            latitude: user.active_roadside_assistance_jobs.pickup_location.latitude, 
-                            longitude: user.active_roadside_assistance_jobs.pickup_location.longitude 
+                            latitude: user.active_roadside_assistance_job.pickup_location.latitude, 
+                            longitude: user.active_roadside_assistance_job.pickup_location.longitude 
                         }}
                         ref={(marker) => this.marker = marker}
                     >
                         <Image source={require("../../../assets/icons/finish.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
                     </Marker>
                 );
-            } else if (_.has(user.active_roadside_assistance_jobs.pickup_location, "position")) {
+            } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
                 return (
                     <Marker 
                         coordinate={{ 
-                            latitude: user.active_roadside_assistance_jobs.pickup_location.position.lat, 
-                            longitude: user.active_roadside_assistance_jobs.pickup_location.position.lon
+                            latitude: user.active_roadside_assistance_job.pickup_location.position.lat, 
+                            longitude: user.active_roadside_assistance_job.pickup_location.position.lon
                         }}
                         ref={(marker) => this.marker = marker}
                     >
@@ -310,6 +342,7 @@ constructor(props) {
                         </Button>
                     </Right>
                 </Header>
+                {this.renderSocketsWeb()}
                 <View>
                     <Modal isVisible={this.state.isVisible}>
                         <View style={styles.modalContent}>

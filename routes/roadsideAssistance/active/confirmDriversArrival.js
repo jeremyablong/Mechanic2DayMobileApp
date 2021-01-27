@@ -33,7 +33,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === other_user_id) {
                             console.log("other ------------ :", user);
 
-                            if (_.has(user.active_roadside_assistance_jobs, "arrived") && user.active_roadside_assistance_jobs.arrived === true) {
+                            if (_.has(user.active_roadside_assistance_job, "arrived") && user.active_roadside_assistance_job.arrived === true) {
                                 resolve(true);
                             } else {
                                 resolve(false);

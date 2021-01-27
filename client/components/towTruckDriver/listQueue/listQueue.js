@@ -311,7 +311,7 @@ constructor(props) {
                         this.setState({
                             isVisible: false
                         }, () => {
-                            if (user.active_roadside_assistance_jobs.current_page === "actively-on-site") {
+                            if (user.active_roadside_assistance_job.current_page === "actively-on-site") {
                                 this.props.props.navigation.push("settings-active-roadside-assistance-manage");
                             } else {
                                 this.props.props.navigation.push("tow-activated-map-view");
@@ -425,8 +425,8 @@ constructor(props) {
                             this.RBSheet.close();
 
                             if (user !== null && user.active_employee === true) {
-                                if (_.has(user, "active_roadside_assistance_jobs")) {
-                                    if (user.active_roadside_assistance_jobs.active === false) {
+                                if (_.has(user, "active_roadside_assistance_job")) {
+                                    if (user.active_roadside_assistance_job.active === false) {
 
                                         setTimeout(() => {
                                             

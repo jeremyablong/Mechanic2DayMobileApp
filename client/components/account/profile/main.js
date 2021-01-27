@@ -74,7 +74,7 @@ constructor(props) {
     renderConditionalAuth = () => {
         const { user } = this.state;
 
-        if (user !== null && user.accountType === "mechanic") {
+        if (user !== null && (user.accountType === "mechanic" || user.accountType === "client")) {
             if (this.props.accountType === "CLIENT") {
                 return (
                     <Fragment>
@@ -274,7 +274,7 @@ const mapStateToProps = (state) => {
         };
     } else {
         return {
-            accountType: null,
+            accountType: {},
             fullName: state.auth.authenticated.fullName,
             unique_id: state.auth.authenticated.unique_id
         };

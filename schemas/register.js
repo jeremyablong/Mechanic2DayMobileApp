@@ -25,6 +25,12 @@ const UserSchema =  new mongoose.Schema({
     active_employee: {
         type: Boolean
     },
+    company_id: {
+        type: String
+    },
+    company_name: {
+        type: String
+    },
     email: {
         type: String
     },

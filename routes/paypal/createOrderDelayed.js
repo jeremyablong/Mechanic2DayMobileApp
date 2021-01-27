@@ -43,7 +43,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 "email_address": "${other_user_paypal_email.toString()}"
                             },
                             "payment_instruction": {
-                                "disbursement_mode": "DELAYED"
+                                "disbursement_mode": "DELAYED" 
                             }
                         }],
                         "payer": {

@@ -7,6 +7,7 @@ const cors = require('cors');
 const axios = require('axios');
 const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
+const _ = require("lodash");
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, responseeeeee) => {
@@ -23,27 +24,33 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 console.log("This is my user....:", user); 
 
                 axios.post(`${config.get("ngrok_url")}/notify/other/user/arrival/tow`, {
-                    id: user.active_roadside_assistance_jobs.requestee_id,
+                    id: user.active_roadside_assistance_job.requestee_id,
                     fullName: user.fullName,
                     profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
                     other_user_id: id
                 }).then((res) => {
                     if (res.data.message === "Notified!") {
-                        console.log("success!");
+                        console.log("success!", res.data.other_user);
 
-                        user.active_roadside_assistance_jobs.arrived = true;
-                        user.active_roadside_assistance_jobs.completed_job = false;
-                        user.active_roadside_assistance_jobs.payment_recieved = false;
-                        user.active_roadside_assistance_jobs.confirmed_onsite = true;
-                        user.active_roadside_assistance_jobs.agree_job_completed = false;
-                        user.active_roadside_assistance_jobs.current_page = "actively-on-site";
+                        user.active_roadside_assistance_job.arrived = true;
+                        user.active_roadside_assistance_job.completed_job = false;
+                        user.active_roadside_assistance_job.payment_recieved = false;
+                        user.active_roadside_assistance_job.confirmed_onsite = true;
+                        user.active_roadside_assistance_job.agree_job_completed = false;
+                        user.active_roadside_assistance_job.current_page = "actively-on-site";
 
                         collection.save(user);
 
-                        responseeeeee.json({
-                            message: "Notified other user successfully!",
-                            user
-                        })
+                        if (_.has(res.data.other_user.active_roadside_assistance_job, "arrived") && res.data.other_user.active_roadside_assistance_job.arrived === true && user.active_roadside_assistance_job.arrived === true) {
+                            responseeeeee.json({
+                                message: "Notified other user successfully and both users have agreed the driver has arrived!",
+                                user
+                            })
+                        } else {
+                            responseeeeee.json({
+                                message: "Only ONE user has agreed that the driver has arrived."
+                            })
+                        }
                     } else {
                         console.log("Err", res.data);
                     }
