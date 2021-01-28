@@ -11,8 +11,7 @@ export default StyleSheet.create({
     container: {
         minHeight: height,
         width, 
-        backgroundColor: "white",
-        zIndex: -1
+        backgroundColor: "white"
     },
     centered: {
         justifyContent: "center",
@@ -22,19 +21,10 @@ export default StyleSheet.create({
     margin: {
         margin: 20
     },
-    p: {
-        fontSize: 18,
-        textAlign: "center"
-    },
     hr: {
         borderBottomColor: "lightgrey",
         borderBottomWidth: 2,
         marginTop: 15, 
         marginBottom: 15 
-    },
-    headerMain: {
-        textAlign: "center",
-        fontSize: 24,
-        fontWeight: "bold"
     }
 })

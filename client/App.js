@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Dimensions, Text, Image } from 'react-native';
 import { connect } from "react-redux";
 import axios from "axios";
+import { navigationRef } from "./RootNavigation.js";
 import { Config } from "react-native-config";
 import IntroSlider from "./components/intro/intro.js";
 import SignupPageOnePage from "./pages/signup/index.js";
@@ -86,13 +87,15 @@ import ManageUponArrivalDeparturePage from "./pages/roadsideAssistance/manage/ma
 import AssociateWithTowCompanyPage from "./pages/towTruckDriver/associateTowCo/associate.js";
 import Modal from 'react-native-modal';
 import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
-
+import ReviewRoadsideAssistanceAgentPage from "./pages/roadsideAssistance/review/reviewRoadsideAgent/review.js";
+import ReviewRoadsideAssistanceClientPage from "./pages/towTruckDriver/reviewClient/reviewClient.js";
 
 const { width, height } = Dimensions.get("window");
 
 const Stack = createStackNavigator();
 
 const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
+
 
 class App extends Component {
 constructor(props) {
@@ -372,6 +375,7 @@ constructor(props) {
       return false;
     }
   }
+  
   renderSockets = () => {
     socket.on("delivered", (data) => {
         if (data.delivered === true && data.user_id === this.props.unique_id) {
@@ -383,6 +387,26 @@ constructor(props) {
             })
         }
     })
+    socket.on("complete", (data) => {
+      if (data.complete === true && data.user_id === this.props.unique_id) {
+
+          console.log("completed!!!!!");
+
+          this.setState({
+            showModalTwo: true
+          })
+      }
+  })
+  socket.on("redirect", (data) => {
+    if (data.redirect === true && data.user_id === this.props.unique_id) {
+      this.navigationRef.navigate("review-roadside-assistance-client", null);
+    }
+  })
+  socket.on("redirect-agent", (data) => {
+    if (data.redirect === true && data.user_id === this.props.unique_id) {
+      this.navigationRef.navigate("review-roadside-assistance-agent", null);
+    }
+  })
 }
   render () {
     console.log("this.state APP.js", this.state);
@@ -411,7 +435,7 @@ constructor(props) {
 						}}
             style={{ flex: 1 }}
 					>
-          <NavigationContainer> 
+          <NavigationContainer ref={(ref) => this.navigationRef = ref}> 
             <Stack.Navigator screenOptions={{
                 headerShown: false
               }} initialRouteName={this.getStartingPage()}>
@@ -481,12 +505,14 @@ constructor(props) {
               <Stack.Screen name="settings-active-roadside-assistance-manage" component={ManageActiveJobRoadsideAssistanceManageJobPage} />
               <Stack.Screen name="driver-has-arrived-manage-listing-depatarture" component={ManageUponArrivalDeparturePage} />
               <Stack.Screen name="associate-with-tow-company" component={AssociateWithTowCompanyPage} />
+              <Stack.Screen name="review-roadside-assistance-agent" component={ReviewRoadsideAssistanceAgentPage} />
+              <Stack.Screen name="review-roadside-assistance-client" component={ReviewRoadsideAssistanceClientPage} />
             </Stack.Navigator>
           </NavigationContainer>
 
           {this.renderSockets()}
           <Modal isVisible={this.state.showModalOne}>
-          <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 350, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
+          <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 500, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
             <Image source={require("./assets/icons/gps-2.png")} style={{ maxWidth: 75, maxHeight: 75 }} />
             <Text style={{ marginBottom: 25, fontWeight: "bold", textAlign: "center", fontSize: 18, marginTop: 15 }}>You roadside assistance agent marked your trip as complete! Please verify and confirm this change.</Text>
             <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
@@ -495,6 +521,34 @@ constructor(props) {
                 showModalOne: false
               })
             }} textColor={"black"}>Close/exit</AwesomeButtonBlue>
+            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+            <AwesomeButtonBlue type={"primary"} textColor={"white"} onPress={() => {
+              this.setState({
+                showModalOne: false
+              }, () => {
+                this.navigationRef.navigate('settings-active-roadside-assistance-manage', null);
+              })
+            }} width={width * 0.75}>Redirect to page</AwesomeButtonBlue>
+          </View>
+        </Modal>
+        <Modal isVisible={this.state.showModalTwo}>
+          <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 500, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
+            <Image source={require("./assets/icons/completed.png")} style={{ maxWidth: 75, maxHeight: 75 }} />
+            <Text style={{ marginBottom: 25, fontWeight: "bold", textAlign: "center", fontSize: 18, marginTop: 15 }}>The client for the roadside assistance/tow job you're actively assigned to marked the trip as "complete". Please confirm on your half to finish and finalize the trip! You can find these actions in the "roadside assistance" section of this app...</Text>
+            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+            <AwesomeButtonBlue type={"secondary"} width={width * 0.75} onPress={() => {
+              this.setState({
+                showModalTwo: false
+              })
+            }} textColor={"black"}>Close/exit</AwesomeButtonBlue>
+            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+            <AwesomeButtonBlue type={"primary"} textColor={"white"} onPress={() => {
+              this.setState({
+                showModalTwo: false
+              }, () => {
+                this.navigationRef.navigate('driver-has-arrived-manage-listing-depatarture', null);
+              })
+            }} width={width * 0.75}>Redirect to page</AwesomeButtonBlue>
           </View>
         </Modal>
           <Toast ref={(ref) => Toast.setRef(ref)} />

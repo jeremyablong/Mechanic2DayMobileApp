@@ -160,7 +160,7 @@ constructor(props) {
                     return (
                         <Fragment>
                             <Button info onPress={() => {
-                                this.props.props.navigation.navigate("tow-truck-driver-online-homepage");
+                                this.props.props.navigation.push("tow-truck-driver-online-homepage");
                             }} style={styles.customButtonFive}>
                                 <NativeText style={{ color: "white", fontWeight: "bold" }}>Go ONLINE and more!</NativeText>
                             </Button>

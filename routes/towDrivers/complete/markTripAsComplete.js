@@ -90,7 +90,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         // tow truck driver - signed in user
                         if (user.unique_id === id) {
                             
-                            user.active_roadside_assistance_job.agree_job_completed = true;
+                            // user.active_roadside_assistance_job.agree_job_completed = true;
                             user.active_roadside_assistance_job.current_page = "final-manage-dropoff";
     
                             collection.save(user);

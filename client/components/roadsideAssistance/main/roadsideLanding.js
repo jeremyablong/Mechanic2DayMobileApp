@@ -566,6 +566,8 @@ constructor(props) {
                                     this.props.props.navigation.navigate("in-progress-roadside-assistance");
                                 } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
                                     this.props.props.navigation.navigate("driver-has-arrived-manage-listing-depatarture");
+                                } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "finale-review") {
+                                    this.props.props.navigation.navigate("review-roadside-assistance-agent");
                                 } else {
                                     this.RBSheet.open();
                                 }

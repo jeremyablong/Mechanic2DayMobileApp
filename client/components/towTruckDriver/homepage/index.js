@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Text,
     View,
-    TouchableOpacity,
+    ScrollView,
     Image
   } from 'react-native';
 import styles from "./styles.js";
@@ -111,7 +111,7 @@ constructor(props) {
                     </Dialog.Container>
                 </View>
                 <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
-                <View style={styles.container}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 125 }} style={styles.container}>
                     <List>
                         <ListItem button={true} onPress={() => {}} itemDivider>
                             <Left>
@@ -150,6 +150,8 @@ constructor(props) {
                                     this.props.props.navigation.push("settings-active-roadside-assistance-manage");
                                 } else if (_.has(user.active_roadside_assistance_job, "current_page") && user.active_roadside_assistance_job.current_page === "final-manage-dropoff") {
                                     this.props.props.navigation.push("driver-has-arrived-manage-listing-depatarture");
+                                } else if (_.has(user.active_roadside_assistance_job, "current_page") && user.active_roadside_assistance_job.current_page === "finale-review") {
+                                    this.props.props.navigation.push("review-roadside-assistance-client");
                                 } else {
                                     this.props.props.navigation.push("tow-activated-map-view");
                                 }
@@ -217,7 +219,7 @@ constructor(props) {
                             </Right>
                         </ListItem>
                     </List>
-                </View>
+                </ScrollView>
             </View>
         )
     }

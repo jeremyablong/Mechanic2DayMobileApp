@@ -120,6 +120,9 @@ app.use("/notify/business/activate/account", require("./routes/towDrivers/notify
 app.use("/associate/with/tow/truck/company", require("./routes/towDrivers/associate/associateWithCo.js"));
 app.use("/associate/user/tow/company/send/request", require("./routes/towCompanies/newDriver/associateDriverRequest.js"));
 app.use("/mark/tow/driver/trip/complete", require("./routes/towDrivers/complete/markTripAsComplete.js"));
+app.use("/mark/trip/complete/finale/half/one", require("./routes/roadsideAssistance/completeTrip/completeClientHalf.js"));
+app.use("/mark/trip/complete/finale/half/two/agent", require("./routes/roadsideAssistance/completeTrip/completeTripAgent.js"));
+app.use("/submit/feedback/review/agent", require("./routes/roadsideAssistance/review/submitReviewAgent.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
@@ -174,11 +177,32 @@ io.on("connection", socket => {
 	console.log("New client connected");
 
 	socket.on("approved-driver-arrival", (data) => {
+
 		console.log("JACKPOT!:", data);
+
 		io.sockets.emit("arrived", data);
+
+	})
+	socket.on("mark-trip-complete", (data) => {
+
+		console.log("JACKPOT THREE!:", data);
+
+		io.sockets.emit("complete", data);
+	})
+	socket.on("handle-redirection", (data) => {
+		console.log("majgggggicccccc", data);
+
+		io.sockets.emit("redirect", data);
+	})
+	socket.on("handle-redirection-agent", (data) => {
+		console.log("majgggggicccccc FOURRRRRR", data);
+
+		io.sockets.emit("redirect-agent", data);
 	})
 	socket.on("delivered-successfully", (data) => {
+
 		console.log("JACKPOT TWO DELIVERED!:", data);
+
 		io.sockets.emit("delivered", data);
 	});
 	socket.on("disconnect", () => console.log("Client disconnected"));
