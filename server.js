@@ -123,6 +123,7 @@ app.use("/mark/tow/driver/trip/complete", require("./routes/towDrivers/complete/
 app.use("/mark/trip/complete/finale/half/one", require("./routes/roadsideAssistance/completeTrip/completeClientHalf.js"));
 app.use("/mark/trip/complete/finale/half/two/agent", require("./routes/roadsideAssistance/completeTrip/completeTripAgent.js"));
 app.use("/submit/feedback/review/agent", require("./routes/roadsideAssistance/review/submitReviewAgent.js"));
+app.use("/submit/feedback/review/client", require("./routes/towDrivers/review/reviewClientRoadsideJob.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

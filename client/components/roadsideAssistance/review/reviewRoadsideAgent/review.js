@@ -78,7 +78,9 @@ constructor(props) {
                 informational, 
                 knowledgable,
                 id: this.props.unique_id,
-                tow_driver_id: user.towing_services_start.tow_driver_infomation.unique_id
+                fullName: this.props.fullName,
+                tow_driver_id: user.towing_services_start.tow_driver_infomation.unique_id,
+                profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePicss.length - 1].full_url : null
             }).then((res) => {
                 if (res.data.message === "Successfully submitted review and completed job!") {
                     console.log(res.data);
@@ -503,7 +505,8 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
     return {
-        unique_id: state.auth.authenticated.unique_id
+        unique_id: state.auth.authenticated.unique_id,
+        fullName: state.auth.authenticated.fullName
     }
 }
 export default connect(mapStateToProps, { })(ReviewRoadsideAssistanceAgentHelper);

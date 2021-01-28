@@ -11,7 +11,8 @@ export default StyleSheet.create({
     container: {
         minHeight: height,
         width, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: -1
     },
     centered: {
         justifyContent: "center",
@@ -24,7 +25,73 @@ export default StyleSheet.create({
     hr: {
         borderBottomColor: "lightgrey",
         borderBottomWidth: 2,
+        marginTop: 55, 
+        marginBottom: 15 
+    },
+    hrTwo: {
+        borderBottomColor: "lightgrey",
+        borderBottomWidth: 2,
         marginTop: 15, 
         marginBottom: 15 
+    },
+    headerText: {
+        fontSize: 18, 
+        fontWeight: "bold"
+    },
+    row: {
+        flexDirection: "row"
+    },
+    hugeText: {
+        fontSize: 30, 
+        fontWeight: "bold"
+    },
+    listitem: {
+        height: 65
+    },
+    title: {
+        fontSize: 22,
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    column: {
+        width: width * 0.30,
+        flexDirection: "column"
+    },
+    icon: {
+        maxHeight: 75,
+        maxWidth: 75
+    },
+    lightIcon: {
+        tintColor: "white",
+        maxHeight: 75,
+        maxWidth: 75
+    },
+    textText: {
+        textAlign: "center", 
+        marginTop: 10,
+        fontSize: 16 ,
+        fontWeight: "bold"
+    },
+    circle: {
+        borderRadius: 50, 
+        height: 100,
+        backgroundColor: "white",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        width: 100,
+        borderWidth: 2,
+        borderColor: "black"
+    },
+    darkCircle: {
+        borderRadius: 50, 
+        height: 100,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        backgroundColor: "#8884FF",
+        width: 100,
+        borderWidth: 2,
+        borderColor: "black"
     }
 })

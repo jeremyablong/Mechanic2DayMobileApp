@@ -4,7 +4,9 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-
+const moment = require("moment");
+const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
@@ -14,27 +16,28 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         const collection = database.collection("users");
 
         const { 
-            pickup_times_rating, 
-            communication_rating, 
-            expectation,
-            drove_safely_rating, 
-            informational_rating, 
-            honest_polite_rating, 
-            overall_interaction_rating, 
-            proper_vehicle_condition_rating,
-            hospitality, 
-            safeDriving, 
-            respectful,
-            quickResponses, 
-            informational, 
-            knowledgable,
             id,
-            tow_driver_id,
+            accurate_pickup_location, 
+            helpful, 
+            other_user_id,
+            respectful, 
+            quickResponses, 
+            descriptive, 
+            expectation, 
+            safe, 
+            pickup_accurate_rating, 
+            communication_rating, 
+            informational_rating, 
+            safe_during_interaction,
+            overall_interaction_rating, 
+            honest_polite_rating, 
+            as_described,
             fullName,
             profilePic
         } = req.body;
 
-        collection.find({ unique_id: { "$in": [tow_driver_id, id]}}).toArray((err, users) => {
+
+        collection.find({ unique_id: { "$in": [other_user_id, id]}}).toArray((err, users) => {
             if (err) {
 
                 console.log(err);
@@ -48,8 +51,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 const promiseee = new Promise((resolve, reject) => {
                     for (let index = 0; index < users.length; index++) {
                         const user = users[index];
-                        // TOW TRUCK user
-                        if (user.unique_id === tow_driver_id) {
+                        // CLIENT user
+                        if (user.unique_id === other_user_id) {
 
                             if (user.review_count) {
                                 user.review_count = user.review_count + 1;
@@ -57,6 +60,25 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 user["review_count"] = 1;
                             }
 
+                            if (user.compliements_reviews) {
+                                user.compliements_reviews = {
+                                    accurate_pickup_location: accurate_pickup_location === true ? user.compliements_reviews.accurate_pickup_location + 1 : user.compliements_reviews.accurate_pickup_location, 
+                                    helpful: helpful === true ? user.compliements_reviews.helpful + 1: user.compliements_reviews.helpful,
+                                    respectful: respectful === true ? user.compliements_reviews.respectful + 1 : user.compliements_reviews.respectful, 
+                                    quick_responses: quickResponses === true ? user.compliements_reviews.quick_responses + 1 : user.compliements_reviews.quick_responses,
+                                    descriptive: descriptive === true ? user.compliements_reviews.descriptive + 1 : user.compliements_reviews.descriptive, 
+                                    safe: safe === true ? user.compliements_reviews.safe + 1 : user.compliements_reviews.safe, 
+                                }
+                            } else {
+                                user["compliements_reviews"] = {
+                                    accurate_pickup_location: accurate_pickup_location === true ? 1 : 0, 
+                                    helpful: helpful === true ? 1 : 0, 
+                                    respectful: respectful === true ? 1 : 0,
+                                    quick_responses: quickResponses === true ? 1 : 0, 
+                                    descriptive: descriptive === true ? 1 : 0,
+                                    safe: safe === true ? 1 : 0
+                                }
+                            }
 
                             if (user.expectations_ranking) {
                                 user.expectations_ranking = {
@@ -76,48 +98,27 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 }
                             }
 
-                            if (user.compliements_reviews) {
-                                user.compliements_reviews = {
-                                    hospitality: hospitality === true ? user.compliements_reviews.hospitality + 1 : user.compliements_reviews.hospitality, 
-                                    safe_driving: safeDriving === true ? user.compliements_reviews.safe_driving + 1: user.compliements_reviews.safe_driving,
-                                    respectful: respectful === true ? user.compliements_reviews.respectful + 1 : user.compliements_reviews.respectful, 
-                                    quick_responses: quickResponses === true ? user.compliements_reviews.quick_responses + 1 : user.compliements_reviews.quick_responses,
-                                    informational: informational === true ? user.compliements_reviews.informational + 1 : user.compliements_reviews.informational, 
-                                    knowledgable: knowledgable === true ? user.compliements_reviews.knowledgable + 1 : user.compliements_reviews.knowledgable, 
-                                }
-                            } else {
-                                user["compliements_reviews"] = {
-                                    hospitality: hospitality === true ? 1 : 0, 
-                                    safe_driving: safeDriving === true ? 1 : 0, 
-                                    respectful: respectful === true ? 1 : 0,
-                                    quick_responses: quickResponses === true ? 1 : 0, 
-                                    informational: informational === true ? 1 : 0,
-                                    knowledgable: knowledgable === true ? 1 : 0
-                                }
-                            }
-
                             if (user.review_categories) {
                                 user.review_categories = {
-                                    pickup_times_rating: (user.review_categories.pickup_times_rating + pickup_times_rating) / user.review_count,
+                                    pickup_accurate_rating: (user.review_categories.pickup_accurate_rating + pickup_accurate_rating) / user.review_count,
                                     communication_rating: (user.review_categories.communication_rating + communication_rating) / user.review_count,
-                                    drove_safely_rating: (user.review_categories.drove_safely_rating + drove_safely_rating) / user.review_count,
                                     informational_rating: (user.review_categories.informational_rating + informational_rating) / user.review_count,
-                                    honest_polite_rating: (user.review_categories.honest_polite_rating + honest_polite_rating) / user.review_count,
+                                    safe_during_interaction: (user.review_categories.safe_during_interaction + safe_during_interaction) / user.review_count,
                                     overall_interaction_rating: (user.review_categories.overall_interaction_rating + overall_interaction_rating) / user.review_count,
-                                    proper_vehicle_condition_rating: (user.review_categories.proper_vehicle_condition_rating + proper_vehicle_condition_rating) / user.review_count
+                                    honest_polite_rating: (user.review_categories.honest_polite_rating + honest_polite_rating) / user.review_count,
+                                    as_described: (user.review_categories.as_described + as_described) / user.review_count
                                 }
                             } else {
                                 user["review_categories"] = {
-                                    pickup_times_rating, 
-                                    communication_rating, 
-                                    drove_safely_rating, 
-                                    informational_rating, 
-                                    honest_polite_rating, 
-                                    overall_interaction_rating, 
-                                    proper_vehicle_condition_rating
+                                    pickup_accurate_rating, 
+                                    communication_rating,
+                                    informational_rating,
+                                    safe_during_interaction,
+                                    overall_interaction_rating,
+                                    honest_polite_rating,
+                                    as_described
                                 }
                             }
-
 
                             const configgg = {
                                 headers: {
@@ -131,8 +132,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 system_date: Date.now(),
                                 date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                                 data: {
-                                    title: `Your client ${fullName} left you a review!`,
-                                    body: `Your client ${fullName} left you a review, head over to your profile to check it out now!`
+                                    title: `Your roadside agent ${fullName} left you a review!`,
+                                    body: `Your roadside agent ${fullName} left you a review, head over to your profile to check it out now!`
                                 },
                                 from: id,
                                 link: "notifications"
@@ -141,8 +142,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             axios.post("https://fcm.googleapis.com/fcm/send", {
                                 "to": user.firebasePushNotificationToken,
                                 "notification": {
-                                    "title": `Your client ${fullName} left you a review!`,
-                                    "body": `Your client ${fullName} left you a review, head over to your profile to check it out now!`,
+                                    "title": `Your roadside agent ${fullName} left you a review!`,
+                                    "body": `Your roadside agent ${fullName} left you a review, head over to your profile to check it out now!`,
                                     "mutable_content": true,
                                     "sound": "Tri-tone"
                                 },
@@ -177,7 +178,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         // signed in user
                         if (user.unique_id === id) {
 
-                            user.towing_services_start = {};
+                            user.active_roadside_assistance_job = {};
 
                             collection.save(user);
 
