@@ -18,7 +18,9 @@ import _ from "lodash";
 import Dialog from "react-native-dialog";
 import geodist from 'geodist';
 import Modal from 'react-native-modal';
+import io from 'socket.io-client';
 
+const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
 
 class ListQueueHelper extends Component {
 constructor(props) {
@@ -246,6 +248,11 @@ constructor(props) {
             if (res.data.message === "Updated both users and started transaction!") {
                 console.log(res.data);
 
+                socket.emit("started-active-tow", {
+                    started: true,
+                    user_id: selected.requested_by
+                })
+
                 this.props.props.navigation.replace("tow-activated-map-view");
             } else {
                 console.log("err", res.data);
@@ -426,22 +433,28 @@ constructor(props) {
 
                             if (user !== null && user.active_employee === true) {
                                 if (_.has(user, "active_roadside_assistance_job")) {
-                                    if (user.active_roadside_assistance_job.active === false) {
+                                    if (Object.keys(user.active_roadside_assistance_job).length > 0) {
+                                        if (user.active_roadside_assistance_job.active === false) {
 
-                                        setTimeout(() => {
-                                            
-                                            this.startJobAndContinue();
+                                            setTimeout(() => {
+                                                
+                                                this.startJobAndContinue();
 
-                                            console.log("start");
-                                        }, 500);
+                                                console.log("start");
+                                            }, 500);
+                                            } else {
+                                            console.log("already on a job...");
+
+                                            setTimeout(() => {
+                                                this.setState({
+                                                    isVisible: true
+                                                })
+                                            }, 1000);
+                                        }
                                     } else {
-                                        console.log("already on a job...");
+                                        this.startJobAndContinue();
 
-                                        setTimeout(() => {
-                                            this.setState({
-                                                isVisible: true
-                                            })
-                                        }, 1000);
+                                        console.log("Start job else ONE!!!1");
                                     }
                                 } else {
                                     this.startJobAndContinue();

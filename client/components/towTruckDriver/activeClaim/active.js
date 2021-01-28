@@ -156,16 +156,23 @@ constructor(props) {
 
                             console.log(res.data);
 
-                            this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
+                            socket.emit("approve-next-page", {
+                                approved: true,
+                                user_id: user.active_roadside_assistance_job.requestee_id
+                            })
+
+                            setTimeout(() => {
+                                this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
+                            }, 1000)
 
                         } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
                             console.log("Err", res.data);
 
                             Toast.show({
-                                text1: "The other driver has not confirmed your arrival yet...",
-                                text2: "The other driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                text1: "The client has not confirmed your arrival yet...",
+                                text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
                                 visibilityTime: 5500,
-                                position: "bottom",
+                                position: "top",
                                 type: "info"
                             })
                         }
@@ -188,16 +195,23 @@ constructor(props) {
                         if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
                             console.log(res.data);
 
-                            this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
+                            socket.emit("approve-next-page", {
+                                approved: true,
+                                user_id: user.active_roadside_assistance_job.requestee_id
+                            })
+
+                            setTimeout(() => {
+                                this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
+                            }, 1000)
 
                         } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
                             console.log("Err", res.data);
 
                             Toast.show({
-                                text1: "The other driver has not confirmed your arrival yet...",
-                                text2: "The other driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                text1: "The client has not confirmed your arrival yet...",
+                                text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
                                 visibilityTime: 5500,
-                                position: "bottom",
+                                position: "top",
                                 type: "info"
                             })
                         }
@@ -278,16 +292,6 @@ constructor(props) {
             );
         }
     }
-    renderSocketsWeb = () => {
-        socket.on("arrived", (data) => {
-            if (data.approved === true && data.user_id === this.props.unique_id) {
-
-                console.log("approved!!!!!");
-
-                this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
-            }
-        })
-    }
     renderMarker = () => {
         const { user } = this.state;
 
@@ -342,7 +346,6 @@ constructor(props) {
                         </Button>
                     </Right>
                 </Header>
-                {this.renderSocketsWeb()}
                 <View>
                     <Modal isVisible={this.state.isVisible}>
                         <View style={styles.modalContent}>

@@ -222,7 +222,7 @@ constructor(props) {
 
                 const { updated_order } = res.data;
 
-                this.props.props.navigation.navigate("waiting-room-roadside-assistance", { order: updated_order });
+                this.props.props.navigation.push("waiting-room-roadside-assistance", { order: updated_order });
             } else {
                 console.log("Err", res.data);
             }

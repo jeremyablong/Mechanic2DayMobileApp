@@ -151,7 +151,7 @@ constructor(props) {
                             <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.push("active-jobs");
                             }} style={styles.listItem}>
-                            <Left><NativeText>Mechanics - active repair jobs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
+                            <Left><NativeText>Active repair jobs</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             {user.accountType === "tow-truck-driver" ? <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.push("tow-truck-driver-online-homepage");
@@ -164,7 +164,7 @@ constructor(props) {
                             <Left><NativeText>Advertise Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}
                             {user.accountType === "client" ? <ListItem button={true} onPress={() => {
-                                this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                                this.props.props.navigation.push("roadside-assistance-main-landing");
                             }} style={styles.listItem}>
                             <Left><NativeText>Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/tow-truck.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}

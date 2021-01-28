@@ -159,11 +159,9 @@ constructor(props) {
                 case "tow-truck-driver":
                     return (
                         <Fragment>
-                            <Button info onPress={() => {
+                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
                                 this.props.props.navigation.push("tow-truck-driver-online-homepage");
-                            }} style={styles.customButtonFive}>
-                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Go ONLINE and more!</NativeText>
-                            </Button>
+                            }}>Go ONLINE and more!</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;

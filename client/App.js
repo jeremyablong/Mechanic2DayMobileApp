@@ -387,6 +387,14 @@ constructor(props) {
             })
         }
     })
+    socket.on("arrived", (data) => {
+      if (data.approved === true && data.user_id === this.props.unique_id) {
+
+          console.log("approved!!!!!");
+
+          this.navigationRef.navigate("settings-active-roadside-assistance-manage");
+      }
+    })
     socket.on("complete", (data) => {
       if (data.complete === true && data.user_id === this.props.unique_id) {
 
@@ -405,6 +413,16 @@ constructor(props) {
   socket.on("redirect-agent", (data) => {
     if (data.redirect === true && data.user_id === this.props.unique_id) {
       this.navigationRef.navigate("review-roadside-assistance-agent", null);
+    }
+  })
+  socket.on("start", (data) => {
+    if (data.started === true && data.user_id === this.props.unique_id) {
+      this.navigationRef.navigate("in-progress-roadside-assistance", null);
+    }
+  })
+  socket.on("fire-off", (data) => {
+    if (data.approved === true && data.user_id === this.props.unique_id) {
+      this.navigationRef.navigate("driver-has-arrived-manage-listing-depatarture", null);
     }
   })
 }

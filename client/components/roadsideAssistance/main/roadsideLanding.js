@@ -382,7 +382,7 @@ constructor(props) {
                                 })
                             }}
                             renderItem={({ item, i }) => (
-                                <TouchableOpacity style={styles.listItemTwo} onPress={() => {
+                                <TouchableOpacity key={i} style={styles.listItemTwo} onPress={() => {
                                     this.setState({
                                         towDesination: item.address.freeformAddress,
                                         hideOrNotTwo: true,
@@ -515,6 +515,8 @@ constructor(props) {
                 return "Continue with active claim";
             } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
                 return "Finish Roadside Assistance Job";
+            } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "finale-review") {
+                return "Finish Active Job - Review Driver!";
             } else {
                 return "Get immediate assistance";
             }
@@ -567,7 +569,7 @@ constructor(props) {
                                 } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
                                     this.props.props.navigation.navigate("driver-has-arrived-manage-listing-depatarture");
                                 } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "finale-review") {
-                                    this.props.props.navigation.navigate("review-roadside-assistance-agent");
+                                    this.props.props.navigation.push("review-roadside-assistance-agent");
                                 } else {
                                     this.RBSheet.open();
                                 }

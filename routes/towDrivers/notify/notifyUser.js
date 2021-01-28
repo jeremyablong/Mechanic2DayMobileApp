@@ -64,7 +64,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     }
 
                     user.towing_services_start.order_status = "on-site";
-                    user.towing_services_start.arrived = false;
                     user.towing_services_start.payment_recieved = false;
                     user.towing_services_start.confirmed_onsite = false;
                     user.towing_services_start.agree_job_completed = false;

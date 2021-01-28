@@ -62,9 +62,23 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             }
                         }
                     } else {
-                        responseee.json({
-                            message: "User has NOT yet marked that they've arrived..."
-                        })
+
+                        for (let index = 0; index < users.length; index++) {
+                            const user = users[index];
+                            
+                            if (user.unique_id === id) {
+        
+                                user.towing_services_start.arrived = true;
+        
+                                console.log("signed-in ------------ :", user);
+
+                                collection.save(user);
+
+                                responseee.json({
+                                    message: "User has NOT yet marked that they've arrived..."
+                                })
+                            }
+                        }
                     }
                 })
             }

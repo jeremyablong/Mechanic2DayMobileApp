@@ -477,7 +477,7 @@ constructor(props) {
                 <Header>
                     <Left>
                         <Button onPress={() => {
-                            this.props.props.navigation.goBack();
+                            this.props.props.navigation.push("homepage-main");
                         }} transparent>
                             <Image source={require("../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
@@ -488,9 +488,9 @@ constructor(props) {
                     </Body>
                     <Right>
                         <Button onPress={() => {
-                           this.props.props.navigation.push("homepage-main")
+                           this.props.props.navigation.push("profile-main")
                         }} transparent>
-                            <Image source={require("../../../assets/icons/home.png")} style={[styles.headerIcon, { position: "absolute", right: 20 }]} />
+                            <Image source={require("../../../assets/icons/profile.png")} style={[styles.headerIcon, { position: "absolute", right: 20 }]} />
                         </Button>
                     </Right>
                 </Header>

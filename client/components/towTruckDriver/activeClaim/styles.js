@@ -11,7 +11,8 @@ export default StyleSheet.create({
     container: {
         height: height - (Platform === "ios" ? 64 : 56),
         width, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: -1
     },
     customMapButton: {
         width: width,
@@ -26,7 +27,7 @@ export default StyleSheet.create({
         left: 0,
         right: 0,
         position: "absolute",
-        bottom: 50
+        bottom: 100
     },
     centered: {
         justifyContent: "center",

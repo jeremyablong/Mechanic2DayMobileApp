@@ -11,6 +11,9 @@ import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blu
 import Dialog from "react-native-dialog";
 import _ from "lodash";
 import io from 'socket.io-client';
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from "../../toastConfig.js";
+
 
 const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
 
@@ -179,6 +182,14 @@ constructor(props) {
 
             } else if (res.data.message === "User has NOT yet marked that they've arrived...") {
                 console.log("ERR: ", res.data);
+
+                Toast.show({
+                    text1: "The driver has not confirmed your arrival yet...",
+                    text2: "The driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                    visibilityTime: 5500,
+                    position: "top",
+                    type: "info"
+                })
             }
         }).catch((err) => {
             console.log(err);
@@ -281,6 +292,7 @@ constructor(props) {
                         </Button>
                     </Right>
                 </Header>
+                <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <View style={styles.container}>
                     {this.renderConditional()}
                 </View>

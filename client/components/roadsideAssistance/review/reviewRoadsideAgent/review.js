@@ -80,7 +80,7 @@ constructor(props) {
                 id: this.props.unique_id,
                 fullName: this.props.fullName,
                 tow_driver_id: user.towing_services_start.tow_driver_infomation.unique_id,
-                profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePicss.length - 1].full_url : null
+                profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : null
             }).then((res) => {
                 if (res.data.message === "Successfully submitted review and completed job!") {
                     console.log(res.data);
@@ -476,7 +476,7 @@ constructor(props) {
                 <Header>
                     <Left>
                         <Button onPress={() => {
-                            this.props.props.navigation.goBack();
+                            this.props.props.navigation.push("homepage-main");
                         }} transparent>
                             <Image source={require("../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
@@ -487,9 +487,9 @@ constructor(props) {
                     </Body>
                     <Right>
                         <Button onPress={() => {
-                           this.props.props.navigation.push("homepage-main")
+                           this.props.props.navigation.push("profile-main")
                         }} transparent>
-                            <Image source={require("../../../../assets/icons/home.png")} style={[styles.headerIcon, { position: "absolute", right: 20 }]} />
+                            <Image source={require("../../../../assets/icons/profile.png")} style={[styles.headerIcon, { position: "absolute", right: 20 }]} />
                         </Button>
                     </Right>
                 </Header>

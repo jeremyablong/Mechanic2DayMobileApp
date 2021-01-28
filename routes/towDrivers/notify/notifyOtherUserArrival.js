@@ -41,7 +41,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                         collection.save(user);
 
-                        if (_.has(res.data.other_user.active_roadside_assistance_job, "arrived") && res.data.other_user.active_roadside_assistance_job.arrived === true && user.active_roadside_assistance_job.arrived === true) {
+                        if (_.has(res.data.other_user.towing_services_start, "arrived") && res.data.other_user.towing_services_start.arrived === true && user.active_roadside_assistance_job.arrived === true) {
                             responseeeeee.json({
                                 message: "Notified other user successfully and both users have agreed the driver has arrived!",
                                 user

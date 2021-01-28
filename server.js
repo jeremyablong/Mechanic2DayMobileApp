@@ -184,6 +184,12 @@ io.on("connection", socket => {
 		io.sockets.emit("arrived", data);
 
 	})
+	socket.on("approve-next-page", (data) => {
+
+		console.log("fire sockets one!!!", data);
+
+		io.sockets.emit("fire-off", data);
+	})
 	socket.on("mark-trip-complete", (data) => {
 
 		console.log("JACKPOT THREE!:", data);
@@ -205,6 +211,12 @@ io.on("connection", socket => {
 		console.log("JACKPOT TWO DELIVERED!:", data);
 
 		io.sockets.emit("delivered", data);
+	});
+	socket.on("started-active-tow", (data) => {
+
+		console.log("JACKPOT TWO DELIVERED!:", data);
+
+		io.sockets.emit("start", data);
 	});
 	socket.on("disconnect", () => console.log("Client disconnected"));
 });

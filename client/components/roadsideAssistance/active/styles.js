@@ -63,7 +63,8 @@ export default StyleSheet.create({
     container: {
         minHeight: height - (Platform === "ios" ? 64 : 58),
         width, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: -1
     },
     absolutelyTopRight: {
         position: "absolute",
