@@ -19,7 +19,7 @@ const PaymentMainPageHelper =  (props) => {
                 </Header>
                 <List>
                 <ListItem button={true} onPress={() => {
-                    props.props.navigation.navigate("payments-cards");
+                    props.props.navigation.push("payments-cards");
                 }} style={styles.listItem}>
                     <Left>
                         <NativeText>Payment Methods</NativeText>

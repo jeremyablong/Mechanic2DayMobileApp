@@ -486,7 +486,7 @@ constructor(props) {
                     </View>
                     <View style={[styles.centered, { marginTop: 20 }]}>
                         <View style={styles.centered}>
-                            {(selected !== null || myLocation !== null) && (serviceRequired !== null || selected !== null) ? <Button onPress={() => {
+                            {myLocation !== null || serviceRequired !== null ? <Button onPress={() => {
                                 this.RBSheet.close();
 
                                 this.setState({
@@ -563,11 +563,11 @@ constructor(props) {
                         <View style={styles.centered}>
                             <AwesomeButtonRick textColor={"black"} onPress={() => {
                                 if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
-                                    this.props.props.navigation.navigate("waiting-room-roadside-assistance");
+                                    this.props.props.navigation.push("waiting-room-roadside-assistance");
                                 } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "mapview-in-progress") {
-                                    this.props.props.navigation.navigate("in-progress-roadside-assistance");
+                                    this.props.props.navigation.push("in-progress-roadside-assistance");
                                 } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
-                                    this.props.props.navigation.navigate("driver-has-arrived-manage-listing-depatarture");
+                                    this.props.props.navigation.push("driver-has-arrived-manage-listing-depatarture");
                                 } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "finale-review") {
                                     this.props.props.navigation.push("review-roadside-assistance-agent");
                                 } else {
@@ -611,8 +611,6 @@ constructor(props) {
                                 onValueChange={(value) => {
                                     this.setState({
                                         towNeeded: value,
-                                        selected: null,
-                                        full: null,
                                         towDesination: null, 
                                         serviceRequired: null, 
                                         towDesinationFull: null

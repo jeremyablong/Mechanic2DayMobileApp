@@ -5,6 +5,8 @@ const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
 const { decrypt } = require('../../../../../crypto.js');
+const stripe = require('stripe')(config.get("stripeSecretKey"));
+
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
@@ -18,14 +20,21 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
 
-                const promiseee = new Promise((resolve, reject) => {
+                const promiseee = new Promise(async (resolve, reject) => {
                     if (user.card_payment_methods) {
                         for (let index = 0; index < user.card_payment_methods.length; index++) {
                             const individual = user.card_payment_methods[index];
                             console.log("individual", individual);
                             if (decrypt(individual.card_number) === decrypt(card.card_number)) {
-                                console.log("matchhhhhh")
+
+                                console.log("matchhhhhh");
+
                                 individual.primary = true;
+
+                                const customer = await stripe.customers.update(
+                                    user.unique_id,
+                                    { default_source: individual.token.card.id }
+                                );
                             } else {
                                 individual.primary = false;
                             }

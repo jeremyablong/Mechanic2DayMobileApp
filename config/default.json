@@ -13,5 +13,8 @@
     "ngrok_url": "http://mental-health-mobile-app.ngrok.io",
     "paypalSandboxAccount": "sb-mwizs1403235@business.example.com",
     "paypalRESTClientID": "AXUw3NuSWLC2fDgRdhTHAOYKCO52r9KoFQXqGIU30ZQagSvT5su60t72JMuzkFSmEC_2MZQO_38Z7j1H",
-    "paypalRESTSecret": "ELcvXt3rY-zcuJcabzvMFNshwxin9LaMP6GL8Floo1OrDyzlxy2o2o-naT7LAfnBXonCgAkTKc3Z17Gt"
+    "paypalRESTSecret": "ELcvXt3rY-zcuJcabzvMFNshwxin9LaMP6GL8Floo1OrDyzlxy2o2o-naT7LAfnBXonCgAkTKc3Z17Gt",
+    "stripePublishableKey": "pk_test_51IEjoaIfXpf42s2bBlXxGyErATvfyGa6EZZtPJ3XRm3zVEQbQBWg2oqheH0sInEN8tf6K7kvNBXSkLR3fJWRmLgZ00Et9i51LT",
+    "stripeSecretKey": "sk_test_51IEjoaIfXpf42s2bHZrck67yUp2yKGCYgUsmXS9mqBuA8SOgPxzmYWRGooHOcVGybtd8zRRAQRLvcS1oMJ3m66Mo00MpwjNyoh",
+    "tomtomApiKey": "BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV"
 }

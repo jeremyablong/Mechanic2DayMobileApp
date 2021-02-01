@@ -25,6 +25,9 @@ const UserSchema =  new mongoose.Schema({
     active_employee: {
         type: Boolean
     },
+    strip_connect_account: {
+        type: Object
+    },
     company_id: {
         type: String
     },

@@ -10,7 +10,8 @@ export default StyleSheet.create({
     container: {
         height: height - (Platform === "ios" ? 64 : 56),
         width, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: -1
     },
     margin: {
         margin: 20
@@ -29,7 +30,7 @@ export default StyleSheet.create({
     },
     circle: {
         position: "absolute",
-        bottom: 50, 
+        bottom: 100, 
         right: 30,
         backgroundColor: "white",
         height: 85,

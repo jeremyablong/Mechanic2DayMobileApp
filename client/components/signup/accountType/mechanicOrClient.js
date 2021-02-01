@@ -129,6 +129,19 @@ const CreateAccountTypeHelper = (props) => {
             props.props.navigation.navigate("associate-to-tow-company");
         }, 500);
     }
+    const mechanicMoveNextPage = () => {
+        console.log("mechanicMoveNextPage clicked");
+
+        props.authenticated({
+            ...props.previous,
+                accountType: "mechanic",
+                page: 7
+        });
+
+        setTimeout(() => {
+            props.props.navigation.navigate("mechanic-select-pricing-plan");
+        }, 500);
+    }
     return (
         <Fragment>
             <ImageBackground source={require("../../../assets/images/white-wood.jpg")} style={styles.container}>
@@ -137,7 +150,7 @@ const CreateAccountTypeHelper = (props) => {
                     <Text style={styles.mainText}>Are you a mechanic OR looking to get work done?</Text>
                     <View style={styles.center}>
                         <Button bordered onPress={() => {
-                            continueToNextPage("mechanic");
+                            mechanicMoveNextPage();
                         }} style={styles.submitBtn}>
                             <NativeText style={{ color: "black" }}>I'm a mechanic</NativeText>
                         </Button>

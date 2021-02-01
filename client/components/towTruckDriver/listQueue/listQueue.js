@@ -19,6 +19,8 @@ import Dialog from "react-native-dialog";
 import geodist from 'geodist';
 import Modal from 'react-native-modal';
 import io from 'socket.io-client';
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from "../../toastConfig.js";
 
 const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
 
@@ -237,23 +239,36 @@ constructor(props) {
         })
     }
     startJobAndContinue = () => {
-        console.log("startJobAndContinue clicked");
         
         const { selected } = this.state;
 
-        axios.post(`${Config.ngrok_url}/assign/driver/roadside/assistance`, {
+        console.log("startJobAndContinue clicked", selected);
+
+        axios.post(`${Config.ngrok_url}/gather/tow/company/information/prices`, {
             id: this.props.unique_id,
-            selected
+            selected,
+            company_id: this.props.employed_by,
+            company_name: this.props.company_name
         }).then((res) => {
-            if (res.data.message === "Updated both users and started transaction!") {
+            if (res.data.message === "Gathered company info!") {
                 console.log(res.data);
 
-                socket.emit("started-active-tow", {
-                    started: true,
-                    user_id: selected.requested_by
+                socket.emit("send-invitation-request", {
+                    user_id: selected.requested_by,
+                    company_informtion: res.data.listing,  
+                    selected,
+                    fullName: this.props.fullName,
+                    lengthInMeters: res.data.lengthInMeters,
+                    tow_driver_id: this.props.unique_id
                 })
 
-                this.props.props.navigation.replace("tow-activated-map-view");
+                Toast.show({
+                    text1: "Successfully sent proposal/request to client!",
+                    text2: "We've sent the client your invitiation, if they 'accept' - you will be automatically redirect.",
+                    type: "success",
+                    position: "top",
+                    visibilityTime: 4500
+                })
             } else {
                 console.log("err", res.data);
             }
@@ -303,6 +318,7 @@ constructor(props) {
                     </Body>
                     <Right />
                 </Header>
+                <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <View style={{ flex: 1 }}>
                     <Dialog.Container visible={isVisible}>
                     <Dialog.Title>You already have an ACTIVE open incomplete job!</Dialog.Title>
@@ -479,7 +495,10 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
     return {
-        unique_id: state.auth.authenticated.unique_id
+        unique_id: state.auth.authenticated.unique_id,
+        fullName: state.auth.authenticated.fullName,
+        employed_by: state.auth.authenticated.employed_by,
+        company_name: state.auth.authenticated.company_name
     }
 }
 export default connect(mapStateToProps, { })(ListQueueHelper);

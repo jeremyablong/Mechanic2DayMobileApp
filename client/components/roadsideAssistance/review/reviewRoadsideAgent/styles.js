@@ -58,8 +58,8 @@ export default StyleSheet.create({
         flexDirection: "column"
     },
     icon: {
-        maxHeight: 75,
-        maxWidth: 75
+        maxHeight: 50,
+        maxWidth: 50
     },
     lightIcon: {
         tintColor: "white",
@@ -83,15 +83,30 @@ export default StyleSheet.create({
         borderWidth: 2,
         borderColor: "black"
     },
+    flexStartCustom: {
+        marginTop: 15, 
+        justifyContent: "flex-start", 
+        alignItems: "flex-start", 
+        alignContent: "flex-start"
+    },
     darkCircle: {
         borderRadius: 50, 
         height: 100,
         justifyContent: "center",
         alignItems: "center",
         alignContent: "center",
-        backgroundColor: "#8884FF",
         width: 100,
-        borderWidth: 2,
-        borderColor: "black"
+        borderWidth: 10,
+        borderColor: "#8884FF"
+    },
+    textInput: {
+        borderColor: "grey",
+        borderWidth: 1,
+        padding: 10
+    },
+    titleText: {
+        marginBottom: 15,
+        fontSize: 18, 
+        fontWeight: "bold"
     }
 })

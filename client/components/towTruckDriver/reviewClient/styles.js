@@ -51,15 +51,30 @@ export default StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "left"
     },
     column: {
         width: width * 0.30,
         flexDirection: "column"
     },
+    flexBeginning: {
+        alignSelf: "flex-start",
+        justifyContent: "flex-start",
+        alignItems: "flex-start"
+    },
     icon: {
-        maxHeight: 75,
-        maxWidth: 75
+        maxHeight: 50,
+        maxWidth: 50
+    },
+    textInput: {
+        borderColor: "grey",
+        borderWidth: 1,
+        padding: 10
+    },
+    titleText: {
+        marginBottom: 15,
+        fontSize: 18, 
+        fontWeight: "bold"
     },
     lightIcon: {
         tintColor: "white",
@@ -89,9 +104,8 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         alignContent: "center",
-        backgroundColor: "#8884FF",
         width: 100,
-        borderWidth: 2,
-        borderColor: "black"
+        borderWidth: 10,
+        borderColor: "#8884FF"
     }
 })

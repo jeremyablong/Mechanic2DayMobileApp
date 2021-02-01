@@ -119,12 +119,14 @@ constructor(props) {
                             </Left>
                         </ListItem>                    
                         <ListItem button={true} onPress={() => {
-                            if (user.active_employee === true) {
-                                this.props.props.navigation.push("list-roadside-assistance-queue");
-                            } else {
-                                this.setState({
-                                    isVisible: true
-                                })
+                            if (user !== null) {
+                                if (user.active_employee === true) {
+                                    this.props.props.navigation.push("list-roadside-assistance-queue");
+                                } else {
+                                    this.setState({
+                                        isVisible: true
+                                    })
+                                }
                             }
                         }}>
                             <Left>

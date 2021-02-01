@@ -46,7 +46,8 @@ constructor(props) {
             card_number: payment.number,
             postal_code: payment.postalCode,
             type: payment.type,
-            id: this.props.unique_id
+            id: this.props.unique_id,
+            fullName: this.props.fullName
         }).then((res) => {
             if (res.data.message === "Successfully added a new card!") {
                 console.log(res.data);
@@ -112,7 +113,8 @@ constructor(props) {
 }
 const mapStateToProps = (state) => {
     return {
-        unique_id: state.auth.authenticated.unique_id
+        unique_id: state.auth.authenticated.unique_id,
+        fullName: state.auth.authenticated.fullName
     };
 }
 export default connect(mapStateToProps, {  })(AddCardHelper);

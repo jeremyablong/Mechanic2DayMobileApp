@@ -10,6 +10,7 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../toastConfig.js";
 import { connect } from "react-redux";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
 
 const { height, width } = Dimensions.get("window");
@@ -34,7 +35,9 @@ constructor(props) {
         safe_during_interaction: 0, 
         overall_interaction_rating: 0, 
         honest_polite_rating: 0, 
-        as_described: 0
+        as_described: 0,
+        publicMessage: "",
+        privateMessage: ""
     }
 }
     componentDidMount() {
@@ -58,9 +61,9 @@ constructor(props) {
     }
     handleSubmission = () => {
 
-        const { accurate_pickup_location, helpful, user, respectful, quickResponses, descriptive, expectation, safe, pickup_accurate_rating, communication_rating, informational_rating, safe_during_interaction, overall_interaction_rating, honest_polite_rating, as_described } = this.state;
+        const { accurate_pickup_location, helpful, user, respectful, quickResponses, descriptive, expectation, safe, pickup_accurate_rating, communication_rating, informational_rating, safe_during_interaction, overall_interaction_rating, honest_polite_rating, as_described, privateMessage, publicMessage } = this.state;
 
-        if (pickup_accurate_rating !== 0 && communication_rating !== 0 && informational_rating !== 0 && safe_during_interaction !== 0 && overall_interaction_rating !== 0 && honest_polite_rating !== 0 && as_described !== 0 && typeof expectation !== "undefined" && expectation.length > 0) {
+        if (pickup_accurate_rating !== 0 && communication_rating !== 0 && informational_rating !== 0 && safe_during_interaction !== 0 && overall_interaction_rating !== 0 && honest_polite_rating !== 0 && as_described !== 0 && typeof expectation !== "undefined" && expectation.length > 0 && (typeof publicMessage !== "undefined" && publicMessage.length > 0)) {
             console.log("submit!");
 
             axios.post(`${Config.ngrok_url}/submit/feedback/review/client`, {
@@ -81,7 +84,9 @@ constructor(props) {
                 honest_polite_rating, 
                 as_described,
                 fullName: this.props.fullName,
-                profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePicss.length - 1].full_url : null
+                profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : null,
+                privateMessage, 
+                publicMessage
             }).then((res) => {
                 if (res.data.message === "Successfully submitted review and completed job!") {
                     console.log(res.data);
@@ -258,105 +263,143 @@ constructor(props) {
                         <View style={{ marginTop: 30 }} />
                         <Text style={styles.headerText}>Please rate each category to the best of your ablitiy with 1 star being "bad" and 5 stars being "excellent".</Text>
                         <View style={{ marginTop: 30 }} />
-                        <View style={{ marginTop: 15 }}>
-                            <Text style={styles.title}>Communication</Text>
-                            <AirbnbRating
-                                count={5}
-                                reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
-                                defaultRating={0}
-                                size={30}
-                                onFinishRating={(value) => {
-                                    this.setState({
-                                        communication_rating: value
-                                    })
-                                }}
-                            />
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <Text style={styles.title}>Accurate pick-up location</Text>
-                            <AirbnbRating
-                                count={5}
-                                reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
-                                defaultRating={0}
-                                size={30}
-                                onFinishRating={(value) => {
-                                    this.setState({
-                                        pickup_accurate_rating: value
-                                    })
-                                }}
-                            />
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <Text style={styles.title}>Informational and/or descriptive of problems</Text>
-                            <AirbnbRating
-                                count={5}
-                                reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
-                                defaultRating={0}
-                                size={30}
-                                onFinishRating={(value) => {
-                                    this.setState({
-                                        informational_rating: value
-                                    })
-                                }}
-                            />
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <Text style={styles.title}>I felt safe during this interaction</Text>
-                            <AirbnbRating
-                                count={5}
-                                reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
-                                defaultRating={0}
-                                size={30}
-                                onFinishRating={(value) => {
-                                    this.setState({
-                                        safe_during_interaction: value
-                                    })
-                                }}
-                            />
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <Text style={styles.title}>Pleased with overall interaction</Text>
-                            <AirbnbRating
-                                count={5}
-                                reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
-                                defaultRating={0}
-                                size={30}
-                                onFinishRating={(value) => {
-                                    this.setState({
-                                        overall_interaction_rating: value
-                                    })
-                                }}
-                            />
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <Text style={styles.title}>Client was honest & genuine</Text>
-                            <AirbnbRating
-                                count={5}
-                                reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
-                                defaultRating={0}
-                                size={30}
-                                onFinishRating={(value) => {
-                                    this.setState({
-                                        honest_polite_rating: value
-                                    })
-                                }}
-                            />
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <Text style={styles.title}>Everything was as described in initial request</Text>
-                            <AirbnbRating
-                                count={5}
-                                reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
-                                defaultRating={0}
-                                size={30}
-                                onFinishRating={(value) => {
-                                    this.setState({
-                                        as_described: value
-                                    })
-                                }}
-                            />
+                        <View style={styles.flexBeginning}>
+                            <View style={{ marginTop: 15, justifyContent: "flex-start", alignItems: "flex-start", alignContent: "flex-start" }}>
+                                <Text style={styles.title}>Communication</Text>
+                                <AirbnbRating
+                                    count={5}
+                                    reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
+                                    defaultRating={0}
+                                    size={30}
+                                    onFinishRating={(value) => {
+                                        this.setState({
+                                            communication_rating: value
+                                        })
+                                    }}
+                                />
+                            </View>
+                            <View style={{ marginTop: 15, justifyContent: "flex-start", alignItems: "flex-start", alignContent: "flex-start" }}>
+                                <Text style={styles.title}>Accurate pick-up location</Text>
+                                <AirbnbRating
+                                    count={5}
+                                    reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
+                                    defaultRating={0}
+                                    size={30}
+                                    onFinishRating={(value) => {
+                                        this.setState({
+                                            pickup_accurate_rating: value
+                                        })
+                                    }}
+                                />
+                            </View>
+                            <View style={{ marginTop: 15, justifyContent: "flex-start", alignItems: "flex-start", alignContent: "flex-start" }}>
+                                <Text style={styles.title}>Informational and/or descriptive of problems</Text>
+                                <AirbnbRating
+                                    count={5}
+                                    reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
+                                    defaultRating={0}
+                                    size={30}
+                                    onFinishRating={(value) => {
+                                        this.setState({
+                                            informational_rating: value
+                                        })
+                                    }}
+                                />
+                            </View>
+                            <View style={{ marginTop: 15, justifyContent: "flex-start", alignItems: "flex-start", alignContent: "flex-start" }}>
+                                <Text style={styles.title}>I felt safe during this interaction</Text>
+                                <AirbnbRating
+                                    count={5}
+                                    reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
+                                    defaultRating={0}
+                                    size={30}
+                                    onFinishRating={(value) => {
+                                        this.setState({
+                                            safe_during_interaction: value
+                                        })
+                                    }}
+                                />
+                            </View>
+                            <View style={{ marginTop: 15, justifyContent: "flex-start", alignItems: "flex-start", alignContent: "flex-start" }}>
+                                <Text style={styles.title}>Pleased with overall interaction</Text>
+                                <AirbnbRating
+                                    count={5}
+                                    reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
+                                    defaultRating={0}
+                                    size={30}
+                                    onFinishRating={(value) => {
+                                        this.setState({
+                                            overall_interaction_rating: value
+                                        })
+                                    }}
+                                />
+                            </View>
+                            <View style={{ marginTop: 15, justifyContent: "flex-start", alignItems: "flex-start", alignContent: "flex-start" }}>
+                                <Text style={styles.title}>Client was honest & genuine</Text>
+                                <AirbnbRating
+                                    count={5}
+                                    reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
+                                    defaultRating={0}
+                                    size={30}
+                                    onFinishRating={(value) => {
+                                        this.setState({
+                                            honest_polite_rating: value
+                                        })
+                                    }}
+                                />
+                            </View>
+                            <View style={{ marginTop: 15, justifyContent: "flex-start", alignItems: "flex-start", alignContent: "flex-start" }}>
+                                <Text style={styles.title}>Everything was as described in initial request</Text>
+                                <AirbnbRating
+                                    count={5}
+                                    reviews={["Terrible", "Ok", "Average", "Good", "Excellent"]}
+                                    defaultRating={0}
+                                    size={30}
+                                    onFinishRating={(value) => {
+                                        this.setState({
+                                            as_described: value
+                                        })
+                                    }}
+                                />
+                            </View>
                         </View>
                         
+                    </View>
+                    <View style={styles.hr} />
+                    <View style={styles.margin}>
+                        <Text style={styles.titleText}>Enter a <Text style={{ fontStyle: "italic", textDecorationLine: "underline" }}>private message</Text> to the client... You may skip this if you'd like.</Text>
+                        <AutoGrowingTextInput
+                            value={this.state.privateMessage}
+                            onChangeText={(value) => {
+                                this.setState({
+                                    privateMessage: value
+                                })
+                            }}
+                            style={styles.textInput}
+                            placeholder={'Enter your PRIVATE message to the client here...'}
+                            placeholderTextColor='#66737C'
+                            minHeight={150}
+                            enableScrollToCaret
+                            ref={(r) => { this._textInput = r; }}
+                        />
+                    </View>
+                    <View style={styles.hr} />
+                    <View style={styles.margin}>
+                        <Text style={styles.titleText}>Enter a <Text style={{ fontStyle: "italic", textDecorationLine: "underline" }}>public review</Text> for the client. This is a <Text style={{ color: "red" }}>required</Text> step.</Text>
+                        <AutoGrowingTextInput
+                            value={this.state.publicMessage}
+                            onChangeText={(value) => {
+                                this.setState({
+                                    publicMessage: value
+                                })
+                            }}
+                            style={styles.textInput}
+                            placeholder={'Enter your PUBLIC review for the client here...'}
+                            placeholderTextColor='#66737C'
+                            minHeight={150}
+                            enableScrollToCaret
+                            ref={(r) => { this._textInput = r; }}
+                        />
                     </View>
                     <View style={styles.margin}>
                         <AwesomeButtonBlue width={width * 0.90} textColor={"black"} onPress={() => {

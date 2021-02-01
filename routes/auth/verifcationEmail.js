@@ -35,7 +35,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         await transporter.sendMail({
             from: 'help@mechanictoday.com',
             to: email.toLowerCase(),
-            subject: 'Mechanic Today Authentication',
+            subject: 'Mechanic2Day Authentication Code',
             text: `Your authentication code is: ${generatedID}`
         });
 

@@ -11,7 +11,8 @@ export default StyleSheet.create({
     container: {
         minHeight: height,
         width, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: -1
     },
     centered: {
         justifyContent: "center",

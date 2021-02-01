@@ -210,20 +210,12 @@ constructor(props) {
                             ref={marker => this.marker = marker}
                             coordinate={towDriverLocation}
                         >
-                            <Image source={require("../../../assets/icons/tow-truck.png")} style={{ maxWidth: 50, maxHeight: 50 }} />
+                            <Image source={require("../../../assets/icons/blue-pin.png")} style={{ maxWidth: 50, maxHeight: 50 }} />
                         </Marker.Animated>
                         <Polyline
                             coordinates={this.state.polyline}
-                            strokeColor="black" // fallback for when `strokeColors` is not supported by the map-provider
-                            strokeColors={[
-                                '#7F0000',
-                                '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
-                                '#B24112',
-                                '#E5845C',
-                                '#238C23',
-                                '#7F0000'
-                            ]}
-                            strokeWidth={7}
+                            strokeColor="blue"
+                            strokeWidth={4}
                         />
                     </MapView>
                     <View style={styles.absolutelyTopLeft}>
@@ -396,7 +388,7 @@ constructor(props) {
                                 <Text style={[styles.postTitle, { marginBottom: 15 }]}>
                                     Driver is employed by {roadside_assistance_company.company_name}.
                                 </Text>
-                                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Tow Company Service Rates</Text>
+                                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Standard Tow Company Service Rates OUTSIDE Mechanic2Day</Text>
                                 <Text style={styles.postDescription}>
                                     Tire Change: ${roadside_assistance_company.services.change_tire_cost} {"\n"}
                                     Gas Delivery: ${roadside_assistance_company.services.gas_delivery_cost} {"\n"}

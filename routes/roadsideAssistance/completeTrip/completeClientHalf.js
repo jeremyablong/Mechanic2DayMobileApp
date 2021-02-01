@@ -4,7 +4,7 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-
+const stripe = require('stripe')(config.get("stripeSecretKey"));
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, responseee) => {
@@ -34,16 +34,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === id) {
                             
                             user.towing_services_start.agree_job_completed = true;
-                            user.towing_services_start.page = "finale-review";
-
-                            resolve(true);
+                            user.towing_services_start.page = "driver-has-arrived-manage-listing-depatarture";
 
                             collection.save(user);
+
+                            resolve(true);
                         }
                     }
                 })
 
-                promiseee.then((passedData) => {
+                promiseee.then(async (passedData) => {
                     console.log("resolved.");
 
                     for (let index = 0; index < users.length; index++) {
@@ -51,9 +51,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         // tow truck driver - roadside associate
                         if (user.unique_id === tow_driver_id) {
                             if (passedData === true && user.active_roadside_assistance_job.agree_job_completed === true) {
-                                responseee.json({
-                                    message: "Both users have agreed the job is complete!"
-                                });
+
+                                const charge = await stripe.charges.capture(
+                                    user.active_roadside_assistance_job.charge.id
+                                );
+
+                                setTimeout(() => {
+                                    responseee.json({
+                                        message: "Both users have agreed the job is complete!"
+                                    });
+                                }, 1500);
                             } else {
                                 responseee.json({
                                     message: "Marked as complete!"

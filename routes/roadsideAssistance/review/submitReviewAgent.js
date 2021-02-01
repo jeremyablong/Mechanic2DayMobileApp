@@ -33,7 +33,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             id,
             tow_driver_id,
             fullName,
-            profilePic
+            profilePic,
+            publicMessage,
+            privateMessage
         } = req.body;
 
         collection.find({ unique_id: { "$in": [tow_driver_id, id]}}).toArray((err, users) => {
@@ -120,6 +122,45 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 }
                             }
 
+                            const new_review_text = {
+                                id: uuidv4(),
+                                date: moment(new Date()).format("dddd, MMMM Do YYYY"),
+                                system_date: Date.now(),
+                                review: publicMessage,
+                                reviewer: {
+                                    id: id,
+                                    fullName: fullName,
+
+                                }
+                            }
+
+                            if (user.text_reviews) {
+                                user.text_reviews.push(new_review_text);
+                            } else {
+                                user["text_reviews"] = [new_review_text];
+                            }
+
+                            const review_overview = {
+                                id: uuidv4(),
+                                date: moment(new Date()).format("dddd, MMMM Do YYYY , h:mm:ss a"),
+                                system_date: Date.now(),
+                                private_message: privateMessage,
+                                public_message: publicMessage,
+                                compliments: {
+                                    hospitality: hospitality === true ? true : false, 
+                                    safe_driving: safeDriving === true ? true : false, 
+                                    respectful: respectful === true ? true : false,
+                                    quick_responses: quickResponses === true ? true : false, 
+                                    informational: informational === true ? true : false,
+                                    knowledgable: knowledgable === true ? true : false
+                                }
+                            };
+
+                            if (user.review_overviews_list) {
+                                user.review_overviews_list.push(review_overview)
+                            } else {
+                                user["review_overviews_list"] = [review_overview];
+                            }
 
                             const configgg = {
                                 headers: {

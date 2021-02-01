@@ -33,7 +33,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             honest_polite_rating, 
             as_described,
             fullName,
-            profilePic
+            profilePic,
+            privateMessage,
+            publicMessage
         } = req.body;
 
 
@@ -118,6 +120,46 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     honest_polite_rating,
                                     as_described
                                 }
+                            };
+
+                            const new_review_text = {
+                                id: uuidv4(),
+                                date: moment(new Date()).format("dddd, MMMM Do YYYY"),
+                                system_date: Date.now(),
+                                review: publicMessage,
+                                reviewer: {
+                                    id: id,
+                                    fullName: fullName,
+
+                                }
+                            }
+
+                            if (user.text_reviews) {
+                                user.text_reviews.push(new_review_text);
+                            } else {
+                                user["text_reviews"] = [new_review_text];
+                            }
+
+                            const review_overview = {
+                                id: uuidv4(),
+                                date: moment(new Date()).format("dddd, MMMM Do YYYY , h:mm:ss a"),
+                                system_date: Date.now(),
+                                private_message: privateMessage,
+                                public_message: publicMessage,
+                                compliments: {
+                                    accurate_pickup_location: accurate_pickup_location, 
+                                    helpful: helpful,
+                                    respectful: respectful, 
+                                    quick_responses: quickResponses,
+                                    descriptive: descriptive, 
+                                    safe: safe
+                                }
+                            };
+
+                            if (user.review_overviews_list) {
+                                user.review_overviews_list.push(review_overview)
+                            } else {
+                                user["review_overviews_list"] = [review_overview];
                             }
 
                             const configgg = {

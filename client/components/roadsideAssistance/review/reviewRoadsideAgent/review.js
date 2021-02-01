@@ -10,7 +10,7 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../toastConfig.js";
 import { connect } from "react-redux";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-
+import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
 const { height, width } = Dimensions.get("window");
 
@@ -57,9 +57,9 @@ constructor(props) {
         })
     }
     handleSubmission = () => {
-        const { hospitality, safeDriving, respectful, quickResponses, informational, knowledgable, expectation, user, pickup_times_rating, communication_rating, drove_safely_rating, informational_rating, honest_polite_rating, overall_interaction_rating, proper_vehicle_condition_rating } = this.state;
+        const { hospitality, safeDriving, respectful, quickResponses, informational, knowledgable, expectation, user, pickup_times_rating, communication_rating, drove_safely_rating, informational_rating, honest_polite_rating, overall_interaction_rating, proper_vehicle_condition_rating, privateMessage, publicMessage } = this.state;
 
-        if (pickup_times_rating !== 0 && communication_rating !== 0 && drove_safely_rating !== 0 && informational_rating !== 0 && honest_polite_rating !== 0 && overall_interaction_rating !== 0 && proper_vehicle_condition_rating && typeof expectation !== "undefined" && expectation.length > 0) {
+        if (pickup_times_rating !== 0 && communication_rating !== 0 && drove_safely_rating !== 0 && informational_rating !== 0 && honest_polite_rating !== 0 && overall_interaction_rating !== 0 && proper_vehicle_condition_rating && typeof expectation !== "undefined" && expectation.length > 0 && typeof publicMessage !== "undefined" && publicMessage.length > 0) {
             console.log("submit!");
 
             axios.post(`${Config.ngrok_url}/submit/feedback/review/agent`, {
@@ -80,7 +80,9 @@ constructor(props) {
                 id: this.props.unique_id,
                 fullName: this.props.fullName,
                 tow_driver_id: user.towing_services_start.tow_driver_infomation.unique_id,
-                profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : null
+                profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : null,
+                privateMessage, 
+                publicMessage
             }).then((res) => {
                 if (res.data.message === "Successfully submitted review and completed job!") {
                     console.log(res.data);
@@ -257,7 +259,7 @@ constructor(props) {
                         <View style={{ marginTop: 30 }} />
                         <Text style={styles.headerText}>Please rate each category to the best of your ablitiy with 1 star being "bad" and 5 stars being "excellent".</Text>
                         <View style={{ marginTop: 30 }} />
-                        <View style={{ marginTop: 15 }}>
+                        <View style={styles.flexStartCustom}>
                             <Text style={styles.title}>Communication</Text>
                             <AirbnbRating
                                 count={5}
@@ -271,7 +273,7 @@ constructor(props) {
                                 }}
                             />
                         </View>
-                        <View style={{ marginTop: 15 }}>
+                        <View style={styles.flexStartCustom}>
                             <Text style={styles.title}>Pick-up/arrival times</Text>
                             <AirbnbRating
                                 count={5}
@@ -285,7 +287,7 @@ constructor(props) {
                                 }}
                             />
                         </View>
-                        <View style={{ marginTop: 15 }}>
+                        <View style={styles.flexStartCustom}>
                             <Text style={styles.title}>Informational and/or descriptive of problems</Text>
                             <AirbnbRating
                                 count={5}
@@ -299,7 +301,7 @@ constructor(props) {
                                 }}
                             />
                         </View>
-                        <View style={{ marginTop: 15 }}>
+                        <View style={styles.flexStartCustom}>
                             <Text style={styles.title}>Drove safely and obeyed traffic laws</Text>
                             <AirbnbRating
                                 count={5}
@@ -313,7 +315,7 @@ constructor(props) {
                                 }}
                             />
                         </View>
-                        <View style={{ marginTop: 15 }}>
+                        <View style={styles.flexStartCustom}>
                             <Text style={styles.title}>Pleased with overall interaction</Text>
                             <AirbnbRating
                                 count={5}
@@ -327,7 +329,7 @@ constructor(props) {
                                 }}
                             />
                         </View>
-                        <View style={{ marginTop: 15 }}>
+                        <View style={styles.flexStartCustom}>
                             <Text style={styles.title}>Driver was honest & genuine</Text>
                             <AirbnbRating
                                 count={5}
@@ -341,7 +343,7 @@ constructor(props) {
                                 }}
                             />
                         </View>
-                        <View style={{ marginTop: 15 }}>
+                        <View style={styles.flexStartCustom}>
                             <Text style={styles.title}>Vehicle was in proper condition</Text>
                             <AirbnbRating
                                 count={5}
@@ -356,6 +358,42 @@ constructor(props) {
                             />
                         </View>
                         
+                    </View>
+                    <View style={styles.hr} />
+                    <View style={styles.margin}>
+                        <Text style={styles.titleText}>Enter a <Text style={{ fontStyle: "italic", textDecorationLine: "underline" }}>private message</Text> to the client... You may skip this if you'd like.</Text>
+                        <AutoGrowingTextInput
+                            value={this.state.privateMessage}
+                            onChangeText={(value) => {
+                                this.setState({
+                                    privateMessage: value
+                                })
+                            }}
+                            style={styles.textInput}
+                            placeholder={'Enter your PRIVATE message to the client here...'}
+                            placeholderTextColor='#66737C'
+                            minHeight={150}
+                            enableScrollToCaret
+                            ref={(r) => { this._textInput = r; }}
+                        />
+                    </View>
+                    <View style={styles.hr} />
+                    <View style={styles.margin}>
+                        <Text style={styles.titleText}>Enter a <Text style={{ fontStyle: "italic", textDecorationLine: "underline" }}>public review</Text> for the client. This is a <Text style={{ color: "red" }}>required</Text> step.</Text>
+                        <AutoGrowingTextInput
+                            value={this.state.publicMessage}
+                            onChangeText={(value) => {
+                                this.setState({
+                                    publicMessage: value
+                                })
+                            }}
+                            style={styles.textInput}
+                            placeholder={'Enter your PUBLIC review for the client here...'}
+                            placeholderTextColor='#66737C'
+                            minHeight={150}
+                            enableScrollToCaret
+                            ref={(r) => { this._textInput = r; }}
+                        />
                     </View>
                     <View style={styles.margin}>
                         <AwesomeButtonBlue width={width * 0.90} textColor={"black"} onPress={() => {

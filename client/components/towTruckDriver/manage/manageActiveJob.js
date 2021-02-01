@@ -8,10 +8,13 @@ import axios from "axios";
 import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import RBSheet from "react-native-raw-bottom-sheet";
-import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+import geodist from "geodist";
 import _ from "lodash";
 import Dialog from "react-native-dialog";
 import io from 'socket.io-client';
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from "../../toastConfig.js";
+
 
 const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
 
@@ -229,32 +232,48 @@ constructor(props) {
         }
     }
     markTripAsCompleted = () => {
-        console.log("markTripAsCompleted clicked");
+        const { user, roadside } = this.state;
 
-        const { roadside } = this.state;
+        if (user !== null) {
+            console.log("markTripAsCompleted clicked", geodist({ lat: user.current_location.coords.latitude, lon: user.current_location.coords.longitude }, { lat: user.active_roadside_assistance_job.dropoff_location.position.lat, lon: user.active_roadside_assistance_job.dropoff_location.position.lon }));
 
-        axios.post(`${Config.ngrok_url}/mark/tow/driver/trip/complete`, {
-            id: this.props.unique_id,
-            fullName: this.props.fullName,
-            other_user_id: roadside.requestee_id
-        }).then((res) => {
-            if (res.data.message === "Updated account and marked trip as complete for tow truck driver and notifed other user!") {
-                console.log(res.data);
+            // CHANGE 10 TO 2 IN PRODUCTION
 
-                socket.emit("delivered-successfully", {
-                    delivered: true,
-                    user_id: roadside.requestee_id
+            if (geodist({ lat: user.current_location.coords.latitude, lon: user.current_location.coords.longitude }, { lat: user.active_roadside_assistance_job.dropoff_location.position.lat, lon: user.active_roadside_assistance_job.dropoff_location.position.lon }) <= 10) {
+                axios.post(`${Config.ngrok_url}/mark/tow/driver/trip/complete`, {
+                    id: this.props.unique_id,
+                    fullName: this.props.fullName,
+                    other_user_id: roadside.requestee_id
+                }).then((res) => {
+                    if (res.data.message === "Updated account and marked trip as complete for tow truck driver and notifed other user!") {
+                        console.log(res.data);
+        
+                        socket.emit("delivered-successfully", {
+                            delivered: true,
+                            user_id: roadside.requestee_id
+                        })
+        
+                        setTimeout(() => {
+                            this.props.props.navigation.replace("driver-has-arrived-manage-listing-depatarture");
+                        }, 1500)
+                    } else {
+                        console.log("err", res.data);
+                    }
+                }).catch((err) => {
+                    console.log(err);
                 })
-
-                setTimeout(() => {
-                    this.props.props.navigation.replace("driver-has-arrived-manage-listing-depatarture");
-                }, 1500)
             } else {
-                console.log("err", res.data);
+                console.log("nOT WITHIN DISTANCE.");
+
+                Toast.show({
+                    text1: "You MUST be close to the drop-off location before proceeding...",
+                    text2: "Please get closer to the drop-off location before continuing with the claim.",
+                    visibilityTime: 4500,
+                    type: "error",
+                    position: "top"
+                })
             }
-        }).catch((err) => {
-            console.log(err);
-        })
+        }
     }
     render() {
         console.log("this.state manageActiveJob.js state", this.state);
@@ -277,6 +296,7 @@ constructor(props) {
                         </Button>
                     </Right>
                 </Header>
+                <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <ScrollView contentContainerStyle={{ paddingBottom: 125 }} style={styles.container}>
                     {this.renderConditional()}
                 </ScrollView>
@@ -284,7 +304,7 @@ constructor(props) {
                     <Dialog.Container visible={this.state.isVisible}>
                     <Dialog.Title>Are you sure you would like to complete this trip?</Dialog.Title>
                     <Dialog.Description>
-                        You cannot undo this action and the other user has to confirm before proceeding... are you sure you'd like to mark this trip as "complete"?
+                        You cannot undo this action, are you sure you'd like to mark this trip as "complete"?
                     </Dialog.Description>
                     <Dialog.Button onPress={() => {
                         this.setState({

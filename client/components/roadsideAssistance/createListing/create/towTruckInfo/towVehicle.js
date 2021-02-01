@@ -9,7 +9,7 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../../toastConfig.js";
 import uuid from "react-native-uuid";
 
-const colors = ["blue", "green", "beige", "brown", "black", "orange", "purple", "red", "yellow", "purple", "pink", "grey"];
+const colors = ["blue", "green", "beige", "brown", "black", "orange", "purple", "red", "yellow", "pink", "grey"];
 
 class TowVehicleDetailsRoadsideAssistanceHelper extends Component {
 constructor(props) {

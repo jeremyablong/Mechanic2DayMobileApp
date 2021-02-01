@@ -17,7 +17,8 @@ constructor(props) {
         data: this.props.props.route.params.tow_services,
         routes: null,
         passed: null,
-        location: null
+        location: null,
+        distance: 0
     }
 }
     componentDidMount() {
@@ -41,6 +42,7 @@ constructor(props) {
     
                     this.setState({
                         routes: routes[0],
+                        distance: routes[0].summary.lengthInMeters,
                         passed: "used-location-button"
                     })
                 }).catch((err) => {
@@ -54,6 +56,7 @@ constructor(props) {
     
                     this.setState({
                         routes: routes[0],
+                        distance: routes[0].summary.lengthInMeters,
                         passed: "manually-entered-addresses"
                     })
                 }).catch((err) => {
@@ -74,7 +77,8 @@ constructor(props) {
 
                     if (res.data) {
                         this.setState({
-                            location: `${res.data.results[0].locations[0].street}, ${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`
+                            location: `${res.data.results[0].locations[0].street}, ${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`,
+                            distance: 0
                         })
                     }
                 }).catch((err) => {
@@ -92,7 +96,8 @@ constructor(props) {
 
                     if (res.data) {
                         this.setState({
-                            location: `${res.data.results[0].locations[0].street}, ${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`
+                            location: `${res.data.results[0].locations[0].street}, ${res.data.results[0].locations[0].adminArea5}, ${res.data.results[0].locations[0].adminArea3} ${res.data.results[0].locations[0].adminArea1 === "US" ? "United States" : res.data.results[0].locations[0].adminArea1}`,
+                            distance: 0
                         })
                     }
                 }).catch((err) => {
@@ -252,10 +257,14 @@ constructor(props) {
                         </ListItem>
                     </List>
                     <View style={styles.topBottomMargin}>
-                        <Text>Depature Time: {moment(departure).format("MMMM Do YYYY, h:mm:ss a")}</Text>
-                        <Text style={{ marginTop: 10 }}>Arrival Time: {moment(arrival).format("MMMM Do YYYY, h:mm:ss a")}</Text>
+                        <Text style={{ fontWeight: "bold" }}>Depature Time: {moment(departure).format("MMMM Do YYYY, h:mm:ss a")}</Text>
+                        <Text style={{ marginTop: 10, fontWeight: "bold" }}>Arrival Time: {moment(arrival).format("MMMM Do YYYY, h:mm:ss a")}</Text>
                         <Text style={{ marginTop: 10, fontStyle: 'italic', marginTop: 15 }}>Times are a rough estimate and do not include time until tow truck arrives.</Text>
                     </View>
+                    <View style={styles.hr} />
+                    <Text style={{ fontWeight: "bold", color: "black" }}>Prices will be sent to you real-time when tow drivers respond with their basic information and pricing. Each company has pre-selected pricing rated in "Tier's" as selected per each company. You may pick and choose which tow request you'd like to accept.</Text>
+                    <View style={styles.hr} />
+                    <Text style={{ fontWeight: "bold", fontStyle: "italic" }}>Each tier includes a "Flat-Rate" and a "Per-Mile" charge.</Text>
                     {this.renderMap()}
 
                     <View style={[styles.centered, { marginTop: 25 }]}>
@@ -294,7 +303,11 @@ constructor(props) {
                     <View style={[styles.centered, { marginTop: 25 }]}>
                         <View style={styles.centered}>
                             <Button info onPress={() => {
-                                this.initiateTowAndContinue();
+                                if (typeof user.card_payment_methods !== "undefined" && user.card_payment_methods.length > 0) {
+                                    this.initiateTowAndContinue();
+                                } else {
+                                    console.log("NO CARD ON FILE!..... redirect.")
+                                }
                             }} style={styles.customButton}>
                                 <NativeText style={{ fontWeight: "bold", color: "white" }}>Initiate Roadside Assistance</NativeText>
                             </Button>

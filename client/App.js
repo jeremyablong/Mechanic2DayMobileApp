@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { View, Dimensions, Text, Image } from 'react-native';
+import React, { Component, Fragment } from 'react';
+import { View, Dimensions, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { connect } from "react-redux";
 import axios from "axios";
 import { navigationRef } from "./RootNavigation.js";
@@ -89,6 +89,10 @@ import Modal from 'react-native-modal';
 import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
 import ReviewRoadsideAssistanceAgentPage from "./pages/roadsideAssistance/review/reviewRoadsideAgent/review.js";
 import ReviewRoadsideAssistanceClientPage from "./pages/towTruckDriver/reviewClient/reviewClient.js";
+import SubscriptionPlansSelectionPage from "./pages/signup/subscriptionPlans/subscription.js";
+import RBSheet from "react-native-raw-bottom-sheet";
+
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -105,7 +109,14 @@ constructor(props) {
   this.state = {
     count: 0,
     showModalOne: false,
-    interval: 0
+    interval: 0,
+    company_informtion: null,
+    selected: null,
+    fullName: "",
+    ready: false,
+    price: 0,
+    lengthInMeters: 0,
+    tow_driver_id: ""
   }
 }
 
@@ -417,7 +428,24 @@ constructor(props) {
   })
   socket.on("start", (data) => {
     if (data.started === true && data.user_id === this.props.unique_id) {
-      this.navigationRef.navigate("in-progress-roadside-assistance", null);
+      this.navigationRef.navigate("tow-activated-map-view", null);
+    }
+  })
+  socket.on("invite", (data) => {
+    if (data.user_id === this.props.unique_id) {
+      console.log("data data data", data);
+
+      setTimeout(() => {
+        this.setState({
+          selected: data.selected,
+          fullName: data.fullName,
+          lengthInMeters: data.lengthInMeters,
+          company_informtion: data.company_informtion,
+          tow_driver_id: data.tow_driver_id,
+          showProposalModal: true,
+          ready: true
+        })
+      }, 2000);
     }
   })
   socket.on("fire-off", (data) => {
@@ -426,8 +454,102 @@ constructor(props) {
     }
   })
 }
+  calculateReadiness = () => {
+    const { ready } = this.state;
+    
+    if (ready === true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  renderModalContent = () => {
+    const { selected, company_informtion } = this.state;
+
+    if (selected.tow_required === false) {
+      switch (selected.roadside_service_required) {
+          case "door-unlocking":
+              return (
+                <Fragment>
+                  <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.unlock_locked_door_cost}</Text>
+                </Fragment>
+              );
+              break;
+          case "gas-delivery":
+            return (
+              <Fragment>
+                <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.gas_delivery_cost}</Text>
+              </Fragment>
+            );
+            break;
+          case "tire-change": 
+            return (
+              <Fragment>
+                <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.change_tire_cost}</Text>
+              </Fragment>
+            );
+            break;
+          case "stuck-vehicle":
+            return (
+              <Fragment>
+                <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.remove_stuck_vehicle}</Text>
+              </Fragment>
+            );
+            break;
+          case "jump-start":
+            return (
+              <Fragment>
+                <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.jumpstart_cost}</Text>
+              </Fragment>
+            );
+            break;
+          default:
+              break;
+      }
+    } else {
+      return (
+        <Fragment>
+          <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.standard_tow_fees.tow_price} flat rate</Text>
+          <Text style={{ textAlign: "center" }}>+ Plus +</Text>
+          <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${((this.state.lengthInMeters / 1609.34) * company_informtion.standard_tow_fees.per_mile_fee).toFixed(2)} in milage</Text>
+        </Fragment>
+      );
+    }
+  }
+  handleRedirectAndProcessPriceCalc = () => {
+    const { lengthInMeters, company_informtion, selected, fullName, tow_driver_id } = this.state;
+
+    console.log("handleRedirectAndProcessPriceCalc clicked");
+
+    axios.post(`${Config.ngrok_url}/start/active/job/roadside/assistance/accepted/proposal`, {
+      length_in_meters: lengthInMeters,
+      company_informtion,
+      selected,
+      fullName,
+      tow_driver_id,
+      client_id: this.props.unique_id
+    }).then((res) => {
+      if (res.data.message === "Successfully executed logic!") {
+        console.log(res.data);
+
+        socket.emit("started-active-tow", {
+            started: true,
+            user_id: tow_driver_id
+        })
+
+        setTimeout(() => {
+          this.navigationRef.navigate("in-progress-roadside-assistance");
+        }, 1000)
+      } else {
+        console.log(res.data);
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
   render () {
     console.log("this.state APP.js", this.state);
+    const { selected, company_informtion } = this.state;
     return (
       <>
         <View style={{ flex: 1 }}> 
@@ -525,9 +647,77 @@ constructor(props) {
               <Stack.Screen name="associate-with-tow-company" component={AssociateWithTowCompanyPage} />
               <Stack.Screen name="review-roadside-assistance-agent" component={ReviewRoadsideAssistanceAgentPage} />
               <Stack.Screen name="review-roadside-assistance-client" component={ReviewRoadsideAssistanceClientPage} />
+              <Stack.Screen name="mechanic-select-pricing-plan" component={SubscriptionPlansSelectionPage} />
             </Stack.Navigator>
           </NavigationContainer>
+          {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>
+          <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: height - 25, minHeight: height - 25, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 50, maxWidth: width * 0.85 }} style={{ borderWidth: 2, borderColor: "darkgrey", marginBottom: 25 }}>
+              <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>
+                       You have a new offer from {company_informtion.company_name}
+                    </Text>
+                </View>
 
+                <View style={styles.postContent}>
+                    <Text style={styles.postTitle}>
+                        Services Fee's - Specific Tasks
+                    </Text>
+
+                    <Text style={styles.postDescription}>
+                        Changing a tire: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>{company_informtion.services.change_tire_cost}{"\n"}</Text>
+                        Gas Delivery: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>{company_informtion.services.gas_delivery_cost}{"\n"}</Text>
+                        Jumpstart: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>{company_informtion.services.jumpstart_cost}{"\n"}</Text>
+                        Remove Stuck Vehicle: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>{company_informtion.services.remove_stuck_vehicle}{"\n"}</Text>
+                        Unlock Door(s): <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>{company_informtion.services.unlock_locked_door_cost}{"\n"}</Text>
+                    </Text>
+                    <View style={styles.hr} />
+                    <Text style={styles.postTitle}>
+                        Standard Flat Rate {"\n"}<Text style={{ color: "darkblue", fontWeight: "bold" }}>${company_informtion.standard_tow_fees.tow_price.toString()}</Text>
+                    </Text>
+                    <View style={styles.hr} />
+                    <Text style={styles.postTitle}>
+                        Price Per Mile {"\n"}<Text style={{ color: "darkblue", fontWeight: "bold" }}>${company_informtion.standard_tow_fees.per_mile_fee.toString()}</Text> 
+                    </Text>
+                    <View style={styles.hr} />
+
+                    <Text style={styles.date}>
+                      Joined {company_informtion.date}
+                    </Text>
+
+                    <View style={styles.profile}>
+                      <Image style={styles.avatar}
+                        source={{uri: company_informtion.company_image }}/>
+
+                      <Text style={styles.name}>
+                          <Text style={{ textDecorationLine: "underline" }}>Driver</Text> {"\n"}{this.state.fullName}
+                      </Text>
+                    </View>
+                    <View style={styles.hr} />
+                      <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 26 }}>You'll pay....</Text>
+                      {this.renderModalContent()}
+                    <View style={styles.hr} />
+                    <AwesomeButtonBlue type={"primary"} textColor={"white"} stretch={true} onPress={() => {
+                      this.setState({
+                        showProposalModal: false,
+                        ready: false
+                      }, () => {
+                        this.handleRedirectAndProcessPriceCalc();
+                      })
+                    }}>Accept Offer & Redirect</AwesomeButtonBlue>
+                </View>
+              </View>
+            </ScrollView>
+            <AwesomeButtonBlue type={"secondary"} width={width * 0.75} onPress={() => {
+              this.setState({
+                showProposalModal: false,
+                ready: false
+              })
+            }} textColor={"black"}>Close/exit</AwesomeButtonBlue>
+            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+          </View>
+        </Modal> : null}
           {this.renderSockets()}
           <Modal isVisible={this.state.showModalOne}>
           <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 500, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
@@ -544,7 +734,7 @@ constructor(props) {
               this.setState({
                 showModalOne: false
               }, () => {
-                this.navigationRef.navigate('settings-active-roadside-assistance-manage', null);
+                this.navigationRef.navigate('driver-has-arrived-manage-listing-depatarture', null);
               })
             }} width={width * 0.75}>Redirect to page</AwesomeButtonBlue>
           </View>
@@ -552,7 +742,7 @@ constructor(props) {
         <Modal isVisible={this.state.showModalTwo}>
           <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 500, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
             <Image source={require("./assets/icons/completed.png")} style={{ maxWidth: 75, maxHeight: 75 }} />
-            <Text style={{ marginBottom: 25, fontWeight: "bold", textAlign: "center", fontSize: 18, marginTop: 15 }}>The client for the roadside assistance/tow job you're actively assigned to marked the trip as "complete". Please confirm on your half to finish and finalize the trip! You can find these actions in the "roadside assistance" section of this app...</Text>
+            <Text style={{ marginBottom: 25, fontWeight: "bold", textAlign: "center", fontSize: 18, marginTop: 15 }}>The agent for the roadside assistance/tow job you're actively assigned to marked the trip as "complete". Please confirm on your half to finish and finalize the trip! You can find these actions in the "roadside assistance" section of this app...</Text>
             <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
             <AwesomeButtonBlue type={"secondary"} width={width * 0.75} onPress={() => {
               this.setState({
@@ -576,6 +766,78 @@ constructor(props) {
     );
  }
 };
+const styles = StyleSheet.create({
+  container:{
+    flex:1,
+  },
+  header:{
+    padding:30,
+    alignItems: 'center',
+    backgroundColor: "darkblue",
+  },
+  headerTitle:{
+    fontSize:30,
+    color:"white",
+    fontWeight:'bold',
+    marginTop:10,
+  },
+  name:{
+    fontSize:22,
+    color:"darkblue",
+    fontWeight:'600',
+  },
+  postContent: {
+    flex: 1,
+    padding:30,
+  },
+  postTitle:{
+    fontSize:26,
+    fontWeight:'600',
+  },
+  postDescription:{
+    fontSize:20,
+    marginTop:10,
+  },
+  tags:{
+    color: '#00BFFF',
+    marginTop:10,
+  },
+  date:{
+    color: '#696969',
+    marginTop:10,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 35,
+    marginRight: 15,
+    borderWidth: 4,
+    borderColor: "darkblue",
+  },
+  profile:{
+    flexDirection: 'row',
+    marginTop:20
+  },
+  shareButton: {
+    marginTop:10,
+    height:45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:30,
+    backgroundColor: "#00BFFF",
+  },
+  hr: {
+    borderBottomColor: "lightgrey",
+    borderBottomWidth: 2,
+    marginTop: 15, 
+    marginBottom: 15 
+  },
+  shareButtonText:{
+    color: "darkblue",
+    fontSize:20,
+  }
+});
 const mapStateToProps = (state) => {
   console.log("STATE!!!!:", state);
   if (typeof state.auth.authenticated !== "undefined") {

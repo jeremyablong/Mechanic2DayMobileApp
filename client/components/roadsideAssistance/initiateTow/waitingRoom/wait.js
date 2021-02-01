@@ -21,7 +21,8 @@ constructor(props) {
         data: null,
         address: "",
         streetNameNumber: "",
-        queuedData: []
+        queuedData: [],
+        dropoff_location: ""
     }
 }
     componentDidMount() {
@@ -34,24 +35,42 @@ constructor(props) {
 
                 const { data } = res.data;
 
+                this.setState({
+                    data
+                })
+
                 if (_.has(data.initial_location, "accuracy")) {
-                    axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${data.initial_location.latitude},${data.initial_location.longitude}.json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`).then((resp) => {
+                    axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${data.initial_location.latitude},${data.initial_location.longitude}.json?key=${Config.tomtom_api_key}`).then((resp) => {
                         console.log("resp.data", resp.data);
 
                         const { addresses } = resp.data;
 
                         this.setState({
                             address: addresses[0].address.freeformAddress,
-                            streetNameNumber: addresses[0].address.streetNameAndNumber
+                            streetNameNumber: addresses[0].address.streetNameAndNumber ? addresses[0].address.streetNameAndNumber : `${addresses[0].position}`
                         })
                     }).catch((err) => {
                         console.log(err);
                     })
-                }
+                };
 
-                this.setState({
-                    data
+                const configgg = {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }
+                axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${data.tow_desination_information.position.lat},${data.tow_desination_information.position.lon}.json?key=${Config.tomtom_api_key}`, configgg).then((res) => {
+                    if (res.data) {
+                        console.log("This is the response im looking for:", res.data);
+
+                        this.setState({
+                            dropoff_location: res.data.addresses[0].address.freeformAddress
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
                 })
+                
             } else {
                 console.log("err", res.data);
             }
@@ -126,7 +145,7 @@ constructor(props) {
                                     <Thumbnail style={{ maxWidth: 35, maxHeight: 35, marginTop: 10 }} source={require("../../../../assets/icons/finish.png")} />
                                 </Left>
                                 <Body>
-                                    <NativeText>{`${data.tow_desination_information.address.streetNumber} ${data.tow_desination_information.address.streetName}`}</NativeText>
+                                    <NativeText>{`${data.tow_desination_information.position.lat} ${data.tow_desination_information.position.lon}`}</NativeText>
                                     <NativeText note style={{ color: "black" }}>{data.tow_desination_information.address.freeformAddress}</NativeText>
                                 </Body>
                                 <Right>
@@ -179,12 +198,13 @@ constructor(props) {
     }
     render() {
         const { data } = this.state;
+        console.log("wait.js", this.state);
         return (
            <Fragment>
                 <Header>
                     <Left>
                         <Button onPress={() => {
-                            this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                            this.props.props.navigation.push("roadside-assistance-main-landing");
                         }} transparent>
                             <Image source={require("../../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>

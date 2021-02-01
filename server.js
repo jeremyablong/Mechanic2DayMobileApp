@@ -108,6 +108,7 @@ app.use("/intiate/tow/add/to/queue", require("./routes/roadsideAssistance/initia
 app.use("/add/to/queue", require("./routes/roadsideAssistance/initiate/addToQueue.js"));
 app.use("/gather/requested/tow/information", require("./routes/roadsideAssistance/queue/gatherRequestInfo.js"));
 app.use("/gather/queued/jobs", require("./routes/roadsideAssistance/queue/gatherQueuedJobs.js"));
+// initiate tow finale
 app.use("/assign/driver/roadside/assistance", require("./routes/roadsideAssistance/towTransaction/assignDriverAndNotify.js"));
 app.use("/update/both/users/start/tow", require("./routes/roadsideAssistance/towTransaction/startTow.js"));
 app.use("/gather/user/location/in/transit", require("./routes/roadsideAssistance/active/snagLocationTowTruckTransit.js"));
@@ -124,6 +125,12 @@ app.use("/mark/trip/complete/finale/half/one", require("./routes/roadsideAssista
 app.use("/mark/trip/complete/finale/half/two/agent", require("./routes/roadsideAssistance/completeTrip/completeTripAgent.js"));
 app.use("/submit/feedback/review/agent", require("./routes/roadsideAssistance/review/submitReviewAgent.js"));
 app.use("/submit/feedback/review/client", require("./routes/towDrivers/review/reviewClientRoadsideJob.js"));
+app.use("/gather/tow/company/information/prices", require("./routes/towDrivers/requestCompanyData/requestData.js"));
+app.use("/start/active/job/roadside/assistance/accepted/proposal", require("./routes/roadsideAssistance/initiate/startJobRoadsideAssistanceConfirmed.js"));
+app.use("/remove/queued/item", require("./routes/roadsideAssistance/towTransaction/removeFromQueue.js"));
+app.use("/gather/company/related/information", require("./routes/roadsideAssistance/initiate/gatherCoAssociated.js"));
+
+
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
@@ -217,6 +224,12 @@ io.on("connection", socket => {
 		console.log("JACKPOT TWO DELIVERED!:", data);
 
 		io.sockets.emit("start", data);
+	});
+	socket.on("send-invitation-request", (data) => {
+
+		console.log("INVITE DELIVERED!:", data);
+
+		io.sockets.emit("invite", data);
 	});
 	socket.on("disconnect", () => console.log("Client disconnected"));
 });

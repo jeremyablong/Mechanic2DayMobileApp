@@ -36,5 +36,11 @@ export default StyleSheet.create({
     topBottomMargin: {
         marginTop: 15, 
         marginBottom: 15
+    },
+    hr: {
+        borderBottomColor: "lightgrey",
+        borderBottomWidth: 2,
+        marginTop: 30, 
+        marginBottom: 30
     }
 })
