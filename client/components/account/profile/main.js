@@ -121,7 +121,7 @@ constructor(props) {
                              <Left><NativeText>QUICK LINKS</NativeText></Left>
                             </ListItem>                    
                             <ListItem button={true} onPress={() => {
-                                this.props.props.navigation.navigate("homepage-main");
+                                this.props.props.navigation.push("homepage-main");
                             }} style={styles.listItem}>
                             <Left><NativeText>Main Homepage</NativeText></Left><Right><Image source={require("../../../assets/icons/home.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
@@ -129,12 +129,12 @@ constructor(props) {
                              <Left><NativeText>ACCOUNT SETTINGS</NativeText></Left>
                             </ListItem>                    
                             <ListItem button={true} onPress={() => {
-                                this.props.props.navigation.navigate("personal-info");
+                                this.props.props.navigation.push("personal-info");
                             }} style={styles.listItem}>
                             <Left><NativeText>Personal information</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             <ListItem button={true} onPress={() => {
-                                this.props.props.navigation.navigate("payments-main");
+                                this.props.props.navigation.push("payments-main");
                             }} style={styles.listItem}>
                             <Left><NativeText>Payments and payouts</NativeText></Left><Right><Image source={require("../../../assets/icons/payment.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
@@ -159,7 +159,7 @@ constructor(props) {
                             <Left><NativeText>Go ONLINE & more...</NativeText></Left><Right><Image source={require("../../../assets/icons/online.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}
                             {user.accountType === "tow-truck-company" ? <ListItem button={true} onPress={() => {
-                            this.props.props.navigation.navigate("advertise-roadside-assistance-main");
+                            this.props.props.navigation.push("advertise-roadside-assistance-main");
                             }} style={styles.listItem}>
                             <Left><NativeText>Advertise Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}
@@ -168,8 +168,13 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/tow-truck.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}
+                            <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("verify-validate-account-stripe");
+                            }} style={styles.listItem}>
+                            <Left><NativeText numberOfLines={2}>Verify/Validate Account</NativeText></Left><Right><Image source={require("../../../assets/icons/approval.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem>
                             {user.accountType === "tow-truck-company" ?  <ListItem button={true} onPress={() => {
-                                this.props.props.navigation.navigate("manage-tow-drivers");
+                                this.props.props.navigation.push("manage-tow-drivers");
                             }} style={styles.listItem}>
                             <Left><NativeText>Manage Tow Drivers</NativeText></Left><Right><Image source={require("../../../assets/icons/tow-truck.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}

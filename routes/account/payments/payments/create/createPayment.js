@@ -52,37 +52,37 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     console.log("DATA!:", dataaaaaa);
 
                     const card = await stripe.customers.createSource(
-                        user.unique_id,
-                        {source: dataaaaaa.id }, (err, card) => {
+                        user.stripe_customer_account.id,
+                        { source: dataaaaaa.id }, (err, card) => {
                           if (err) {
                             // Error adding card to customer
-                            console.log(err)
+                                console.log(err)
                           } else {
-                            // Success
-                            console.log(card);
+                                // Success
+                                console.log("CARD", card);
 
-                            const card_addition = {
-                                cvc,
-                                expiration,
-                                last_four: card_number.split(" ")[3],
-                                card_number: encrypt(card_number),
-                                postal_code,
-                                type,
-                                primary: false,
-                                token: dataaaaaa
-                            }
-            
-                            if (user.card_payment_methods) {
-                                user.card_payment_methods.push(card_addition);
-                            } else {
-                                user["card_payment_methods"] = [card_addition];
-                            }
+                                const card_addition = {
+                                    cvc,
+                                    expiration,
+                                    last_four: card_number.split(" ")[3],
+                                    card_number: encrypt(card_number),
+                                    postal_code,
+                                    type,
+                                    primary: false,
+                                    token: dataaaaaa
+                                }
+                
+                                if (user.card_payment_methods) {
+                                    user.card_payment_methods.push(card_addition);
+                                } else {
+                                    user["card_payment_methods"] = [card_addition];
+                                }
 
-                            collection.save(user);
+                                collection.save(user);
 
-                            res.json({
-                                message: "Successfully added a new card!"
-                            })
+                                res.json({
+                                    message: "Successfully added a new card!"
+                                })
                           }
                         }
                     );

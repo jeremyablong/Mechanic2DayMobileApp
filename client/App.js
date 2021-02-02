@@ -90,8 +90,7 @@ import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blu
 import ReviewRoadsideAssistanceAgentPage from "./pages/roadsideAssistance/review/reviewRoadsideAgent/review.js";
 import ReviewRoadsideAssistanceClientPage from "./pages/towTruckDriver/reviewClient/reviewClient.js";
 import SubscriptionPlansSelectionPage from "./pages/signup/subscriptionPlans/subscription.js";
-import RBSheet from "react-native-raw-bottom-sheet";
-
+import VerifyAndValidateAccountStripePage from "./pages/account/verify/verifyAccount.js";
 
 
 const { width, height } = Dimensions.get("window");
@@ -547,6 +546,22 @@ constructor(props) {
       console.log(err);
     })
   }
+  declineOffer = () => {
+    console.log("declineOffer clicked");
+
+    axios.post(`${Config.ngrok_url}/decline/roadside/assistance/offer`, {
+      client_id: this.props.unique_id,
+      tow_driver_id: this.state.tow_driver_id
+    }).then((res) => {
+      if (res.data.message === "Successfully declined offer!") {
+        console.log(res.data);
+      } else {
+        console.log(res.data);
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
   render () {
     console.log("this.state APP.js", this.state);
     const { selected, company_informtion } = this.state;
@@ -648,6 +663,7 @@ constructor(props) {
               <Stack.Screen name="review-roadside-assistance-agent" component={ReviewRoadsideAssistanceAgentPage} />
               <Stack.Screen name="review-roadside-assistance-client" component={ReviewRoadsideAssistanceClientPage} />
               <Stack.Screen name="mechanic-select-pricing-plan" component={SubscriptionPlansSelectionPage} />
+              <Stack.Screen name="verify-validate-account-stripe" component={VerifyAndValidateAccountStripePage} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>
@@ -706,16 +722,19 @@ constructor(props) {
                         this.handleRedirectAndProcessPriceCalc();
                       })
                     }}>Accept Offer & Redirect</AwesomeButtonBlue>
+                    <View style={styles.hr} />
+                    <AwesomeButtonBlue type={"secondary"} stretch={true} onPress={() => {
+                      this.setState({
+                        showProposalModal: false,
+                        ready: false
+                      }, () => {
+                        this.declineOffer();
+                      })
+                    }} textColor={"black"}>Decline Offer</AwesomeButtonBlue>
+                    <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
                 </View>
               </View>
             </ScrollView>
-            <AwesomeButtonBlue type={"secondary"} width={width * 0.75} onPress={() => {
-              this.setState({
-                showProposalModal: false,
-                ready: false
-              })
-            }} textColor={"black"}>Close/exit</AwesomeButtonBlue>
-            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
           </View>
         </Modal> : null}
           {this.renderSockets()}

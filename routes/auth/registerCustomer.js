@@ -20,9 +20,17 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
             const generated_unique_id = uuidv4();
 
-            const account = await stripe.accounts.create({
-                type: 'express',
-                country: 'US'
+            const customer = await stripe.customers.create({
+                description: "Client and/or customer.",
+                address: {
+                    line1: address,
+                    city: wholeAddress.address.municipality,
+                    postal_code: wholeAddress.address.postalCode,
+                    state: wholeAddress.address.countrySubdivisionName
+                },
+                email: "Not-Provided",
+                phone: unformatted,
+                name: fullName
             }, (errrrrr, account) => {
                 if (errrrrr) {
                     console.log(errrrrr);
@@ -37,8 +45,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         fullName, 
                         active_employee,
                         password,  
-                        stripe_connect_account: account,
                         pending_application: false,
+                        stripe_customer_account: account,
                         company_id,
                         company_name,
                         phoneNumber: [{
@@ -83,8 +91,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 res.json({
                                     message: "Successfully registered new user!",
                                     data
-                                })
-                                
+                                }) 
                             })
                         }
                     }).catch((error) => {
@@ -101,9 +108,17 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
             const generated_unique_id = uuidv4();
 
-            const account = await stripe.accounts.create({
-                type: 'standard',
-                country: 'US'
+            const customer = await stripe.customers.create({
+                description: "Client and/or customer.",
+                address: {
+                    line1: address,
+                    city: wholeAddress.address.municipality,
+                    postal_code: wholeAddress.address.postalCode,
+                    state: wholeAddress.address.countrySubdivisionName
+                },
+                email: email,
+                phone: "Not-Provided",
+                name: fullName
             }, (errrrrr, account) => {
                 if (errrrrr) {
                     console.log(errrrrr);
@@ -117,9 +132,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         gender, 
                         fullName, 
                         active_employee,
-                        stripe_connect_account: account,
-                        pending_application: false,
+                        stripe_customer_account: account,
                         password,  
+                        pending_application: false,
                         company_id,
                         company_name,
                         email,

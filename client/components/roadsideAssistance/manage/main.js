@@ -5,6 +5,9 @@ import styles from './styles.js';
 import axios from 'axios';
 import { Config } from "react-native-config";
 import { connect } from "react-redux";
+import Dialog from "react-native-dialog";
+import _ from "lodash";
+
 
 class ManageListingsRoadsideAssistanceHelper extends Component {
 constructor(props) {
@@ -12,7 +15,8 @@ constructor(props) {
 
     this.state = {
         listings: [],
-        completeListings: []
+        completeListings: [],
+        user: null
     }
 }
     componentDidMount() {
@@ -45,6 +49,23 @@ constructor(props) {
         }).catch((err) => {
             console.log(err);
         })
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+
+                const { user } = res.data;
+
+                this.setState({
+                    user
+                })
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
     calculateRoute = (listing) => {
         console.log("calculateRoute clicked.", listing);
@@ -70,7 +91,7 @@ constructor(props) {
         }
     }
     render() {
-        const { listings, completeListings } = this.state;
+        const { listings, completeListings, user } = this.state;
 
         console.log("this.state manage.main.js", this.state);
         return (
@@ -89,12 +110,38 @@ constructor(props) {
                     </Body>
                     <Right>
                         <Button button={true} onPress={() => {
-                            this.props.props.navigation.navigate("advertise-create-address-preview");
+                            if (_.has(user, "completed_stripe_onboarding") && user.completed_stripe_onboarding === true) {
+                                this.props.props.navigation.navigate("advertise-create-address-preview");
+                            } else {
+                                this.setState({
+                                    showDialog: true
+                                })
+                            }
                         }} transparent>
                             <Image source={require("../../../assets/icons/plus.png")} style={styles.headerIcon} />
                         </Button>
                     </Right>
                 </Header>
+                <View>
+                    <Dialog.Container visible={this.state.showDialog}>
+                    <Dialog.Title>You MUST verify/validate your account before proceeding as payments are involved in later steps.</Dialog.Title>
+                    <Dialog.Description>
+                        Would you like to stay on this page or redirect to the verification section?
+                    </Dialog.Description>
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            showDialog: false
+                        })
+                    }} label="STAY" />
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            showDialog: false
+                        }, () => {
+                            this.props.props.navigation.push("verify-validate-account-stripe");
+                        })
+                    }} label="REDIRECT" />
+                    </Dialog.Container>
+                </View>
                 <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 125 }}>
                     <Content style={{ padding: 20 }}>
                     <Text style={styles.title}>Continue where you left off (<Text style={styles.em}>UNLISTED</Text> listings)</Text>

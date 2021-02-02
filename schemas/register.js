@@ -22,10 +22,16 @@ const UserSchema =  new mongoose.Schema({
     phoneNumber: {
         type: Array
     },
+    pending_application: {
+        type: Boolean
+    },
     active_employee: {
         type: Boolean
     },
-    strip_connect_account: {
+    stripe_customer_account: {
+        type: Object
+    },
+    stripe_connect_account: {
         type: Object
     },
     company_id: {

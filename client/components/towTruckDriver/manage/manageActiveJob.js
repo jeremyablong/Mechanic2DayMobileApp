@@ -16,6 +16,11 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../toastConfig.js";
 
 
+////////////////////////////////////////////////////////////////
+// change geodist line 242ish in production mode
+////////////////////////////////////////////////////////////////
+
+
 const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
 
 const { height, width } = Dimensions.get("window");
@@ -239,7 +244,7 @@ constructor(props) {
 
             // CHANGE 10 TO 2 IN PRODUCTION
 
-            if (geodist({ lat: user.current_location.coords.latitude, lon: user.current_location.coords.longitude }, { lat: user.active_roadside_assistance_job.dropoff_location.position.lat, lon: user.active_roadside_assistance_job.dropoff_location.position.lon }) <= 10) {
+            if (geodist({ lat: user.current_location.coords.latitude, lon: user.current_location.coords.longitude }, { lat: user.active_roadside_assistance_job.dropoff_location.position.lat, lon: user.active_roadside_assistance_job.dropoff_location.position.lon }) <= 50) {
                 axios.post(`${Config.ngrok_url}/mark/tow/driver/trip/complete`, {
                     id: this.props.unique_id,
                     fullName: this.props.fullName,

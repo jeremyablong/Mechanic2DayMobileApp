@@ -34,7 +34,9 @@ constructor(props) {
         selected: null,
         user: null,
         isVisible: false,
-        isVisibleTwo: false
+        isVisibleTwo: false,
+        applied: false,
+        unmounted: false
     }
 }
     componentDidMount() {
@@ -244,36 +246,88 @@ constructor(props) {
 
         console.log("startJobAndContinue clicked", selected);
 
-        axios.post(`${Config.ngrok_url}/gather/tow/company/information/prices`, {
-            id: this.props.unique_id,
-            selected,
-            company_id: this.props.employed_by,
-            company_name: this.props.company_name
-        }).then((res) => {
-            if (res.data.message === "Gathered company info!") {
-                console.log(res.data);
+        this.setState({
+            applied: true
+        }, () => {
+            axios.get(`${Config.ngrok_url}/check/if/able/to/apply`, {
+                params: {
+                    id: this.props.unique_id
+                }
+            }).then((resppppp) => {
+                if (resppppp.data.active === false) {
+                    console.log("resppppp", resppppp.data);
 
-                socket.emit("send-invitation-request", {
-                    user_id: selected.requested_by,
-                    company_informtion: res.data.listing,  
-                    selected,
-                    fullName: this.props.fullName,
-                    lengthInMeters: res.data.lengthInMeters,
-                    tow_driver_id: this.props.unique_id
-                })
+                    axios.post(`${Config.ngrok_url}/gather/tow/company/information/prices`, {
+                        id: this.props.unique_id,
+                        selected,
+                        company_id: this.props.employed_by,
+                        company_name: this.props.company_name
+                    }).then((res) => {
+                        if (res.data.message === "Gathered company info!") {
+                            
+                            console.log(res.data);
+        
+                            axios.post(`${Config.ngrok_url}/make/applied`, {
+                                id: this.props.unique_id
+                            }).then((resolution) => {
+        
+                                if (resolution.data.message === "Marked as complete.") {
+        
+                                    socket.emit("send-invitation-request", {
+                                        user_id: selected.requested_by,
+                                        company_informtion: res.data.listing,  
+                                        selected,
+                                        fullName: this.props.fullName,
+                                        lengthInMeters: res.data.lengthInMeters,
+                                        tow_driver_id: this.props.unique_id
+                                    })
+                    
+                                    Toast.show({
+                                        text1: "Successfully sent proposal/request to client!",
+                                        text2: "We've sent the client your invitiation, if they 'accept' - you will be automatically redirect.",
+                                        type: "success",
+                                        position: "top",
+                                        visibilityTime: 4500
+                                    })
+                                } else {
+                                    console.log("err", res.data);
+                                }
+                            }).catch((err) => {
+                                console.log(err);
+                            })
+                        } else {
+                            console.log("err", res.data);
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                } else {
+                    console.log("ERRRRR", resppppp.data);
 
-                Toast.show({
-                    text1: "Successfully sent proposal/request to client!",
-                    text2: "We've sent the client your invitiation, if they 'accept' - you will be automatically redirect.",
-                    type: "success",
-                    position: "top",
-                    visibilityTime: 4500
-                })
-            } else {
-                console.log("err", res.data);
-            }
-        }).catch((err) => {
-            console.log(err);
+                    Toast.show({
+                        text1: "We are still waiting for a response from the other user, please check back soon.",
+                        text2: "Waiting for a response from the user... If no response is recieved in 1 min, we will let you apply again.",
+                        type: "error",
+                        position: "top",
+                        visibilityTime: 4500
+                    })
+                }
+            }).catch((errorrrrrrrrrr) => {
+                console.log(errorrrrrrrrrr);
+            })    
+        });
+
+        if (this.state.unmounted === false) {
+            setTimeout(() => {
+                this.setState({
+                    applied: false
+                });
+            }, 20000);
+        }
+    }
+    componentWillUnmount () {
+        this.setState({
+            unmounted: true
         })
     }
     calculateService = (passed) => {
@@ -381,11 +435,21 @@ constructor(props) {
                                             </Body>
                                             <Right>
                                                 <Button onPress={() => {
-                                                    this.setState({
-                                                        selected: result
-                                                    }, () => {
-                                                        this.RBSheet.open();
-                                                    })
+                                                    if (this.state.applied === false) {
+                                                        this.setState({
+                                                            selected: result
+                                                        }, () => {
+                                                            this.RBSheet.open();
+                                                        })
+                                                    } else {
+                                                        Toast.show({
+                                                            text1: "You need to wait 20 seconds before applying for another job.",
+                                                            text2: "We require 20 second intervals to prevent spam and fraud. Please try again soon.",
+                                                            type: "error",
+                                                            position: "top",
+                                                            visibilityTime: 4500
+                                                        })
+                                                    }
                                                 }} transparent>
                                                     <Text style={{ fontWeight: "bold", color: "blue" }}>View</Text>
                                                 </Button>
@@ -408,11 +472,21 @@ constructor(props) {
                                             </Body>
                                             <Right>
                                                 <Button onPress={() => {
-                                                    this.setState({
-                                                        selected: result
-                                                    }, () => {
-                                                        this.RBSheet.open();
-                                                    })
+                                                    if (this.state.applied === false) {
+                                                        this.setState({
+                                                            selected: result
+                                                        }, () => {
+                                                            this.RBSheet.open();
+                                                        })
+                                                    } else {
+                                                        Toast.show({
+                                                            text1: "You need to wait 20 seconds before applying for another job.",
+                                                            text2: "We require 20 second intervals to prevent spam and fraud. Please try again soon.",
+                                                            type: "error",
+                                                            position: "top",
+                                                            visibilityTime: 4500
+                                                        })
+                                                    }
                                                 }} transparent>
                                                     <Text style={{ fontWeight: "bold", color: "blue" }}>View</Text>
                                                 </Button>
@@ -433,7 +507,7 @@ constructor(props) {
                     ref={ref => {
                         this.RBSheet = ref;
                     }}
-                    height={100}
+                    height={250}
                     openDuration={250}
                     customStyles={{
                         container: {
@@ -443,7 +517,8 @@ constructor(props) {
                     }}
                     >
                     <View style={styles.centered}>
-                        <Button success onPress={() => {
+                        <View style={{ margin: 20 }}>
+                            <Button success onPress={() => {
 
                             this.RBSheet.close();
 
@@ -484,9 +559,12 @@ constructor(props) {
                                     })
                                 }, 1000);
                             }
-                        }} style={styles.customButton}>
-                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Accept Job & Start</NativeText>
-                        </Button>
+                            }} style={styles.customButton}>
+                            <NativeText style={{ color: "white", fontWeight: "bold" }}>Accept Job & Send Proposal</NativeText>
+                            </Button>
+                            <View style={styles.hr} />
+                            <Text style={{ fontWeight: "bold", fontSize: 22, textAlign: "center" }}>When you submit a proposal - you are <Text style={{ textDecorationLine: "underline", color: "blue" }}>REQUIRED</Text> to take the trip when and if it is accepted.</Text>
+                        </View>
                     </View>
                 </RBSheet>
             </View>

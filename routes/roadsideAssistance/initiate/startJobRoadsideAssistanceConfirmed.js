@@ -7,6 +7,7 @@ const cors = require('cors');
 const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
+const { decrypt } = require("../../../crypto");
 const stripe = require('stripe')(config.get("stripeSecretKey"));
 
 
@@ -59,8 +60,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             } else {
                                 user["active_roadside_assistance_job"] = additional_new_data;
                             }
+
+                            user.pending_application = false;
     
-                            console.log("------- This is the TOW TRUCK DRIVER ------- ", user);
+                            // console.log("------- This is the TOW TRUCK DRIVER ------- ", user);
     
                             collection.save(user);
 
@@ -76,6 +79,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === client_id) {
                             user.towing_services_start.order_status = "in-progress";
                             user.towing_services_start.page = "mapview-in-progress";
+
 
                             collection.save(user);
                             
@@ -126,7 +130,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                             "dl": "notifications"
                                         }
                                     }, configgg).then(async (responseeeeee) => {
-                                        console.log(responseeeeee.data);
+                                        // console.log(responseeeeee.data);
 
                                         if (userrr.notifications) {
                                             userrr.notifications.push(custom_notification);
@@ -156,33 +160,33 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                                                     const { stripe_account_id } = resppppppppp.data;
 
-                                                    const charge = await stripe.charges.create({
+                                                    const paymentIntent = await stripe.paymentIntents.create({
+                                                        payment_method_types: ['card'],
                                                         amount: Math.round((cost_milage + cost_flat_rate) * 100),
                                                         currency: 'usd',
-                                                        description: 'Roadside Assistance Claim',
-                                                        customer: user.unique_id,
-                                                        capture: false,
-                                                        // this on_behalf_of should be the company's account working for
-                                                        on_behalf_of: stripe_account_id
-                                                    }, (errrrrrr, charge) => {
-                                                        if (errrrrrr) {
-                                                            console.log(errrrrrr);
+                                                        application_fee_amount: 500,
+                                                        transfer_data: {
+                                                          destination: stripe_account_id,
+                                                        },
+                                                    }, async (errrrrrrr, charge) => {
+                                                        if (errrrrrrr) {
+                                                            console.log(errrrrrrr);
                                                         } else {
-    
+                                                            console.log("charge", charge);
+
                                                             user.towing_services_start.charge = charge;
                                                             userrr.active_roadside_assistance_job.charge = charge;
 
                                                             collection.save(user);
     
                                                             collection.save(userrr);
-    
-    
+
                                                             axios.post(`${config.get("ngrok_url")}/remove/queued/item`, {
                                                                 selected
                                                             }).then(() => {
     
                                                                 console.log("CHARGE: ", charge);
-                                                                
+
                                                                 console.log("------- This is the CLIENT USER  ------- ", user);
                         
                                                                 return;
@@ -190,7 +194,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                                                 console.log(critical_err);
                                                             })
                                                         }
-                                                    })
+                                                    });
+                                                   
                                                 }).catch((errrrrrrrooooooooor) => {
                                                     console.log(errrrrrrrooooooooor);
                                                 })

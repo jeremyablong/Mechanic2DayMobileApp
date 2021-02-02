@@ -13,14 +13,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { company_id } = req.query;
+        const { id } = req.query;
 
-        collection.findOne({ unique_id: company_id }).then((user) => {
+        collection.findOne({ unique_id: id }).then((user) => {
             if (user) {
 
                 res.json({
-                    message: "Successfully located business stripe info",
-                    stripe_account_id: user.stripe_connect_account.id
+                    message: "User is free to apply!",
+                    active: user.pending_application
                 })
             } else {
                 res.json({

@@ -23,6 +23,9 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { Switch } from 'react-native-switch';
 import Autocomplete from "react-native-autocomplete-input";
 import _ from "lodash";
+import Dialog from "react-native-dialog";
+
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -58,7 +61,9 @@ constructor(props) {
         queryTwo: "",
         hideOrNotFour: false,
         mechanics: [],
-        active: 0
+        active: 0,
+        showDialogCustom: false,
+        showOnboardingDialog: false
     }
 }
     _renderItem = ({item, index}, parallaxProps) => {
@@ -517,6 +522,8 @@ constructor(props) {
                 return "Finish Roadside Assistance Job";
             } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "finale-review") {
                 return "Finish Active Job - Review Driver!";
+            } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "driver-has-arrived-manage-listing-depatarture") {
+                return "Review & Continue";
             } else {
                 return "Get immediate assistance";
             }
@@ -562,17 +569,31 @@ constructor(props) {
                     {user !== null && _.has(this.props.authenticated, "fullName") && user.accountType !== "tow-truck-driver" ? <View style={styles.marginAbsolute}>
                         <View style={styles.centered}>
                             <AwesomeButtonRick textColor={"black"} onPress={() => {
-                                if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
-                                    this.props.props.navigation.push("waiting-room-roadside-assistance");
-                                } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "mapview-in-progress") {
-                                    this.props.props.navigation.push("in-progress-roadside-assistance");
-                                } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
-                                    this.props.props.navigation.push("driver-has-arrived-manage-listing-depatarture");
-                                } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "finale-review") {
-                                    this.props.props.navigation.push("review-roadside-assistance-agent");
-                                } else {
-                                    this.RBSheet.open();
-                                }
+                                // if (_.has(user, "completed_stripe_onboarding") && user.completed_stripe_onboarding === true) {
+                                    if (typeof user.card_payment_methods !== "undefined" && user.card_payment_methods.length > 0) {
+                                        if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "waiting-room") {
+                                            this.props.props.navigation.push("waiting-room-roadside-assistance");
+                                        } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "mapview-in-progress") {
+                                            this.props.props.navigation.push("in-progress-roadside-assistance");
+                                        } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "final-manage-dropoff") {
+                                            this.props.props.navigation.push("driver-has-arrived-manage-listing-depatarture");
+                                        } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "finale-review") {
+                                            this.props.props.navigation.push("review-roadside-assistance-agent");
+                                        } else if (_.has(user.towing_services_start, "page") && user.towing_services_start.page === "driver-has-arrived-manage-listing-depatarture") {
+                                            this.props.props.navigation.push("review-roadside-assistance-agent");
+                                        } else {
+                                            this.RBSheet.open();
+                                        }
+                                    } else {
+                                        this.setState({
+                                            showDialogCustom: true
+                                        })
+                                    }
+                                // } else {
+                                //     this.setState({
+                                //         showOnboardingDialog: true
+                                //     })
+                                // }
                             }} width={width * 0.75} type="secondary">{this.calculateText()}</AwesomeButtonRick>
                         </View>
                     </View> : null}
@@ -587,6 +608,46 @@ constructor(props) {
                             hasParallaxImages={true}
                         />
                     </View>
+                </View>
+                <View>
+                    <Dialog.Container visible={this.state.showDialogCustom}>
+                    <Dialog.Title>You MUST have a payment method on file before booking a tow and/or roadside assistance.</Dialog.Title>
+                    <Dialog.Description>
+                        Would you like to stay on this page or redirect to the payments section?
+                    </Dialog.Description>
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            showDialogCustom: false
+                        })
+                    }} label="STAY" />
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            showDialogCustom: false
+                        }, () => {
+                            this.props.props.navigation.push("payments-cards");
+                        })
+                    }} label="REDIRECT" />
+                    </Dialog.Container>
+                </View>
+                <View>
+                    <Dialog.Container visible={this.state.showOnboardingDialog}>
+                    <Dialog.Title>You MUST verify/validate your account before proceeding as payments are involved in later steps.</Dialog.Title>
+                    <Dialog.Description>
+                        Would you like to stay on this page or redirect to the verification section?
+                    </Dialog.Description>
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            showOnboardingDialog: false
+                        })
+                    }} label="STAY" />
+                    <Dialog.Button onPress={() => {
+                        this.setState({
+                            showOnboardingDialog: false
+                        }, () => {
+                            this.props.props.navigation.push("verify-validate-account-stripe");
+                        })
+                    }} label="REDIRECT" />
+                    </Dialog.Container>
                 </View>
                 <RBSheet    
                     ref={ref => {

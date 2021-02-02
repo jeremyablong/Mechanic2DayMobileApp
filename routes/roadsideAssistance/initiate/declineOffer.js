@@ -7,20 +7,23 @@ const cors = require('cors');
 
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.get("/", (req, res) => {
+    router.post("/", (req, res) => {
 
         const database = db.db("<dbname>");
 
         const collection = database.collection("users");
 
-        const { company_id } = req.query;
+        const { client_id, tow_driver_id } = req.body;
 
-        collection.findOne({ unique_id: company_id }).then((user) => {
+        collection.findOne({ unique_id: tow_driver_id }).then((user) => {
             if (user) {
 
+                user.pending_application = false;
+
+                collection.save(user);
+
                 res.json({
-                    message: "Successfully located business stripe info",
-                    stripe_account_id: user.stripe_connect_account.id
+                    message: "Successfully declined offer!"
                 })
             } else {
                 res.json({

@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json({
 	limit: "500mb"
 }));
-
+app.use("/register/user/customer", require("./routes/auth/registerCustomer.js"));
 app.use("/send/confirmation/email", require("./routes/auth/verifcationEmail.js"));
 app.use("/check/email/code", require("./routes/auth/checkEmailCode.js"));
 app.use("/send/confirmation/phone", require("./routes/auth/phone/sendPhoneVerifcation.js"));
@@ -129,7 +129,11 @@ app.use("/gather/tow/company/information/prices", require("./routes/towDrivers/r
 app.use("/start/active/job/roadside/assistance/accepted/proposal", require("./routes/roadsideAssistance/initiate/startJobRoadsideAssistanceConfirmed.js"));
 app.use("/remove/queued/item", require("./routes/roadsideAssistance/towTransaction/removeFromQueue.js"));
 app.use("/gather/company/related/information", require("./routes/roadsideAssistance/initiate/gatherCoAssociated.js"));
-
+app.use("/onboarding/stripe", require("./routes/account/verification/verifyInitiate.js"));
+app.use("/mark/stripe/onboarding/complete", require("./routes/account/verification/markComplete.js"));
+app.use("/make/applied", require("./routes/roadsideAssistance/initiate/markApplied.js"));
+app.use("/decline/roadside/assistance/offer", require("./routes/roadsideAssistance/initiate/declineOffer.js"));
+app.use("/check/if/able/to/apply", require("./routes/towDrivers/initiate/checkPendingJob.js"));
 
 
 app.get('*', function(req, res) {

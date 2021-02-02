@@ -148,7 +148,7 @@ constructor(props) {
                             }}>
                                 <View style={styles.column}>
                                     <View style={respectful === true ? styles.darkCircle : styles.circle}>
-                                        <Image source={require("../../../assets/icons/salute.png")}  style={respectful === true ? [styles.icon, { tintColor: "white" }] : styles.icon} />
+                                        <Image source={require("../../../assets/icons/salute.png")}  style={styles.icon} />
                                     </View>
                                     <Text style={styles.textText}>Client was respectful/polite</Text>
                                 </View>

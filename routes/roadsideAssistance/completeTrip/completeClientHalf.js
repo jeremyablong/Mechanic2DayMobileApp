@@ -5,6 +5,7 @@ const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
 const stripe = require('stripe')(config.get("stripeSecretKey"));
+const { decrypt } = require("../../../crypto.js");
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, responseee) => {
@@ -34,6 +35,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === id) {
                             
                             user.towing_services_start.agree_job_completed = true;
+
                             user.towing_services_start.page = "driver-has-arrived-manage-listing-depatarture";
 
                             collection.save(user);
@@ -52,15 +54,62 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === tow_driver_id) {
                             if (passedData === true && user.active_roadside_assistance_job.agree_job_completed === true) {
 
-                                const charge = await stripe.charges.capture(
-                                    user.active_roadside_assistance_job.charge.id
-                                );
+                                for (let idxxxxxx = 0; idxxxxxx < users.length; idxxxxxx++) {
+                                    const usa = users[idxxxxxx];
+                                    if (usa.unique_id === id) {
+                                        usa.towing_services_start.page = "driver-has-arrived-manage-listing-depatarture";
 
-                                setTimeout(() => {
-                                    responseee.json({
-                                        message: "Both users have agreed the job is complete!"
-                                    });
-                                }, 1500);
+                                        for (let iiiii = 0; iiiii < usa.card_payment_methods.length; iiiii++) {
+                                            const cardddd = usa.card_payment_methods[iiiii];
+                                            if (cardddd.primary === true) {
+                                                
+                                                const token = await stripe.tokens.create({
+                                                    card: {
+                                                      number: decrypt(cardddd.card_number),
+                                                      exp_month: Number(cardddd.expiration.split("/")[0]),
+                                                      exp_year: Number(cardddd.expiration.split("/")[1]),
+                                                      cvc: cardddd.cvc,
+                                                    },
+                                                }).then(async(dataaaaaa) => {
+                                                    console.log("DATA!:", dataaaaaa);
+        
+                                                    const paymentIntent = await stripe.paymentIntents.confirm(usa.towing_services_start.charge.id, { 
+                                                        payment_method_data: {
+                                                            type: "card",
+                                                            card: {
+                                                                token: dataaaaaa.id
+                                                            }
+                                                        } 
+                                                    }, async (err, intent) => {
+                                                        if (err) {
+                                                            console.log("Critical ERROR CLIENT: ", err.raw.message);
+
+                                                            if (err.raw.message === 'You cannot confirm this PaymentIntent because it has already succeeded after being previously confirmed.') {
+                                                                collection.save(usa);
+
+                                                                responseee.json({
+                                                                    message: "Both users have agreed the job is complete!"
+                                                                });
+                                                            }
+                                                        } else {
+                                                            const paymentIntent = await stripe.paymentIntents.capture(
+                                                                usa.towing_services_start.charge.id
+                                                            );
+            
+                                                            if (paymentIntent) {
+                                                                collection.save(usa);
+
+                                                                responseee.json({
+                                                                    message: "Both users have agreed the job is complete!"
+                                                                });
+                                                            }
+                                                        }
+                                                    });
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
                             } else {
                                 responseee.json({
                                     message: "Marked as complete!"

@@ -9,6 +9,8 @@ const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const request = require('request');
+const stripe = require('stripe')(config.get("stripeSecretKey"));
+
 
 // need to fix how many times res.json is sent - can't send multiple headers
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
@@ -49,7 +51,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             'pass': config.get("paypalRESTSecret")
                         }
                     };
-                    const callback = (error, response, body) => {
+                    const callback = async (error, response, body) => {
                         if (!error && response.statusCode == 200) {
                             console.log("SUCCESSFUL RESPONSE: body-------:", JSON.parse(body));
 
@@ -62,6 +64,24 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             }
 
                             collection.save(user);
+
+                            // const customer = await stripe.customers.create({
+                            //     description: "Client and/or customer.",
+                            //     name: user.fullName
+                            // }, (errrrrr, account) => {
+                            //     if (errrrrr) {
+                            //         console.log(errrrrr);
+                            //     } else {
+                            //         user.stripe_customer_account = account;
+                                    
+                            //         collection.save(user);
+
+                            //         res.json({
+                            //             message: "Successfully authenticated!",
+                            //             user
+                            //         })
+                            //     }
+                            // });
 
                             res.json({
                                 message: "Successfully authenticated!",

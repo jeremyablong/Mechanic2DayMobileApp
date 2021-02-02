@@ -32,7 +32,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 individual.primary = true;
 
                                 const customer = await stripe.customers.update(
-                                    user.unique_id,
+                                    user.stripe_customer_account.id,
                                     { default_source: individual.token.card.id }
                                 );
                             } else {

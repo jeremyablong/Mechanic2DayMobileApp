@@ -66,6 +66,111 @@ const CreateAccountTypeHelper = (props) => {
             })
         }
     }
+    const requestUserPermissionCustom = async (selection) => {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    
+        if (enabled) {
+          getFcmTokenCustom(selection) //<---- Add this
+          console.log('Authorization status:', authStatus);
+        } else {
+            const { previous } = props;
+
+            axios.post(`${Config.ngrok_url}/register/user/customer`, {
+                address: previous.address,
+                authyID: previous.authyID,
+                birthdate: previous.birthdate,
+                gender: previous.gender,
+                fullName: previous.name,
+                password: previous.password,
+                unformatted: previous.unformatted ? previous.unformatted : null,
+                phoneNumber: previous.phoneNumber ? previous.phoneNumber : "",
+                email: previous.email ? previous.email : "",
+                wholeAddress: previous.wholeAddress,
+                accountType: selection
+            }).then((res) => {
+                if (res.data.message === "Successfully registered new user!") {
+                    console.log(res.data);
+
+                    const { data } = res.data;
+
+                    props.authenticated(data);
+
+                    props.sendbirdLogin({ userId: data.unique_id, nickname: data.fullName });
+
+                    props.finishedSignup(true);
+
+                    setTimeout(() => {
+                        props.props.navigation.push("homepage-main");
+                    },  500);
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+
+            props.authenticated({
+                ...props.previous, accountType: selection, page: 8
+            })
+        }
+    }
+    const getFcmTokenCustom = async (selection) => {
+        const fcmToken = await messaging().getToken();
+        if (fcmToken) {
+            console.log(fcmToken);
+            console.log("Your Firebase Token is:", fcmToken);
+
+            const { previous } = props;
+
+            axios.post(`${Config.ngrok_url}/register/user/customer`, {
+                address: previous.address,
+                authyID: previous.authyID,
+                birthdate: previous.birthdate,
+                gender: previous.gender,
+                fullName: previous.name,
+                password: previous.password,
+                unformatted: previous.unformatted ? previous.unformatted : null,
+                phoneNumber: previous.phoneNumber ? previous.phoneNumber : "",
+                email: previous.email ? previous.email : "",
+                wholeAddress: previous.wholeAddress,
+                accountType: selection,
+                firebasePushNotificationToken: fcmToken
+            }).then((res) => {
+                if (res.data.message === "Successfully registered new user!") {
+                    console.log(res.data);
+
+                    const { data } = res.data;
+
+                    props.authenticated(data);
+
+                    props.sendbirdLogin({ userId: data.unique_id, nickname: data.fullName });
+
+                    props.finishedSignup(true);
+
+                    setTimeout(() => {
+                        props.props.navigation.push("homepage-main");
+                    },  500);
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+
+            props.authenticated({
+                ...props.previous, accountType: selection, page: 8
+            })
+        } else {
+            console.log("Failed", "No token received");
+        }
+    }
+    const registerAsCustomer = () => {
+
+        requestUserPermissionCustom("client");
+    }
     const getFcmToken = async (selection) => {
         const fcmToken = await messaging().getToken();
         if (fcmToken) {
@@ -155,7 +260,7 @@ const CreateAccountTypeHelper = (props) => {
                             <NativeText style={{ color: "black" }}>I'm a mechanic</NativeText>
                         </Button>
                         <Button bordered dark onPress={() => {
-                            continueToNextPage("client");
+                            registerAsCustomer();
                         }} style={styles.submitBtn}>
                             <NativeText style={{ color: "black" }}>I need a repair OR roadside assistance</NativeText>
                         </Button>

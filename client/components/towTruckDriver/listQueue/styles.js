@@ -34,7 +34,7 @@ export default StyleSheet.create({
         textAlign: "center"
     },
     customButton: {
-        width: width * 0.85,
+        width: width * 0.90,
         justifyContent: "center"
     },
     lessThan: {
@@ -42,5 +42,11 @@ export default StyleSheet.create({
         color: "darkblue", 
         textAlign: "center", 
         margin: 20
+    },
+    hr: {
+        borderBottomWidth: 2,
+        borderBottomColor: "lightgrey",
+        marginTop: 15,
+        marginBottom: 15
     }
 })
