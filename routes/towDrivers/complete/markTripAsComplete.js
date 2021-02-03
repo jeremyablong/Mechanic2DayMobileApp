@@ -50,7 +50,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 },
                                 from: id,
                                 link: "notifications"
-                            }
+                            };
             
                             axios.post("https://fcm.googleapis.com/fcm/send", {
                                 "to": user.firebasePushNotificationToken,

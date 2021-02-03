@@ -170,7 +170,7 @@ constructor(props) {
 
                     setTimeout(() => {
                         this.props.props.navigation.navigate("email-verification-code");
-                    },  500);
+                    },  1250);
                 } else {
 
                 }

@@ -43,21 +43,23 @@ constructor(props) {
     componentDidMount() {
         console.log("mounted.");
 
-        axios.post(`${Config.ngrok_url}/gather/general/info`, {
-            id: this.props.unique_id
-        }).then((res) => { 
-            if (res.data.message === "Found user!") {
-                console.log(res.data);
-                
-                const { user } = res.data;
-
-                this.setState({
-                    user
-                })
-            }
-        }).catch((err) => {
-            console.log(err);
-        })
+        setTimeout(() => {
+            axios.post(`${Config.ngrok_url}/gather/general/info`, {
+                id: this.props.unique_id
+            }).then((res) => { 
+                if (res.data.message === "Found user!") {
+                    console.log(res.data);
+                    
+                    const { user } = res.data;
+    
+                    this.setState({
+                        user
+                    })
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        }, 500)
     }
     handleSubmission = () => {
 

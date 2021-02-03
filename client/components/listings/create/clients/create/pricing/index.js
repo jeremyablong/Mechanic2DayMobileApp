@@ -55,7 +55,7 @@ constructor(props) {
         if (selected !== 0 && repair_timespan !== 0 && min_reviews !== null && type_of_repair !== null) {
             return (
                 <Fragment>
-                    <Button info style={styles.buttonSpecial} onPress={() => {
+                    <Button info style={[styles.buttonSpecial, { marginTop: 20 }]} onPress={() => {
                         this.submitAndContinue();
                     }}>
                         <NativeText style={{ color: "white", fontWeight: "bold" }}>Post Listing!</NativeText>
@@ -65,7 +65,7 @@ constructor(props) {
         } else {
             return (
                 <Fragment>
-                    <Button info style={styles.greyButton}>
+                    <Button info style={[styles.greyButton, { marginTop: 20 }]}>
                         <NativeText style={{ color: "white", fontWeight: "bold" }}>Post Listing!</NativeText>
                     </Button>
                 </Fragment>

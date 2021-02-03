@@ -61,28 +61,44 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 // Success
                                 console.log("CARD", card);
 
-                                const card_addition = {
-                                    cvc,
-                                    expiration,
-                                    last_four: card_number.split(" ")[3],
-                                    card_number: encrypt(card_number),
-                                    postal_code,
-                                    type,
-                                    primary: false,
-                                    token: dataaaaaa
-                                }
-                
                                 if (user.card_payment_methods) {
+                                    const card_addition = {
+                                        cvc,
+                                        expiration,
+                                        last_four: card_number.split(" ")[3],
+                                        card_number: encrypt(card_number),
+                                        postal_code,
+                                        type,
+                                        primary: false,
+                                        token: dataaaaaa
+                                    }
                                     user.card_payment_methods.push(card_addition);
+
+                                    collection.save(user);
+
+                                    res.json({
+                                        message: "Successfully added a new card!"
+                                    })
                                 } else {
+                                    const card_addition = {
+                                        cvc,
+                                        expiration,
+                                        last_four: card_number.split(" ")[3],
+                                        card_number: encrypt(card_number),
+                                        postal_code,
+                                        type,
+                                        primary: true,
+                                        token: dataaaaaa
+                                    }
+    
                                     user["card_payment_methods"] = [card_addition];
+
+                                    collection.save(user);
+
+                                    res.json({
+                                        message: "Successfully added a new card!"
+                                    })
                                 }
-
-                                collection.save(user);
-
-                                res.json({
-                                    message: "Successfully added a new card!"
-                                })
                           }
                         }
                     );

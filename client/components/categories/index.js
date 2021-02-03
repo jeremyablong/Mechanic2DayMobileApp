@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { View, Text, ScrollView, Image, Dimensions } from 'react-native';
 import styles from './styles.js';
 import { Header, Left, Body, Right, Button, Icon, Title, Card, CardItem, Thumbnail, Text as NativeText } from 'native-base';
 import FooterHelper from "../../components/footer/footer.js";
@@ -7,7 +7,10 @@ import ReadMore from 'react-native-read-more-text';
 import axios from "axios";
 import { Config } from 'react-native-config';
 import Gallery from 'react-native-image-gallery';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
+
+const { height, width } = Dimensions.get("window");
 
 class CategoriesMainHelper extends Component {
 constructor(props) {
@@ -180,9 +183,9 @@ constructor(props) {
                         <Title style={{ marginTop: 10, left: -15 }}>{this.calculateType(TYPE)}</Title>
                     </Left>
                 </Header>
-                <ScrollView contentContainerStyle={{ paddingBottom: 150 }} style={styles.container}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 200 }} style={styles.container}>
                     <View style={styles.margin}>
-                        <Text style={{ fontSize: 25, fontWeight: "bold" }}>300+ Vehicles availiable for repair</Text>
+                        <Text style={{ fontSize: 25, fontWeight: "bold" }}>{this.state.data.length}+ Vehicles availiable for repair</Text>
                         <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut consequat lorem. Duis at quam quis.</Text>
                     </View>
                     <View style={styles.margin}>
@@ -209,8 +212,9 @@ constructor(props) {
                                                 <View style={{ marginTop: 10 }}>
                                                     <View style={{ marginBottom: 15, flexDirection: "row" }}>
                                                         <Image source={require("../../assets/icons/small-star.png")} style={styles.starIcon} />
-                                                        <Text> 4.92 (76)</Text>
+                                                        <Text style={styles.reviewText}> 4.92 (76)</Text>
                                                     </View>
+                                                    <View style={styles.hr} />
                                                     <ReadMore
                                                         numberOfLines={3}
                                                         renderTruncatedFooter={this._renderTruncatedFooter}
@@ -234,7 +238,40 @@ constructor(props) {
                                     </Card>
                                 </Fragment>
                             );
-                        }) : null}
+                        }) : <SkeletonPlaceholder>
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                                <View style={{ width: "100%", height: 250 }}>
+
+                                </View>
+                                <View style={{ marginTop: 30 }} />
+                            </SkeletonPlaceholder>}
                     </View>
                 </ScrollView>
                 <View style={styles.bottom}>

@@ -4,7 +4,7 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-const axios = require('axios');
+
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
@@ -13,25 +13,21 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("roadside-assistance-queues");
 
-        const { selected } = req.body;
+        const { id } = req.body;
 
-        collection.remove({ id: selected.id }, (err, results) => {
+        collection.remove({ requested_by: id }, { justOne: true }, (err, doc) => {
             if (err) {
-
-                console.log(err);
-
                 res.json({
-                    message: "Error occurred...",
-                    err
+                    err,
+                    message: "Critical error occurred..."
                 })
             } else {
-                console.log("results", results);
-
                 res.json({
-                    message: "Success!"
+                    message: "Deleted!",
+                    doc
                 })
             }
-        })
+        });
     });
 });
 

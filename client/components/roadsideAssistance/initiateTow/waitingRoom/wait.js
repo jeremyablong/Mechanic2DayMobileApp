@@ -196,6 +196,23 @@ constructor(props) {
             }
         }
     }
+    cancelRequest = () => {
+        console.log("cancelRequest clicked");
+        
+        axios.post(`${Config.ngrok_url}/cancel/roadside/assistance/claim`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Deleted!") {
+                console.log(res.data);
+
+                this.props.props.navigation.replace("homepage-main");
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     render() {
         const { data } = this.state;
         console.log("wait.js", this.state);
@@ -259,14 +276,18 @@ constructor(props) {
                     openDuration={250}
                     customStyles={{
                         container: {
-                        justifyContent: "center",
-                        alignItems: "center"
+                            justifyContent: "center",
+                            alignItems: "center"
                         }
                     }}
                     >
                         <List>
                             <ListItem onPress={() => {
+                                this.RBSheet.close();
 
+                                setTimeout(() => {
+                                    this.cancelRequest();
+                                }, 1000);
                             }} button={true} style={styles.listitemCustom} icon>
                                 <Left>
                                     <Button transparent style={{  }}>

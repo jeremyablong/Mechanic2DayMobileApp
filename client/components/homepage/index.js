@@ -169,7 +169,7 @@ constructor(props) {
                     return (
                         <Fragment>
                             <AwesomeButtonBlue onPress={() => {
-                                this.props.props.navigation.navigate("providers-listing-homepage");
+                                this.props.props.navigation.push("providers-listing-homepage");
                             }} width={width * 0.85} type={"primary"}>List your vehicle for repair</AwesomeButtonBlue>
                             <View style={{ marginTop: 20 }} />
                             <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
@@ -182,7 +182,7 @@ constructor(props) {
                     return (
                         <Fragment>
                             <Button info onPress={() => {
-                                this.props.props.navigation.navigate("roadside-assistance-main-landing");
+                                this.props.props.navigation.push("roadside-assistance-main-landing");
                             }} style={styles.customButtonFive}>
                                 <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
                             </Button>
@@ -193,11 +193,11 @@ constructor(props) {
                     return (
                         <Fragment>
                             <AwesomeButtonBlue onPress={() => {
-                                this.props.props.navigation.navigate("advertise-roadside-assistance-main");
+                                this.props.props.navigation.push("advertise-roadside-assistance-main");
                             }} width={width * 0.85} type={"primary"}>Advertise Roadside Assistance</AwesomeButtonBlue>
                             <View style={{ marginTop: 20 }} />
                             <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
-                                this.props.props.navigation.navigate("manage-tow-drivers");
+                                this.props.props.navigation.push("manage-tow-drivers");
                             }}>Manage Tow Drivers/Employees</AwesomeButtonBlue>
                         </Fragment>
                     );

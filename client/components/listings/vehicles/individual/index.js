@@ -141,7 +141,8 @@ constructor(props) {
         applied: false,
         times: [],
         selectedTime: "",
-        showDialog: false
+        showDialog: false,
+        signed_in_user: null
     } 
 }
     _renderItem = ({item, index}) => {
@@ -329,7 +330,26 @@ constructor(props) {
             }
         }).catch((err) => {
             console.log(err);
-        })
+        });
+
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+                console.log("We got a response :", res.data);
+
+                const { user } = res.data;
+
+                this.setState({
+                    signed_in_user: user
+                })
+            } else {
+                console.log("err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
     }
     calculateCategory = (listing) => {
         switch (listing.type_of_repair) {
@@ -374,7 +394,7 @@ constructor(props) {
         }
     }
     renderConditional = () => {
-        const { listing, gallery, latLng, location, user } = this.state;
+        const { listing, gallery, latLng, location, user, signed_in_user } = this.state;
         if (listing !== null) {
             return (
                 <Fragment>
@@ -406,7 +426,7 @@ constructor(props) {
                             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Place a bid!</Text>
                             <Text>Here at MechanicToday we use a bid style system for pricing. We allow all mechanics to place a bid which allows the person with the vehicle in need of repair to selectivly choose the right mechanic in their budget and get quality service simultaniously!</Text>
                             {this.state.applied === false ? <AwesomeButtonRick width={width * 0.75} style={{ marginTop: 15 }} onPress={() => {
-                                if (this.props.paypal !== null && typeof this.props.paypal === "string") {
+                                if (typeof signed_in_user.card_payment_methods !== "undefined" && signed_in_user.card_payment_methods.length > 0) {
                                     this.RBSheetTwo.open();
                                 } else {
                                     this.setState({
@@ -998,9 +1018,9 @@ constructor(props) {
             <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
             <View>
                 <Dialog.Container visible={this.state.showDialog}>
-                <Dialog.Title>You must have a paypal email on file before applying</Dialog.Title>
+                <Dialog.Title>You must have a payment method on file before placing a bid...</Dialog.Title>
                 <Dialog.Description>
-                    Would you like to redirect to enter your paypal information? You MUST enter your paypal information before placing a bid.
+                    Would you like to redirect to enter your payment information? You MUST enter your payment information before placing a bid.
                 </Dialog.Description>
                 <Dialog.Button onPress={() => {
                     this.setState({
@@ -1011,7 +1031,7 @@ constructor(props) {
                     this.setState({
                         showDialog: false
                     }, () => {
-                        this.props.props.navigation.navigate("create-payment-paypal");
+                        this.props.props.navigation.navigate("payments-cards");
                     })
                 }} label="REDIRECT" />
                 </Dialog.Container>

@@ -134,6 +134,9 @@ app.use("/mark/stripe/onboarding/complete", require("./routes/account/verificati
 app.use("/make/applied", require("./routes/roadsideAssistance/initiate/markApplied.js"));
 app.use("/decline/roadside/assistance/offer", require("./routes/roadsideAssistance/initiate/declineOffer.js"));
 app.use("/check/if/able/to/apply", require("./routes/towDrivers/initiate/checkPendingJob.js"));
+app.use("/cancel/roadside/assistance/claim", require("./routes/roadsideAssistance/delete/deleteListingRequest.js"));
+app.use("/remove/from/queue", require("./routes/roadsideAssistance/delete/removeFromQueue.js"));
+
 
 
 app.get('*', function(req, res) {

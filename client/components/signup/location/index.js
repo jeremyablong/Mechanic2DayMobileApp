@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, Keyboard } from "react-native";
+import { View, Text, ImageBackground, TouchableOpacity, Keyboard, Dimensions } from "react-native";
 import styles from "./styles.js";
 import Config from "react-native-config";
 import Autocomplete from "react-native-autocomplete-input";
@@ -7,6 +7,10 @@ import axios from "axios";
 import { Button, Text as NativeText } from "native-base";
 import { authenticated } from "../../../actions/signup/auth.js";
 import { connect } from "react-redux";
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
+
+const { width, height } = Dimensions.get("window");
 
 class LocationCreateHelper extends Component {
 constructor(props) {
@@ -57,11 +61,9 @@ constructor(props) {
         if (typeof selected !== "undefined" && selected.length > 0) {
             return (
                 <View style={styles.btnContainer}>
-                    <Button bordered onPress={() => {
+                    <AwesomeButtonBlue stretch={true} style={{ marginTop: 10, marginBottom: 10 }} onPress={() => {
                         this.continueToNextPage();
-                    }} style={styles.submitBtn}>
-                        <NativeText style={{ color: "black" }}>Continue</NativeText>
-                    </Button>
+                    }} type={"secondary"}>Continue</AwesomeButtonBlue>
                 </View>
             );
         } 

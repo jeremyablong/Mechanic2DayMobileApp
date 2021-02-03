@@ -33,17 +33,17 @@ constructor(props) {
       return (
         <View style={{ maxHeight: this.props.height, maxWidth: this.props.width, backgroundColor: '#e1e4e8' }}>
             <Animated.Image
-            {...props}
-            source={thumbnailSource}
-            style={[style, { opacity: this.thumbnailAnimated }]}
-            onLoad={this.handleThumbnailLoad}
-            blurRadius={1}
+                {...props}
+                source={thumbnailSource}
+                style={[style, { opacity: this.thumbnailAnimated }]}
+                onLoad={this.handleThumbnailLoad}
+                blurRadius={1}
             />
             <Animated.Image
-            {...props}
-            source={source}
-            style={[styles.imageOverlay, { opacity: this.imageAnimated }, style]}
-            onLoad={this.onImageLoad}
+                {...props}
+                source={source}
+                style={[styles.imageOverlay, { opacity: this.imageAnimated }, style]}
+                onLoad={this.onImageLoad}
             />
       </View>
       );

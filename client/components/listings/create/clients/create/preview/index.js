@@ -65,13 +65,14 @@ constructor(props) {
                         
                         <View style={styles.rightRight}>
                             <Button onPress={() => {
-                                if (_.has(user, "paypal_payment_address") || this.props.paypal) {
-                                    this.props.props.navigation.navigate("create-vehicle-listing-one");
-                                } else {
-                                    this.setState({
-                                        showDialog: true
-                                    })
-                                }
+                                // if (_.has(user, "completed_stripe_onboarding") && user.completed_stripe_onboarding === true) {
+                                //     this.props.props.navigation.navigate("create-vehicle-listing-one");
+                                // } else {
+                                //     this.setState({
+                                //         showDialog: true
+                                //     })
+                                // }
+                                this.props.props.navigation.navigate("create-vehicle-listing-one");
                             }} style={styles.continueButton}>
                                 <NativeText style={{ color: "white", fontWeight: "bold" }}>Continue</NativeText>
                             </Button>
@@ -128,22 +129,22 @@ constructor(props) {
                 </ScrollView>
                 <View>
                     <Dialog.Container visible={this.state.showDialog}>
-                    <Dialog.Title>Fill out PayPal email information before proceeding</Dialog.Title>
+                    <Dialog.Title>You must verify/validate your account BEFORE posting a vehicle for repair.</Dialog.Title>
                     <Dialog.Description>
-                        Would you like to go to the payments page to fill out your paypal email address? This is a requirement to post listings.
+                        Would you like to go to the verifcation page to validate your account? This is a requirement to post listings.
                     </Dialog.Description>
                     <Dialog.Button onPress={() => {
                         this.setState({ 
                             showDialog: false 
                         });
-                    }} label="Cancel" />
+                    }} label="CANCEL" />
                     <Dialog.Button onPress={() => {
                         this.setState({
                             showDialog: false
                         }, () => {
-                            this.props.props.navigation.navigate("create-payment-paypal");
+                            this.props.props.navigation.navigate("verify-validate-account-stripe");
                         })
-                    }} label="Redirect Me" />
+                    }} label="REDIRECT ME" />
                     </Dialog.Container>
                 </View>
             </Fragment>

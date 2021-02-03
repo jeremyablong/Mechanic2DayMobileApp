@@ -14,6 +14,8 @@ import { Config } from "react-native-config";
 import { connect } from "react-redux";
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../../../../components/toastConfig.js";
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -690,13 +692,11 @@ constructor(props) {
                                 </View>
                             }
                             bottomContent={
-                                <TouchableOpacity onPress={() => {
+                                <AwesomeButtonBlue onPress={() => {
                                     this._panel_two.hide();
 
                                     this.RBSheet.open();
-                                }} style={styles.buttonTouchable}>
-                                    <Text style={styles.buttonText}>Type VIN instead</Text>
-                                </TouchableOpacity>
+                                }} stretch={true} type={"secondary"}>Type VIN instead</AwesomeButtonBlue>
                             }
                         />
                     </View>

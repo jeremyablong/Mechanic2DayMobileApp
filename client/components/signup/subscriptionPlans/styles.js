@@ -85,8 +85,7 @@ export default StyleSheet.create({
         borderRadius:30,
     },
     italizedRed: {
-        fontStyle: "italic",
-        color: "blue"
+        fontStyle: "italic"
     },
     scrollView: {
         backgroundColor: "white"
@@ -119,7 +118,9 @@ export default StyleSheet.create({
         padding:10,
         borderRadius:40,
         marginHorizontal:3,
-        backgroundColor: "#8884FF",
+        backgroundColor: "white",
+        borderColor: "black",
+        borderWidth: 1,
         marginTop:5,
     }
 });

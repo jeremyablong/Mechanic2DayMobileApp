@@ -417,12 +417,12 @@ constructor(props) {
   })
   socket.on("redirect", (data) => {
     if (data.redirect === true && data.user_id === this.props.unique_id) {
-      this.navigationRef.navigate("review-roadside-assistance-client", null);
+      this.navigationRef.navigate("review-roadside-assistance-agent", null);
     }
   })
   socket.on("redirect-agent", (data) => {
     if (data.redirect === true && data.user_id === this.props.unique_id) {
-      this.navigationRef.navigate("review-roadside-assistance-agent", null);
+      this.navigationRef.navigate("review-roadside-assistance-client", null);
     }
   })
   socket.on("start", (data) => {

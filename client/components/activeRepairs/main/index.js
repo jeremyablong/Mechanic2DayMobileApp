@@ -6,8 +6,9 @@ import axios from 'axios';
 import { Config } from 'react-native-config';
 import { connect } from 'react-redux';
 import Gallery from 'react-native-image-gallery';
-import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/rick';
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import ReadMore from 'react-native-read-more-text';
 
 
 const { height, width } = Dimensions.get("window");
@@ -122,6 +123,21 @@ constructor(props) {
             ready: false
         })
     }
+    _renderTruncatedFooter = (handlePress) => {
+        return (
+            <Text style={{color: "blue", fontWeight: "bold", fontSize: 18, marginTop: 5}} onPress={handlePress}>
+            Read more
+            </Text>
+        );
+    }
+    
+    _renderRevealedFooter = (handlePress) => {
+        return (
+            <Text style={{color: "blue", fontWeight: "bold", fontSize: 18, marginTop: 5}} onPress={handlePress}>
+            Show less
+            </Text>
+        );
+    }
     render() {
         const { accepted_jobs, ready } = this.state;
         return (
@@ -166,17 +182,25 @@ constructor(props) {
                             />
                             <View style={styles.cardFooter}>
                             <View style={{alignItems:"center", justifyContent:"center"}}>
-                                <Text>{description}</Text>
+                                <ReadMore
+                                    numberOfLines={3}
+                                    renderTruncatedFooter={this._renderTruncatedFooter}
+                                    renderRevealedFooter={this._renderRevealedFooter}
+                                    onReady={this._handleTextReady}>
+                                    <Text style={styles.cardText}>
+                                        {description}
+                                    </Text>
+                                </ReadMore>
                                 <Text style={styles.name}>Agreed Price: ${item.agreed_amount}</Text>
                                 <Text style={styles.position}>{`${year} ${make} ${model}`}</Text>
-                                <AwesomeButtonRick width={width * 0.75} backgroundShadow={"#E8CEE4"} onPress={() => {
+                                <AwesomeButtonBlue width={width * 0.75} backgroundShadow={"#E8CEE4"} onPress={() => {
                                     console.log("clicked");
 
                                     this.props.props.navigation.push("view-individual-agreement", { vehicle: item.vehicle_data, item });
                                 }} type="secondary">
                                     <Image source={require("../../../assets/icons/info.png")} style={{ maxWidth: 40, maxHeight: 40 }}/>
                                     <Text>View Individual Listing</Text>
-                                </AwesomeButtonRick>
+                                </AwesomeButtonBlue>
                             </View>
                             </View>
                         </View>

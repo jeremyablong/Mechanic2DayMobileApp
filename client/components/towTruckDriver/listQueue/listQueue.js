@@ -260,8 +260,8 @@ constructor(props) {
                     axios.post(`${Config.ngrok_url}/gather/tow/company/information/prices`, {
                         id: this.props.unique_id,
                         selected,
-                        company_id: this.props.employed_by,
-                        company_name: this.props.company_name
+                        company_id: this.state.user.employed_by,
+                        company_name: this.state.user.company_name
                     }).then((res) => {
                         if (res.data.message === "Gathered company info!") {
                             

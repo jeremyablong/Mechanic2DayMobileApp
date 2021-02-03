@@ -255,7 +255,7 @@ const CreateAccountTypeHelper = (props) => {
                     <Text style={styles.mainText}>Are you a mechanic OR looking to get work done?</Text>
                     <View style={styles.center}>
                         <Button bordered onPress={() => {
-                            mechanicMoveNextPage();
+                            continueToNextPage("mechanic");
                         }} style={styles.submitBtn}>
                             <NativeText style={{ color: "black" }}>I'm a mechanic</NativeText>
                         </Button>

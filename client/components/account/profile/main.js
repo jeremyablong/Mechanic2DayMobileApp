@@ -168,11 +168,11 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Roadside Assistance</NativeText></Left><Right><Image source={require("../../../assets/icons/tow-truck.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}
-                            <ListItem button={true} onPress={() => {
+                            {user.accountType === "mechanic" || user.accountType === "tow-truck-company" || user.accountType === "tow-truck-driver" ? <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.push("verify-validate-account-stripe");
                             }} style={styles.listItem}>
                             <Left><NativeText numberOfLines={2}>Verify/Validate Account</NativeText></Left><Right><Image source={require("../../../assets/icons/approval.png")} style={styles.inlineIcon} /></Right>
-                            </ListItem>
+                            </ListItem> : null}
                             {user.accountType === "tow-truck-company" ?  <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.push("manage-tow-drivers");
                             }} style={styles.listItem}>

@@ -28,7 +28,7 @@ constructor(props) {
         return item.tags.map((tag, key) => {
             return (
                 <View key={key} style={styles.btnColor}>
-                    <Text style={{ color: "white", fontWeight: "bold", fontSize: 16 }}>{tag}</Text>
+                    <Text style={{ color: "black", fontWeight: "bold", fontSize: 16 }}>{tag}</Text>
                 </View> 
             );
         })
@@ -67,6 +67,7 @@ constructor(props) {
                                 <View style={[styles.cardContent, styles.tagsContent]}>
                                     {this.renderTags(item)}
                                 </View>
+                                <View style={[styles.hr, { marginBottom: -30 }]} />
                                 <View style={styles.margin}>
                                     <Text style={styles.price}>$<Text style={{ fontSize: 34, color: "black" }}>{item.price.toString()}</Text> Per Month</Text>
                                 </View>

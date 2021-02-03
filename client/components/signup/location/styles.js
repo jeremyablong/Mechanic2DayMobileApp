@@ -40,8 +40,9 @@ export default StyleSheet.create({
         borderTopWidth: 0.5,
     },
     listItemTwo: {
-      minHeight: 30,
-      backgroundColor: "lightgrey",
+      minHeight: 40,
+      marginTop: 10,
+      backgroundColor: "white",
       paddingTop: 5
     },
     textBox: {
@@ -80,13 +81,15 @@ export default StyleSheet.create({
       alignItems: "center",
       position: "absolute", 
       bottom: 0,
+      margin: 20,
       flex: 1
     },
     btnContainer: {
       justifyContent: "center",
       alignItems: "center",
       alignContent: "center",
-      marginBottom: 40
+      marginBottom: 40,
+      width: width - 40
     },
     titleText: {
       fontWeight: "bold",

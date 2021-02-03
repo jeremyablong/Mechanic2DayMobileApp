@@ -1,20 +1,20 @@
 import React, { Fragment, useState } from "react";
 import {
-    StyleSheet,
     Text,
     View,
-    TextInput,
-    Button,
     TouchableOpacity,
     Image,
-    ImageBackground
+    ImageBackground,
+    Dimensions
 } from 'react-native';
 import styles from "./styles.js";
 import { connect } from "react-redux";
 import { authenticated } from "../../../actions/signup/auth.js";
 import DatePicker from 'react-native-date-picker';
-import { Button as NativeBtn, Text as NativeText } from 'native-base';
 import moment from "moment";
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
+const { width, height } = Dimensions.get("window");
 
 const CreateBirthdayHelper = (props) => {
 
@@ -48,9 +48,7 @@ const CreateBirthdayHelper = (props) => {
                     </View>
                     <View style={styles.bottomContainer}>
                     <View style={styles.center}>
-                        <NativeBtn onPress={continueToNextPage} style={styles.specialBtn} bordered>
-                            <NativeText style={{ color: "black" }}>Continue</NativeText>
-                        </NativeBtn>
+                        <AwesomeButtonBlue width={width * 0.65} style={{ marginTop: 10, marginBottom: 10 }} onPress={continueToNextPage} type={"secondary"}>Continue</AwesomeButtonBlue>
                     </View>
                         <DatePicker 
                             mode="date"

@@ -339,7 +339,7 @@ constructor(props) {
                         <View style={styles.nextContainer}>
                             <Text style={styles.h3}>Mechanics in Big Bear Lake</Text>
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-                                {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
+                                {typeof listings !== "undefined" && listings.length > 0 ? listings.slice(0, 6).map((listing, index) => {
                                     return (
                                         <TouchableOpacity key={index} onPress={() => {
                                             this.props.props.navigation.navigate("individual-broken-listing", { listing });
@@ -383,7 +383,7 @@ constructor(props) {
                         <View style={styles.nextContainer}>
                             <Text style={styles.h3}>Mechanics in Big Bear Lake</Text>
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-                                {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
+                                {typeof listings !== "undefined" && listings.length > 0 ? listings.slice(7, 14).map((listing, index) => {
                                     return (
                                         <TouchableOpacity key={index} onPress={() => {
                                             this.props.props.navigation.navigate("individual-broken-listing", { listing });
@@ -429,7 +429,7 @@ constructor(props) {
                         <View style={styles.nextContainer}>
                             <Text style={styles.h3}>Mechanics in Big Bear Lake</Text>
                             <ScrollView onScrollEndDrag={this._onRelease} {...this._panResponder.panHandlers} horizontal={true} style={styles.horizontalScroller} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-                                {typeof listings !== "undefined" && listings.length > 0 ? listings.map((listing, index) => {
+                                {typeof listings !== "undefined" && listings.length > 0 ? listings.slice(15, 22).map((listing, index) => {
                                     return (
                                         <TouchableOpacity key={index} onPress={() => {
                                             this.props.props.navigation.navigate("individual-broken-listing", { listing });

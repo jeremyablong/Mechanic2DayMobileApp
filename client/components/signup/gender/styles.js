@@ -26,6 +26,11 @@ export default StyleSheet.create({
         fontWeight: "bold",
         marginTop: 50
     },
+    centered: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: "center"
+    },
     backgroundCentered: {
         backgroundColor: "white",
         padding: 30,

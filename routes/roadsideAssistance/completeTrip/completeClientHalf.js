@@ -90,18 +90,22 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                                                 responseee.json({
                                                                     message: "Both users have agreed the job is complete!"
                                                                 });
-                                                            }
+                                                            } 
                                                         } else {
-                                                            const paymentIntent = await stripe.paymentIntents.capture(
-                                                                usa.towing_services_start.charge.id
-                                                            );
-            
-                                                            if (paymentIntent) {
-                                                                collection.save(usa);
-
-                                                                responseee.json({
-                                                                    message: "Both users have agreed the job is complete!"
-                                                                });
+                                                            try {
+                                                                const paymentIntent = await stripe.paymentIntents.capture(
+                                                                    usa.towing_services_start.charge.id
+                                                                );
+                
+                                                                if (paymentIntent) {
+                                                                    collection.save(usa);
+    
+                                                                    responseee.json({
+                                                                        message: "Both users have agreed the job is complete!"
+                                                                    });
+                                                                }
+                                                            } catch (errorrrrrrr) {
+                                                                console.log("ERRRRRRRRRRRRRRR CLIENT", errorrrrrrr)
                                                             }
                                                         }
                                                     });

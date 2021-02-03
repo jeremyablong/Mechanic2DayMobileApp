@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { View, Text, Dimensions, ScrollView, ImageBackground, Image } from "react-native";
 import styles from "./styles.js";
-import Carousel from 'react-native-snap-carousel';
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
 import { Button, Text as NativeText } from 'native-base';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { authenticated } from "../../../actions/signup/auth.js";
@@ -84,22 +84,18 @@ constructor(props) {
                         {this.state.data.map((each, index) => {
                             if (index % 2 === 0) {
                                 return (
-                                    <View>
-                                        <Button onPress={() => {
+                                    <View styles={[styles.centered, { marginTop: 10 }]}>
+                                        <AwesomeButtonBlue width={width * 0.65} style={{ marginTop: 10, marginBottom: 10 }} onPress={() => {
                                             this.handleSelection(each);
-                                        }} style={styles.genderBtn}>
-                                            <NativeText style={{ color: "black" }}>{each.label}</NativeText>
-                                        </Button>
+                                        }} type={"secondary"}>{each.label}</AwesomeButtonBlue>
                                     </View>
                                 );
                             } else {
                                 return (
-                                    <View>
-                                        <Button onPress={() => {
+                                    <View styles={[styles.centered, { marginTop: 10 }]}>
+                                        <AwesomeButtonBlue width={width * 0.65} style={{ marginTop: 10, marginBottom: 10 }} onPress={() => {
                                             this.handleSelection(each);
-                                        }} style={styles.genderBtnTwo}>
-                                            <NativeText style={{ color: "white" }}>{each.label}</NativeText>
-                                        </Button>
+                                        }} type={"primary"}>{each.label}</AwesomeButtonBlue>
                                     </View>
                                 );
                             }

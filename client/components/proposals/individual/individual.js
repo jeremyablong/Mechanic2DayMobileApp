@@ -50,12 +50,15 @@ constructor(props) {
 
         const { listing } = this.state;
 
+        const total = passedData.amount + (passedData.amount * 0.20) + (passedData.amount * 0.03);
+
         axios.post(`${Config.ngrok_url}/accept/proposal/vehicle/listing`, {
             passedData,
             listing,
             id: this.props.unique_id,
             fullName: this.props.fullName,
-            other_user: passedData.applicant
+            other_user: passedData.applicant,
+            total
         }).then((res) => {
             if (res.data.message === "Succesfully notfied other un-selected users and notified selected user!") {
                 console.log(res.data);

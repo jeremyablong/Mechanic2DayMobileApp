@@ -7,6 +7,8 @@ const cors = require('cors');
 const axios = require('axios');
 const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
+const stripe = require('stripe')(config.get("stripeSecretKey"));
+
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", async (req, res) => {
@@ -20,7 +22,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             listing,
             id, 
             fullName,
-            other_user
+            other_user,
+            total
         } = req.body;
 
         collection.findOne({ unique_id: id }).then(async (user) => {
@@ -75,7 +78,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     proposal,
                                     other: listinggg.poster,
                                     listinggg,
-                                    other_user
+                                    other_user,
+                                    total,
+                                    customer_id: user.stripe_customer_account.id
                                 }).then((res) => {
                                     if (res.data) {
                                         console.log(res.data);
@@ -111,7 +116,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                         await Promise.all(promiseArray).then((data) => {
                             console.log("dataaaaaaaaaaaaa", data);
-        
+
                             res.json({
                                 message: "Succesfully notfied other un-selected users and notified selected user!"
                             })

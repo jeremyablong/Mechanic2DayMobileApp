@@ -22,8 +22,8 @@ export default StyleSheet.create({
         margin: 20
     },
     starIcon: {
-        maxWidth: 15,
-        maxHeight: 15
+        maxWidth: 20,
+        maxHeight: 20
     },
     cardie: {
         flex: 0, 
@@ -35,6 +35,19 @@ export default StyleSheet.create({
         },
         shadowOpacity: 0.55,
         shadowRadius: 14.78,
-        elevation: 22
+        elevation: 12
+    },
+    cardText: {
+        fontSize: 18
+    },
+    hr: {
+        borderBottomColor: "lightgrey",
+        borderBottomWidth: 2,
+        marginTop: 15,
+        marginBottom: 15
+    },
+    reviewText: {
+        fontSize: 18,
+        fontWeight: "bold"
     }
 })

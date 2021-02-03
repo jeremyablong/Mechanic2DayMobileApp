@@ -54,7 +54,6 @@ const FooterHelper = (props) => {
                                 props.props.navigation.push("homepage-main");
                             }
                         }} badge vertical>
-                        <Badge style={styles.badge}><Text>2</Text></Badge>
                             <Image source={require("../../assets/icons/home.png")} style={styles.menuIcon} />
                             <Text>Home</Text>
                         </Button>

@@ -12,7 +12,7 @@ const stripe = require('stripe')(config.get("stripeSecretKey"));
 
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.post("/", (req, res) => {
+    router.post("/", (req, responseeeeeeeee) => {
 
         const database = db.db("<dbname>");
 
@@ -32,7 +32,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         collection.find({ unique_id: {"$in" : [tow_driver_id, client_id]}}).toArray((err, users) => {
             if (err) {
 
-                res.json({
+                responseeeeeeeee.json({
                     message: "Critical Error occurred...",
                     err
                 })
@@ -183,13 +183,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                                                             axios.post(`${config.get("ngrok_url")}/remove/queued/item`, {
                                                                 selected
-                                                            }).then(() => {
+                                                            }).then((responseeeeeeeeeeeeeeeeeee) => {
     
                                                                 console.log("CHARGE: ", charge);
 
-                                                                console.log("------- This is the CLIENT USER  ------- ", user);
-                        
-                                                                return;
+                                                                if (responseeeeeeeeeeeeeeeeeee) {
+                                                                    responseeeeeeeee.json({
+                                                                        message: "Successfully executed logic!"
+                                                                    })
+                                                                }
                                                             }).catch((critical_err) => {
                                                                 console.log(critical_err);
                                                             })
@@ -208,14 +210,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             }
                         }
                     }
-                }).then(() => {
-                    console.log("DONE!");
-
-                    res.json({
-                        message: "Successfully executed logic!",
-                        users
-                    })
-                })
+                });
             }
         })
     });
