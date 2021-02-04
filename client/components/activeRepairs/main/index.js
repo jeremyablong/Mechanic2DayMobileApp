@@ -194,9 +194,22 @@ constructor(props) {
                                 <Text style={styles.name}>Agreed Price: ${item.agreed_amount}</Text>
                                 <Text style={styles.position}>{`${year} ${make} ${model}`}</Text>
                                 <AwesomeButtonBlue width={width * 0.75} backgroundShadow={"#E8CEE4"} onPress={() => {
-                                    console.log("clicked");
-
-                                    this.props.props.navigation.push("view-individual-agreement", { vehicle: item.vehicle_data, item });
+                                    console.log("clicked", item);
+                                    
+                                    if (item.other_user_agrees_completion === true && item.poster_agrees_completion === true) {
+                                        if (this.props.unique_id === item.initiator) {
+                                            // client
+                                            console.log("this.props.unique_id === item.initiator")
+                                            this.props.props.navigation.push("broken-vehicle-review-mechanic", { agreement: item });
+                                        } 
+                                        if (this.props.unique_id === item.other_user) {
+                                            // mechanic
+                                            console.log("this.props.unique_id === item.other_user")
+                                            this.props.props.navigation.push("broken-vehicle-review-client", { agreement: item });
+                                        }
+                                    } else {
+                                        this.props.props.navigation.push("view-individual-agreement", { vehicle: item.vehicle_data, item });
+                                    }
                                 }} type="secondary">
                                     <Image source={require("../../../assets/icons/info.png")} style={{ maxWidth: 40, maxHeight: 40 }}/>
                                     <Text>View Individual Listing</Text>

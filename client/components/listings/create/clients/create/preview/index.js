@@ -65,14 +65,14 @@ constructor(props) {
                         
                         <View style={styles.rightRight}>
                             <Button onPress={() => {
-                                // if (_.has(user, "completed_stripe_onboarding") && user.completed_stripe_onboarding === true) {
-                                //     this.props.props.navigation.navigate("create-vehicle-listing-one");
-                                // } else {
-                                //     this.setState({
-                                //         showDialog: true
-                                //     })
-                                // }
-                                this.props.props.navigation.navigate("create-vehicle-listing-one");
+                                if (_.has(user, "card_payment_methods") && user.card_payment_methods.length > 0) {
+                                    this.props.props.navigation.navigate("create-vehicle-listing-one");
+                                } else {
+                                    this.setState({
+                                        showDialog: true
+                                    })
+                                }
+                                
                             }} style={styles.continueButton}>
                                 <NativeText style={{ color: "white", fontWeight: "bold" }}>Continue</NativeText>
                             </Button>
@@ -129,9 +129,9 @@ constructor(props) {
                 </ScrollView>
                 <View>
                     <Dialog.Container visible={this.state.showDialog}>
-                    <Dialog.Title>You must verify/validate your account BEFORE posting a vehicle for repair.</Dialog.Title>
+                    <Dialog.Title>You MUST have a payment method on file before posting any vehicles for repair.</Dialog.Title>
                     <Dialog.Description>
-                        Would you like to go to the verifcation page to validate your account? This is a requirement to post listings.
+                        Would you like to go to the payment section to add a payment method? This is a requirement to post listings.
                     </Dialog.Description>
                     <Dialog.Button onPress={() => {
                         this.setState({ 
@@ -142,7 +142,7 @@ constructor(props) {
                         this.setState({
                             showDialog: false
                         }, () => {
-                            this.props.props.navigation.navigate("verify-validate-account-stripe");
+                            this.props.props.navigation.navigate("payments-cards");
                         })
                     }} label="REDIRECT ME" />
                     </Dialog.Container>

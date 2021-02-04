@@ -63,7 +63,9 @@ constructor(props) {
             if (res.data.message === "Succesfully notfied other un-selected users and notified selected user!") {
                 console.log(res.data);
 
-                this.props.props.navigation.push("homepage-main");
+                setTimeout(() => {
+                    this.props.props.navigation.push("active-jobs");
+                }, 1000);
             } else {
                 console.log("Err", res.data);
             }

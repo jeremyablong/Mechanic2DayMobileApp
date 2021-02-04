@@ -207,7 +207,7 @@ constructor(props) {
                 this.setState({
                     spinner: false
                 })
-            },  15000);
+            },  20000);
         }
     }
     render() {
@@ -250,7 +250,7 @@ constructor(props) {
                     textContent={'Loading...'}
                     textStyle={styles.spinnerTextStyle} 
                     overlayColor={"rgba(0, 0, 0, 0.75)"} 
-                    textContent={"Processing your photo uploads... Overlay will timeout after 15 seconds."} 
+                    textContent={"Processing your photo uploads... Overlay will timeout after image upload completes"} 
                     textStyle={{ color: "white", margin: 10, textAlign: "center" }} 
                     cancelable={false}
                 />

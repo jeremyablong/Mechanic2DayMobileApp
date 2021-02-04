@@ -566,7 +566,7 @@ constructor(props) {
                             }} />;
                         })}
                     </MapView> : null}
-                    {user !== null && _.has(this.props.authenticated, "fullName") && user.accountType !== "tow-truck-driver" ? <View style={styles.marginAbsolute}>
+                    {user !== null && _.has(this.props.authenticated, "fullName") && (user.accountType !== "tow-truck-driver" && user.accountType !== "mechanic") ? <View style={styles.marginAbsolute}>
                         <View style={styles.centered}>
                             <AwesomeButtonRick textColor={"black"} onPress={() => {
                                 // if (_.has(user, "completed_stripe_onboarding") && user.completed_stripe_onboarding === true) {

@@ -91,7 +91,8 @@ import ReviewRoadsideAssistanceAgentPage from "./pages/roadsideAssistance/review
 import ReviewRoadsideAssistanceClientPage from "./pages/towTruckDriver/reviewClient/reviewClient.js";
 import SubscriptionPlansSelectionPage from "./pages/signup/subscriptionPlans/subscription.js";
 import VerifyAndValidateAccountStripePage from "./pages/account/verify/verifyAccount.js";
-
+import ReviewMechanicFixedVehiclePage from "./pages/activeRepairs/reviews/mechanic/review.js";
+import ReviewClientFixedVehicleHelper from "./pages/activeRepairs/reviews/client/review.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -115,7 +116,9 @@ constructor(props) {
     ready: false,
     price: 0,
     lengthInMeters: 0,
-    tow_driver_id: ""
+    tow_driver_id: "",
+    showCompletionModal: false,
+    fullUserName: ""
   }
 }
 
@@ -430,6 +433,24 @@ constructor(props) {
       this.navigationRef.navigate("tow-activated-map-view", null);
     }
   })
+  socket.on("completed-repair-client", (data) => {
+    if (data.approved === true && data.user_id === this.props.unique_id) {
+      this.navigationRef.navigate("broken-vehicle-review-client", null);
+    }
+  })
+  socket.on("completed-repair-mechanic", (data) => {
+    if (data.approved === true && data.user_id === this.props.unique_id) {
+      this.navigationRef.navigate("broken-vehicle-review-mechanic", null);
+    }
+  })
+  socket.on("completed-partial", (data) => {
+    if (data.notify === true && data.user_id === this.props.unique_id) {
+      this.setState({
+        showCompletionModal: true,
+        fullUserName: data.fullName
+      })
+    }
+  })
   socket.on("invite", (data) => {
     if (data.user_id === this.props.unique_id) {
       console.log("data data data", data);
@@ -664,6 +685,8 @@ constructor(props) {
               <Stack.Screen name="review-roadside-assistance-client" component={ReviewRoadsideAssistanceClientPage} />
               <Stack.Screen name="mechanic-select-pricing-plan" component={SubscriptionPlansSelectionPage} />
               <Stack.Screen name="verify-validate-account-stripe" component={VerifyAndValidateAccountStripePage} />
+              <Stack.Screen name="broken-vehicle-review-mechanic" component={ReviewMechanicFixedVehiclePage} />
+              <Stack.Screen name="broken-vehicle-review-client" component={ReviewClientFixedVehicleHelper} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>
@@ -776,6 +799,26 @@ constructor(props) {
                 this.navigationRef.navigate('driver-has-arrived-manage-listing-depatarture', null);
               })
             }} width={width * 0.75}>Redirect to page</AwesomeButtonBlue>
+          </View>
+        </Modal>
+        <Modal isVisible={this.state.showCompletionModal}>
+          <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 500, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
+            <Image source={require("./assets/icons/completed.png")} style={{ maxWidth: 75, maxHeight: 75 }} />
+            <Text style={{ marginBottom: 25, fontWeight: "bold", textAlign: "center", fontSize: 18, marginTop: 15 }}>The OTHER USER ({this.state.fullUserName}) on a job you're connected to marked their half of the job complete. You should now go and mark the job as complete if the job was completed. This change can be found in the "Active Repair Jobs" Category from your account quick links page...</Text>
+            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+            <AwesomeButtonBlue type={"secondary"} stretch={true} onPress={() => {
+              this.setState({
+                showCompletionModal: false
+              })
+            }} textColor={"black"}>Close/exit</AwesomeButtonBlue>
+            <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+            <AwesomeButtonBlue type={"primary"} textColor={"white"} onPress={() => {
+              this.setState({
+                showCompletionModal: false
+              }, () => {
+                this.navigationRef.navigate("active-jobs");
+              })
+            }} stretch={true}>Redirect to page</AwesomeButtonBlue>
           </View>
         </Modal>
           <Toast ref={(ref) => Toast.setRef(ref)} />

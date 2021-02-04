@@ -102,7 +102,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             const generated_unique_id = uuidv4();
 
             const account = await stripe.accounts.create({
-                type: 'standard',
+                type: 'express',
                 country: 'US'
             }, (errrrrr, account) => {
                 if (errrrrr) {

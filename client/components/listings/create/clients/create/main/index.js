@@ -153,7 +153,7 @@ constructor(props) {
                     </Left>
                     <Right>
                         <Button transparent onPress={() => {
-                            this.props.props.navigation.navigate("list-vehicle-start");
+                            this.props.props.navigation.push("list-vehicle-start");
                         }}>
                             <Image source={require('../../../../../../assets/icons/plus.png')} style={styles.iconSmaller} />
                         </Button>
@@ -174,7 +174,7 @@ constructor(props) {
                     <View style={[styles.centered, { marginTop: 15 }]}>
                         <View style={styles.centered}>
                             <AwesomeButtonRick width={width * 0.80} backgroundShadow={"#E8CEE4"} onPress={() => {
-                                this.props.props.navigation.navigate("list-vehicle-start");
+                                this.props.props.navigation.push("list-vehicle-start");
                             }} type="secondary">
                                 <Text style={{ fontWeight: "bold" }}>List your vehicle for repair</Text>
                             </AwesomeButtonRick>

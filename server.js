@@ -80,13 +80,13 @@ app.use("/gather/breif/data/two", require("./routes/gatherRestrictedDataTwo.js")
 app.use("/delete/notification", require("./routes/notifications/delete/deleteNotification.js"));
 app.use("/gather/accepted_jobs/details", require("./routes/activeJobs/gather/gatherJobs.js"));
 app.use("/gather/applied/information", require("./routes/activeJobs/gather/gatherApplicationDetails.js"));
-app.use("/initiate/payment/paypal/3/step", require("./routes/paypal/createOrderDelayed.js"));
+app.use("/initiate/payment/paypal/3/step", require("./routes/stripe/createOrderDelayed.js"));
 app.use("/update/payments/with/paypal/address", require("./routes/account/payments/payments/create/addPaypalEmailAddress.js"));
 app.use("/delete/paypal/account/email", require("./routes/account/payments/payments/changes/deletePaypalEmailAddress.js"));
-app.use("/capture/paypal/payment/second/step", require("./routes/paypal/capturePayment.js"));
+app.use("/capture/paypal/payment/second/step", require("./routes/stripe/capturePayment.js"));
 app.use("/notify/push/notification/email/paypal/other", require("./routes/push-notifications/paypalRelated/notifyOtherRegEmail.js"));
-app.use("/finalize/payment/paypal/vehicle/repair", require("./routes/paypal/finalizePaymentHalf.js"));
-app.use("/accept/job/quality/work/lister", require("./routes/paypal/acceptOtherHalf.js"));
+app.use("/finalize/payment/paypal/vehicle/repair", require("./routes/stripe/finalizePaymentHalf.js"));
+app.use("/accept/job/quality/work/lister", require("./routes/stripe/acceptOtherHalf.js"));
 app.use("/start/listing/location/roadside/assistance", require("./routes/roadsideAssistance/create/createListingLocation.js"));
 app.use("/gather/listings/roadside/assistance", require("./routes/roadsideAssistance/gather/gatherUnfinishedListings.js"));
 app.use("/update/listing/drivers/license/info/roadside/assistance", require("./routes/roadsideAssistance/create/DLinfo.js"));
@@ -99,7 +99,7 @@ app.use("/update/location/geo", require("./routes/location/updateUserLocation.js
 app.use("/gather/mechanics", require("./routes/mechanics/gatherAllMechanics.js"));
 app.use("/start/tow/service/start/finish", require("./routes/roadsideAssistance/towTransaction/startTowActiveOne.js"));
 app.use("/start/tow/service/start/finish/two", require("./routes/roadsideAssistance/towTransaction/startTowActiveTwo.js"));
-app.use("/take/payment/paypal/capture", require("./routes/paypal/tow/takePaymentInitial.js"));
+app.use("/take/payment/paypal/capture", require("./routes/stripe/tow/takePaymentInitial.js"));
 app.use("/gather/all/companies/display/tow", require("./routes/towCompanies/gatherAllTowCompanies.js"));
 app.use("/associate/and/notify/tow/company", require("./routes/towCompanies/newDriver/newDriverRequest.js"));
 app.use("/gather/tow/drivers/pending", require("./routes/towCompanies/newDriver/gatherPendingDrivers.js"));
@@ -136,8 +136,10 @@ app.use("/decline/roadside/assistance/offer", require("./routes/roadsideAssistan
 app.use("/check/if/able/to/apply", require("./routes/towDrivers/initiate/checkPendingJob.js"));
 app.use("/cancel/roadside/assistance/claim", require("./routes/roadsideAssistance/delete/deleteListingRequest.js"));
 app.use("/remove/from/queue", require("./routes/roadsideAssistance/delete/removeFromQueue.js"));
-
-
+app.use("/mark/complete/broken/vehicle/listing/mechanic/user", require("./routes/brokenVehicleListings/completion/mechanic/markAsComplete.js"));
+app.use("/mark/complete/broken/vehicle/listing/client/user", require("./routes/brokenVehicleListings/completion/client/markAsComplete.js"));
+app.use("/submit/feedback/review/client/broken/vehicle/listing", require("./routes/activeJobs/reviews/client/review.js"));
+app.use("/submit/feedback/review/mechanic/broken/vehicle", require("./routes/activeJobs/reviews/mechanic/review.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
@@ -197,6 +199,23 @@ io.on("connection", socket => {
 
 		io.sockets.emit("arrived", data);
 
+	})
+	socket.on("successfully-completed-repair", (data) => {
+
+		console.log("COMPLETED REPAIR CLIENT!:", data);
+
+		io.sockets.emit("completed-repair-client", data);
+
+	})
+	socket.on("completed-repair-mechanic-review", (data) => {
+		console.log("COMPLETED REPAIR MECHANIC!:", data);
+
+		io.sockets.emit("completed-repair-mechanic", data);
+	})
+	socket.on("notify-other-user-of-completion", (data) => {
+		console.log("NOTIFY OF HALF COMPLETION!:", data);
+
+		io.sockets.emit("completed-partial", data);
 	})
 	socket.on("approve-next-page", (data) => {
 

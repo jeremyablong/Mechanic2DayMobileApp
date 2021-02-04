@@ -425,8 +425,8 @@ constructor(props) {
                         <View style={{ margin: 20 }}>
                             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Place a bid!</Text>
                             <Text>Here at MechanicToday we use a bid style system for pricing. We allow all mechanics to place a bid which allows the person with the vehicle in need of repair to selectivly choose the right mechanic in their budget and get quality service simultaniously!</Text>
-                            {this.state.applied === false ? <AwesomeButtonRick width={width * 0.75} style={{ marginTop: 15 }} onPress={() => {
-                                if (typeof signed_in_user.card_payment_methods !== "undefined" && signed_in_user.card_payment_methods.length > 0) {
+                            {this.state.applied === false && signed_in_user !== null && (signed_in_user.accountType === "mechanic" || signed_in_user.accountType === "tow-truck-driver") ? <AwesomeButtonRick width={width * 0.75} style={{ marginTop: 15 }} onPress={() => {
+                                if (typeof signed_in_user.completed_stripe_onboarding !== "undefined" && signed_in_user.completed_stripe_onboarding === true) {
                                     this.RBSheetTwo.open();
                                 } else {
                                     this.setState({
@@ -1018,9 +1018,9 @@ constructor(props) {
             <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
             <View>
                 <Dialog.Container visible={this.state.showDialog}>
-                <Dialog.Title>You must have a payment method on file before placing a bid...</Dialog.Title>
+                <Dialog.Title>You must verify/validate your account and add a payment method before continuing...</Dialog.Title>
                 <Dialog.Description>
-                    Would you like to redirect to enter your payment information? You MUST enter your payment information before placing a bid.
+                    Would you like to redirect to validate/verify & add a payment method? You MUST enter your payment information before placing a bid.
                 </Dialog.Description>
                 <Dialog.Button onPress={() => {
                     this.setState({
@@ -1031,7 +1031,7 @@ constructor(props) {
                     this.setState({
                         showDialog: false
                     }, () => {
-                        this.props.props.navigation.navigate("payments-cards");
+                        this.props.props.navigation.navigate("verify-validate-account-stripe");
                     })
                 }} label="REDIRECT" />
                 </Dialog.Container>

@@ -13,7 +13,7 @@ const FooterHelper = (props) => {
                 <Footer>
                     <FooterTab>
                         <Button onPress={() => {
-                            props.props.navigation.navigate("proposals");
+                            props.props.navigation.push("proposals");
                         }} vertical>
                             <Image source={require("../../assets/icons/apply.png")} style={styles.menuIcon} />
                         <Text>Proposal</Text>
@@ -26,7 +26,7 @@ const FooterHelper = (props) => {
                         <Text>Listings</Text>
                         </Button>
                         <Button onPress={() => {
-                            props.props.navigation.navigate("chat-conversations");
+                            props.props.navigation.push("chat-conversations");
                         }} badge vertical>
                         <Badge style={styles.badge}><Text>51</Text></Badge>
                             <Image source={require("../../assets/icons/chat.png")} style={styles.menuIcon} />

@@ -332,7 +332,7 @@ constructor(props) {
                         <View style={styles.topContainer}>
                             <View style={styles.justifyCentered}>
                                 <Image source={require("../../assets/icons/dotted.png")} style={{ maxHeight: 20, maxWidth: 100 }} />
-                                {this.state.show === true ? <Text style={{ marginTop: 5, fontSize: 20 }}>1-16 of 300+ Broken Vehicles</Text> : <Text style={{ marginTop: 5, fontSize: 25 }}>300+ Broken Vehicles</Text>}
+                                {this.state.show === true ? <Text style={{ marginTop: 5, fontSize: 20 }}>1-16 of {this.state.listings.length}+ Broken Vehicles</Text> : <Text style={{ marginTop: 5, fontSize: 25 }}>{this.state.listings.length}+ Broken Vehicles</Text>}
                             </View>
                             
                         </View>

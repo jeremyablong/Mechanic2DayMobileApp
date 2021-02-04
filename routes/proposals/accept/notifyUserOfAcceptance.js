@@ -6,6 +6,7 @@ const config = require("config");
 const cors = require('cors');
 const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
+const { resolve } = require("path");
 const stripe = require('stripe')(config.get("stripeSecretKey"));
 
 
@@ -16,74 +17,159 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { proposal, other, listinggg, other_user, total, customer_id } = req.body;
+        const { proposal, other, listinggg, fullName, total, customer_id, signed_in_user_id } = req.body;
 
-        collection.findOne({ unique_id: proposal.applicant }).then(async (user) => {
-            if (user) {
+        collection.find({ unique_id: { "$in": [ proposal.applicant, signed_in_user_id ]}}).toArray(async (err, users) => {
+            if (err) {
+                console.log(err);
 
-                const paymentIntent = await stripe.paymentIntents.create({
-                    amount: Math.round(total * 100),
-                    currency: 'usd',
-                    payment_method_types: ['card'],
-                    application_fee_amount: Math.round(total * 0.20),
-                    customer: customer_id,
-                    transfer_data: {
-                        destination: user.stripe_connect_account.id,
-                    },
-                    confirm: true,
-                    capture_method: "manual"
-                }, (errorrrrrrrrr, intent) => {
-                    if (errorrrrrrrrr) {
-                        console.log(errorrrrrrrrr);
-                    } else {
-                        console.log("INTENT", intent);
+                res.json({
+                    message: "Error occurred...",
+                    err
+                })
+            } else {
 
-                        const accepted = {
-                            id: uuidv4(),
-                            accepted_job_id: proposal.related,
-                            agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-                            agreement_system_date: Date.now(),
-                            agreed_amount: proposal.amount,
-                            currency: "$ - USD",
-                            initiator: other,
-                            other_user,
-                            other_user_agrees_completion: false,
-                            poster_agrees_completion: false,
-                            payment_intent: intent
-                        };
-        
-                        if (user.accepted_jobs) {
-                            user.accepted_jobs.push(accepted)
-                        } else {
-                            user["accepted_jobs"] = [accepted];
-                        }
-        
-                        collection.save(user);
-        
-                        for (let index = 0; index < user.applied_jobs.length; index++) {
-                            const job = user.applied_jobs[index];
-                            
-                            if (job.applied_job_id === listinggg.id) {
-        
-                                job.accepted = true;
+                const generatedUniqueID = uuidv4();
+                
+               const promiseee = new Promise((resolve, reject) => {
+                    for (let index = 0; index < users.length; index++) {
+                        const user = users[index];
+                        // mechanic
+                        if (user.unique_id === proposal.applicant) {
+                            console.log("OTHERRRRRRR USER", user);
 
-                                collection.save(user);
+                            for (let index = 0; index < user.applied_jobs.length; index++) {
+                                const job = user.applied_jobs[index];
+                                
+                                if (job.applied_job_id === listinggg.id) {
+            
+                                    job.accepted = true;
 
-                                res.json({
-                                    message: "Succesfully notified user!",
-                                    user
-                                })
+                                    collection.save(user);
+
+                                    setTimeout(() => {
+                                        resolve(user.stripe_connect_account.id);
+                                    }, 750);
+                                }
                             }
+                        };
+                    }
+               })
+
+                promiseee.then(async (passedData) => {
+
+                    for (let index = 0; index < users.length; index++) {
+                        const user = users[index];
+                        // client
+                        if (user.unique_id === signed_in_user_id) {
+                            console.log("proposal.applicant...", user);
+                            const paymentIntent = await stripe.paymentIntents.create({
+                                amount: Math.round(total  * 100),
+                                currency: 'usd',
+                                payment_method_types: ['card'],
+                                application_fee_amount: Math.round((total * 100) * 0.20),
+                                customer: user.stripe_customer_account.id,
+                                transfer_data: {
+                                    destination: passedData,
+                                },
+                                confirm: true,
+                                capture_method: "manual"
+                            }, async (errorrrrrrrrr, intent) => {
+                                if (errorrrrrrrrr) {
+                                    console.log(errorrrrrrrrr);
+                                } else {
+                                    console.log("INTENT", intent);
+
+                                    if (user.accepted_jobs) {
+                                        user.accepted_jobs.push({
+                                            id: generatedUniqueID,
+                                            accepted_job_id: listinggg.id,
+                                            agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                            agreement_system_date: Date.now(),
+                                            agreed_amount: proposal.amount,
+                                            currency: "$ - USD",
+                                            initiator: signed_in_user_id,
+                                            other_user: proposal.applicant,
+                                            other_user_agrees_completion: false,
+                                            poster_agrees_completion: false,
+                                            payment_intent: intent
+                                        })
+
+                                        await collection.save(user);
+                                    } else {
+                                        user["accepted_jobs"] = [{
+                                            id: generatedUniqueID,
+                                            accepted_job_id: listinggg.id,
+                                            agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                            agreement_system_date: Date.now(),
+                                            agreed_amount: proposal.amount,
+                                            currency: "$ - USD",
+                                            initiator: signed_in_user_id,
+                                            other_user: proposal.applicant,
+                                            other_user_agrees_completion: false,
+                                            poster_agrees_completion: false,
+                                            payment_intent: intent
+                                        }]
+
+                                        await collection.save(user);
+                                    }
+                                }
+                            })
                         }
                     }
-                });
-            } else {
-                res.json({
-                    message: "Could not locate the appropriate user..."
+                }).then(async () => {
+                    for (let index = 0; index < users.length; index++) {
+                        const user = users[index];
+                        
+                        if (user.unique_id === proposal.applicant) {
+                            const accepted = {
+                                id: generatedUniqueID,
+                                accepted_job_id: proposal.related,
+                                agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                agreement_system_date: Date.now(),
+                                agreed_amount: proposal.amount,
+                                currency: "$ - USD",
+                                initiator: signed_in_user_id,
+                                other_user: proposal.applicant,
+                                other_user_agrees_completion: false,
+                                poster_agrees_completion: false
+                            };
+            
+                            if (user.accepted_jobs) {
+                                user.accepted_jobs.push(accepted)
+                            } else {
+                                user["accepted_jobs"] = [accepted];
+                            }
+
+                            const notify_obj = {
+                                id: uuidv4(),
+                                system_date: Date.now(),
+                                date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                data: {
+                                    title: `${fullName} ACCEPTED your proposal to a job you applied for 💰`,
+                                    body: `${fullName} ACCEPTED your application/proposal to fix their vehicle. Congrats!`
+                                },
+                                from: signed_in_user_id,
+                                link: "proposals"
+                            }
+            
+                            if (user.notifications) {
+                                user.notifications.push(notify_obj)
+                            } else {
+                                user["notifications"] = [notify_obj];
+                            }
+            
+                            await collection.save(user);
+
+                            setTimeout(() => {
+                                res.json({
+                                    message: "Succesfully notified user!"
+                                })
+                            }, 500);
+                        }
+                    }
                 })
             }
-        }).catch((err) => {
-            console.log(err);
         })
     });
 });

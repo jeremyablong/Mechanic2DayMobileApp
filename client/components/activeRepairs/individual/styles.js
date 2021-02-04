@@ -10,7 +10,8 @@ export default StyleSheet.create({
     },
     container:{
         flex:1,
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: -1
     },
     desc: {
         fontSize: 14
@@ -154,7 +155,9 @@ export default StyleSheet.create({
     },
     hr: {
         borderBottomColor: "lightgrey", 
-        borderBottomWidth: 1
+        borderBottomWidth: 1,
+        marginTop: 15, 
+        marginBottom: 15
     },  
     header: {
         fontSize: 24, 
