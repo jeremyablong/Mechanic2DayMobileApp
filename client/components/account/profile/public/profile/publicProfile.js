@@ -299,7 +299,6 @@ constructor (props) {
     }
     render() {
         console.log("this.state publicProfile", this.state);
-        const review_count = Math.floor(Math.random() * 50) + 1;
 
         const { user } = this.state;
         return (
@@ -338,7 +337,7 @@ constructor (props) {
                             <Image source={require("../../../../../assets/icons/verified.png")} style={styles.verified} /><Text style={{ marginTop: 8, marginLeft: 10 }}>Identity Verified</Text>
                         </View>
                         <View style={[styles.nextContainer, { marginTop: 15 }]}>
-                            <Image source={require("../../../../../assets/icons/flying.png")} style={styles.verified} /><Text style={{ marginTop: 8, marginLeft: 10 }}>{review_count} Reviews</Text>
+                            <Image source={require("../../../../../assets/icons/flying.png")} style={styles.verified} /><Text style={{ marginTop: 8, marginLeft: 10 }}>{_.has(user, "review_count") ? user.review_count : 0} Reviews</Text>
                         </View>
                     </View>
                     <View style={styles.hr} />
@@ -401,7 +400,7 @@ constructor (props) {
                     </View>
                     <View style={styles.hr} />
                     <View style={styles.marginSpace}>
-                        <Text style={styles.h3}>{review_count} Reviews</Text>
+                        <Text style={styles.h3}>{_.has(user, "review_count") ? user.review_count : 0} Reviews</Text>
                     </View>
                 </ScrollView>
                 <RBSheet

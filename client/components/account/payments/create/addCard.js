@@ -52,7 +52,9 @@ constructor(props) {
             if (res.data.message === "Successfully added a new card!") {
                 console.log(res.data);
 
-                this.props.props.navigation.push("payments-cards");
+                setTimeout(() => {
+                    this.props.props.navigation.push("payments-cards");
+                }, 1500);
             } else {
                 console.log("Err", res.data);
             }

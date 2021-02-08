@@ -30,59 +30,76 @@ const title = "Broken exhaust pipe on a 2016 honda civic touring";
 const dataaa = [{
     title: "Engine Jobs",
     description: "Anything related to the main engine functionality",
-    background: require("../../../../assets/images/car-11.jpg"),
+    background: require("../../../../assets/images/mech-1.jpg"),
+    data: "engine",
     index: 1
 }, { 
-    title: "Exhaust Jobs",
+    title: "Transmission Jobs",
     description: "Anything related to the exahust of the vehicle/bike",
-    background: require("../../../../assets/images/car-10.jpg"),
+    background: require("../../../../assets/images/mech-2.jpg"),
+    data: "transmission",
     index: 2
 }, { 
     title: "Maintenance",
-    description: "This category is strictly for general maintenance jobs",
-    background: require("../../../../assets/images/car-9.jpg"),
-    index: 3
+    description: "Anything related to the maintenance of a vehicle/bike",
+    background: require("../../../../assets/images/mech-3.jpg"),
+    index: 3,
+    data: "maintenance"
 }, {
-    title: "Tire/Brakes",
-    description: "This is strictly for JUST tire and break jobs of all varieties",
-    background: require("../../../../assets/images/car-8.jpg"),
-    index: 4
+    title: "Exhaust Jobs",
+    description: "Anything related to the main engine exhuast",
+    background: require("../../../../assets/images/mech-4.jpg"),
+    index: 4,
+    data: "exhaust"
 }, { 
-    title: "Interior Design",
-    description: "Design and re-design of the interior of a vehicle",
-    background: require("../../../../assets/images/car-7.jpg"),
-    index: 5
+    title: "Tire/Breaks Repair",
+    description: "Anything related to the wheels/tires of a vehicle/bike",
+    background: require("../../../../assets/images/mech-5.jpg"),
+    index: 5,
+    data: "tire-breaks-wheels"
 }, {
-    title: "Oil Changes",
-    description: "Oil changes, we all need em!",
-    background: require("../../../../assets/images/car-6.jpg"),
-    index: 6
+    title: "Interior Design/Repair",
+    description: "Anything related to the interior of a vehicle",
+    background: require("../../../../assets/images/mech-6.jpg"),
+    index: 6,
+    data: "interior-repair-design"
 }, { 
     title: "Electrical Work",
     description: "Fuses, lights, signals, and the main electrical components of any vehicle",
-    background: require("../../../../assets/images/car-5.jpg"),
-    index: 7
+    background: require("../../../../assets/images/mech-7.jpg"),
+    index: 7,
+    data: "electronics/electrical"
 }, {
+    title: "Tuning/Sports Upgrades",
+    description: "High-end vehicle upgrades and alternations",
+    background: require("../../../../assets/images/car-8.jpg"),
+    index: 8,
+    data: "tuning-sports-upgrades"
+}, { 
     title: "Speciality Repairs",
-    description: "Bmw, Infiniti, Etc... foreign vehicle repairs",
-    background: require("../../../../assets/images/car-4.jpg"),
-    index: 8
-}, { 
-    title: "Speciality Upgrades",
-    description: "This category is strictly for high-end vehicle upgrades...",
-    background: require("../../../../assets/images/car-1.jpg"),
-    index: 9
+    description: "Speciality vehicle repairs done by qualified professionals -  (BMW, Audi, Etc..)",
+    background: require("../../../../assets/images/car-9.jpg"),
+    index: 9,
+    data: "speciality-repairs"
 }, {
-    title: "Transmission Repairs",
-    description: "Transmission repairs - anything tranny related!",
-    background: require("../../../../assets/images/car-2.jpg"),
-    index: 10
+    title: "Deisel Repairs",
+    description: "Heavy machinery and deisel mechanics",
+    background: require("../../../../assets/images/car-11.jpg"),
+    index: 10,
+    data: "deisel"
 }, { 
-    title: "Diagnostics",
-    description: "Find out what's wrong with your vehicle",
-    background: require("../../../../assets/images/car-3.jpg"),
-    index: 11
-}];
+    title: "Motorcycle & Motorbike",
+    description: "Designated specifically for motorbikes & motorcycles repairs and maintenance",
+    background: require("../../../../assets/images/mech-3.jpg"),
+    index: 11,
+    data: "motorcycle/motorbike"
+}, { 
+    title: "Body Work & Alterations",
+    description: "Anything body work related from dings to dents to collision repairs",
+    background: require("../../../../assets/images/car-12.jpg"),
+    index: 12,
+    data: "body-work"
+}]
 
 class IndividualBrokenVehicleHelper extends Component {
 constructor(props) {
@@ -152,7 +169,7 @@ constructor(props) {
                     <View style={styles.bottomView}>
                         <Text style={styles.desc}>{item.description}</Text>
                         <Button onPress={() => {
-                            this.props.props.navigation.navigate("individual-broken-listing");
+                            this.props.props.navigation.navigate("categories-main", { type: item.data });
                         }} style={styles.slideshowBtn}><NativeText style={{ color: "black" }}> {item.title} </NativeText></Button>
                     </View>
                 </ImageBackground>
@@ -393,6 +410,50 @@ constructor(props) {
                 break; 
         }
     }
+    renderBidButton = () => {
+        const { signed_in_user, listing } = this.state;
+
+        if (this.state.applied === false && signed_in_user !== null && (signed_in_user.accountType === "mechanic" || signed_in_user.accountType === "tow-truck-driver") && listing !== null) {
+            return (
+                <Fragment>
+                    {listing.min_reviews_to_apply.min === 0 ? <Text style={{ marginBottom: 15, marginTop: 20, fontSize: 18, fontWeight: "bold", color: "blue" }}><Text style={{ fontStyle: "italic" }}>Anyone</Text> can apply to this listing</Text> : <Text style={{ marginBottom: 15, marginTop: 20, fontSize: 18, fontWeight: "bold", color: "blue" }}>You need {listing.min_reviews_to_apply.min} review(s) to apply to this listing</Text>}
+                    <AwesomeButtonRick width={width * 0.75} style={{ marginTop: 15 }} onPress={() => {
+                    if (_.has(signed_in_user, "review_count") && signed_in_user.review_count >= listing.min_reviews_to_apply.min) {
+                        if (typeof signed_in_user.completed_stripe_onboarding !== "undefined" && signed_in_user.completed_stripe_onboarding === true) {
+                            this.RBSheetTwo.open();
+                        } else {
+                            this.setState({
+                                showDialog: true
+                            })
+                        }
+                    } else {
+                        Toast.show({
+                            text1: "You do NOT have enough reviews to apply to this job...",
+                            text2: "You need more reviews to apply to this position. Check out some other listings to see some jobs you do have enough reviews to apply for...",
+                            type: "error", 
+                            visibilityTime: 5000,
+                            position: "top"
+                        })
+                    }
+                }} type="secondary">PLACE A BID</AwesomeButtonRick>
+                </Fragment>
+            );   
+        }
+    }
+    calculateReview = () => {
+        const { user } = this.state;
+
+        let total = 0;
+
+        if (_.has(user, "review_count") && user.review_count > 0) {
+            for (const key in user.review_categories) {
+                const review = user.review_categories[key];
+
+                total += review;
+            }
+            return (total / Object.keys(user.review_categories).length).toFixed(2).toString();
+        }
+    }
     renderConditional = () => {
         const { listing, gallery, latLng, location, user, signed_in_user } = this.state;
         if (listing !== null) {
@@ -409,7 +470,7 @@ constructor(props) {
                             <Text style={styles.title}>{listing.title}</Text>
                             <View style={styles.row}>
                                 <Image source={require("../../../../assets/icons/small-star.png")} style={{ maxWidth: 15, maxHeight: 15 }} />
-                                <Text>4.3 ({Math.floor(Math.random() * 40) + 1})</Text>
+                                <Text>{this.calculateReview()} ({_.has(user, "review_count") ? user.review_count : 0}) Review(s)</Text>
                                 <Image source={require("../../../../assets/icons/medal.png")} style={styles.medal} />
                                 <Text>SuperMechanic</Text>
                             </View>
@@ -425,15 +486,7 @@ constructor(props) {
                         <View style={{ margin: 20 }}>
                             <Text style={{ fontSize: 20, fontWeight: "bold" }}>Place a bid!</Text>
                             <Text>Here at MechanicToday we use a bid style system for pricing. We allow all mechanics to place a bid which allows the person with the vehicle in need of repair to selectivly choose the right mechanic in their budget and get quality service simultaniously!</Text>
-                            {this.state.applied === false && signed_in_user !== null && (signed_in_user.accountType === "mechanic" || signed_in_user.accountType === "tow-truck-driver") ? <AwesomeButtonRick width={width * 0.75} style={{ marginTop: 15 }} onPress={() => {
-                                if (typeof signed_in_user.completed_stripe_onboarding !== "undefined" && signed_in_user.completed_stripe_onboarding === true) {
-                                    this.RBSheetTwo.open();
-                                } else {
-                                    this.setState({
-                                        showDialog: true
-                                    })
-                                }
-                            }} type="secondary">PLACE A BID</AwesomeButtonRick> : null}
+                            {this.renderBidButton()}
                         </View>
                         <View style={styles.hrTwo} />
                         <View style={styles.marginMargin}>
@@ -549,7 +602,7 @@ constructor(props) {
                         <View style={styles.marginMargin}>
                             <View style={styles.row}>
                                 <Image source={require("../../../../assets/icons/small-star.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
-                                <Text style={{ fontSize: 18, marginTop: 6 }}>4.3 ({Math.floor(Math.random() * 40) + 1} Reviews)</Text>
+                                <Text style={{ fontSize: 18, marginTop: 6 }}>{this.calculateReview()} ({_.has(user, "review_count") ? user.review_count : 0} Reviews)</Text>
                             </View>
                             <View style={styles.noMargin}>
                                 {typeof reviews !== 'undefined' && reviews.length > 0 ? reviews.slice(0, 2).map((review, index) => {
@@ -596,7 +649,7 @@ constructor(props) {
                             </View>
                             <View style={[styles.rowRow, { marginTop: 0 }]}>
                                 <Image source={require("../../../../assets/icons/small-star.png")} style={{ maxWidth: 30, maxHeight: 30 }} />
-                                <Text style={{ margin: 5 }}>{Math.floor(Math.random() * 70) + 1} Reviews</Text>
+                                <Text style={{ margin: 5 }}>{_.has(user, "review_count") ? user.review_count : 0} Reviews</Text>
                             </View>
                             <View style={[styles.rowRow, { marginTop: 10 }]}>
                                 <Image source={require("../../../../assets/icons/shield.png")} style={{ maxWidth: 30, maxHeight: 30 }} />

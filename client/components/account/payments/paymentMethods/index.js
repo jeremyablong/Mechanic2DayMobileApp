@@ -159,6 +159,86 @@ constructor(props) {
                                     </Right>
                                 </ListItem>
                             );
+                        } else if (card.type === "discover") {
+                            return (
+                                <ListItem onPress={() => {
+                                    this.props.props.navigation.push("view-individual-card-info", { card });
+                                }} button={true} style={styles.listItem}>
+                                    <Left style={{ flexDirection: "row" }}>
+                                        <TouchableOpacity onPress={() => {}}>
+                                            <Image source={require("../../../../assets/icons/discover.png")} style={styles.paymentIcon} />
+                                        </TouchableOpacity>
+                                        <NativeText style={{ marginLeft: 20 }}>Discover {card.last_four}</NativeText>
+                                    </Left>
+                                     <Right>
+                                        {card.primary === true ? <Text style={styles.default}>Default</Text> : null}
+                                    </Right>
+                                </ListItem>
+                            );
+                        } else if (card.type === "american-express") {
+                            return (
+                                <ListItem onPress={() => {
+                                    this.props.props.navigation.push("view-individual-card-info", { card });
+                                }} button={true} style={styles.listItem}>
+                                    <Left style={{ flexDirection: "row" }}>
+                                        <TouchableOpacity onPress={() => {}}>
+                                            <Image source={require("../../../../assets/icons/amex.png")} style={styles.paymentIcon} />
+                                        </TouchableOpacity>
+                                        <NativeText style={{ marginLeft: 20 }}>AE - Exp. {card.expiration}</NativeText>
+                                    </Left>
+                                     <Right>
+                                        {card.primary === true ? <Text style={styles.default}>Default</Text> : null}
+                                    </Right>
+                                </ListItem>
+                            );
+                        } else if (card.type === "jcb") {
+                            return (
+                                <ListItem onPress={() => {
+                                    this.props.props.navigation.push("view-individual-card-info", { card });
+                                }} button={true} style={styles.listItem}>
+                                    <Left style={{ flexDirection: "row" }}>
+                                        <TouchableOpacity onPress={() => {}}>
+                                            <Image source={require("../../../../assets/icons/jcb.png")} style={styles.paymentIcon} />
+                                        </TouchableOpacity>
+                                        <NativeText style={{ marginLeft: 20 }}>JCB - {card.last_four}</NativeText>
+                                    </Left>
+                                     <Right>
+                                        {card.primary === true ? <Text style={styles.default}>Default</Text> : null}
+                                    </Right>
+                                </ListItem>
+                            );
+                        } else if (card.type === "diners-club") {
+                            return (
+                                <ListItem onPress={() => {
+                                    this.props.props.navigation.push("view-individual-card-info", { card });
+                                }} button={true} style={styles.listItem}>
+                                    <Left style={{ flexDirection: "row" }}>
+                                        <TouchableOpacity onPress={() => {}}>
+                                            <Image source={require("../../../../assets/icons/dinners-club.png")} style={styles.paymentIcon} />
+                                        </TouchableOpacity>
+                                        <NativeText style={{ marginLeft: 20 }}>DC - Ex. {card.expiration}</NativeText>
+                                    </Left>
+                                     <Right>
+                                        {card.primary === true ? <Text style={styles.default}>Default</Text> : null}
+                                    </Right>
+                                </ListItem>
+                            );
+                        } else {
+                            return (
+                                <ListItem onPress={() => {
+                                    this.props.props.navigation.push("view-individual-card-info", { card });
+                                }} button={true} style={styles.listItem}>
+                                    <Left style={{ flexDirection: "row" }}>
+                                        <TouchableOpacity onPress={() => {}}>
+                                            <Image source={require("../../../../assets/icons/general-card.png")} style={styles.paymentIcon} />
+                                        </TouchableOpacity>
+                                        <NativeText style={{ marginLeft: 20 }}>General - {card.last_four}</NativeText>
+                                    </Left>
+                                     <Right>
+                                        {card.primary === true ? <Text style={styles.default}>Default</Text> : null}
+                                    </Right>
+                                </ListItem>
+                            );
                         }
                     }) : null}
                     </List>

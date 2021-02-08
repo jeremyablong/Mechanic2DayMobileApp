@@ -10,6 +10,7 @@ import axios from "axios";
 import { Config } from "react-native-config";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { sendbirdLogin } from "../../../actions/sendbird/user.js";
+import _ from "lodash";
 
 class ProfileMainHelper extends Component {
 constructor(props) {
@@ -17,7 +18,8 @@ constructor(props) {
     
     this.state = {
         mechanic: true,
-        user: null
+        user: null,
+        stripe_balance: null
     }
 }
     deauthenticate = () => {
@@ -35,17 +37,24 @@ constructor(props) {
     }
     componentDidMount() {
         setTimeout(() => {
-            axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            axios.post(`${Config.ngrok_url}/gather/general/info/with/balance`, {
                 id: this.props.unique_id
             }).then((res) => {
                 if (res.data.message === "Found user!") {
                     console.log(res.data);
     
                     const { user } = res.data;
-    
-                    this.setState({
-                        user
-                    })
+
+                    if (_.has(res.data, "stripe_balance")) {
+                        this.setState({
+                            user,
+                            stripe_balance: res.data.stripe_balance
+                        })
+                    } else {
+                        this.setState({
+                            user
+                        })
+                    }
                 } else {
                     console.log("Err", res.data);
                 }
@@ -255,11 +264,15 @@ constructor(props) {
                     </View>
                     <View style={styles.nameContainer}>
                         <Text style={styles.name}>{this.props.fullName}</Text>
-                        <TouchableOpacity onPress={() => {
+                        {this.state.stripe_balance !== null ? <TouchableOpacity onPress={() => {
+                            this.props.props.navigation.push("view-public-profile-page");
+                        }}>
+                            <Text style={styles.subText}>View Profile {"\n"}Account Balance (${this.state.stripe_balance.available[0].amount})</Text>
+                        </TouchableOpacity> : <TouchableOpacity onPress={() => {
                             this.props.props.navigation.push("view-public-profile-page");
                         }}>
                             <Text style={styles.subText}>View Profile</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
                     </View>
                 </View>
                 <View style={{ flex: 1 }}>

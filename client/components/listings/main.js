@@ -256,11 +256,11 @@ constructor(props) {
                                     onCalloutPress={() => {
                                         console.log("callout pressed.");
 
-                                        this.props.props.navigation.navigate("individual-broken-listing", { listing: marker });
+                                        this.props.props.navigation.push("individual-broken-listing", { listing: marker });
                                     }}
                                 >
                                         <Callout onPress={() => {
-                                            this.props.props.navigation.navigate("individual-broken-listing", { listing: marker });
+                                            this.props.props.navigation.push("individual-broken-listing", { listing: marker });
                                         }}>
                                             <View style={styles.callout}>
                                                 <Card style={{ flex: 0 }}>
@@ -277,7 +277,7 @@ constructor(props) {
                                                     <Body>
                                                         <Image source={{uri: marker.photos[0] }} style={styles.innerPicture}/>
                                                         <NativeText>
-                                                            {marker.description.slice(0, 120)}{typeof marker.description !== "undefined" && marker.description.length > 120 ? "..." : ""}
+                                                            {marker.description.slice(0, 75)}{typeof marker.description !== "undefined" && marker.description.length > 75 ? "..." : ""}
                                                         </NativeText>
                                                     </Body>
                                                     </CardItem>

@@ -5,9 +5,10 @@ const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
 const stripe = require('stripe')(config.get("stripeSecretKey"));
+const axios = require("axios");
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
-    router.post("/", (req, res) => {
+    router.post("/", (req, mainResponse) => {
 
         const database = db.db("<dbname>");
 
@@ -20,7 +21,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         collection.find({ unique_id: { "$in": [id, other_user_id]}}).toArray(async (err, users) => {
             if (err) {
 
-                res.json({
+                mainResponse.json({
                     message: "Critical error....",
                     err
                 })
@@ -65,26 +66,42 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     collection.save(user);
     
                                     if (job.other_user_agrees_completion === true && job.poster_agrees_completion === true) {
-                                        const paymentIntent = await stripe.paymentIntents.capture(
-                                            job.payment_intent.id
-                                        ).catch((response) => {
-                                            console.log("RESponse", response);
 
-                                            if (response.raw.message === "This PaymentIntent could not be captured because it has already been captured.") {
-                                                res.json({
-                                                    message: "STRIPE error occurred...",
-                                                    err: response.raw.message
-                                                })
+                                        console.log("Ran..... mechanic.");
+
+                                        axios.post(`${config.get("ngrok_url")}/remove/broken/vehicle/listing`, {
+                                            client_id: other_user_id,
+                                            vehicle
+                                        }).then(async(resp) => {
+                                            if (resp.data.message === "Successfully marked as COMPLETE.") {
+
+
+                                                const paymentIntent = await stripe.paymentIntents.capture(
+                                                    job.payment_intent.id
+                                                ).catch((response) => {
+                                                    console.log("RESponse", response);
+        
+                                                    if (response.raw.message === "This PaymentIntent could not be captured because it has already been captured.") {
+                                                        mainResponse.json({
+                                                            message: "STRIPE error occurred...",
+                                                            err: response.raw.message
+                                                        })
+                                                    }
+                                                });
+        
+                                                if (paymentIntent) {
+                                                    mainResponse.json({
+                                                        message: "Successfully notifed user of completion and updated data in db!"
+                                                    })  
+                                                }
+                                            } else {
+                                                console.log("ERr", resp.data)
                                             }
-                                        });
-
-                                        if (paymentIntent) {
-                                            res.json({
-                                                message: "Successfully notifed user of completion and updated data in db!"
-                                            })
-                                        }
+                                        }).catch((err) => {
+                                            console.log(err);
+                                        })
                                     } else {
-                                        res.json({
+                                        mainResponse.json({
                                             message: "Marked half complete!"
                                         })
                                     }

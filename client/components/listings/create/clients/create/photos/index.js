@@ -110,10 +110,27 @@ constructor(props) {
     }
     completedLaunch = (data) => {
         console.log("completedLaunch", data);
+        
+        const { photos, selected } = this.state;
+
+        const listinggg = this.props.props.route.params.listing;
+
 
         if (data.didCancel !== true) {
-            this.setState({
-                photos: [...this.state.photos, { source: { uri: `data:${data.type};base64,${data.base64}` } }]     
+            axios.post(`${Config.ngrok_url}/upload/individual/photo/on/select`, {
+                photo: `data:${data.type};base64,${data.base64}`,
+                id: this.props.unique_id,
+                selected: selected || listinggg
+            }).then((resolution) => {
+                if (resolution.data.message === "Uploaded!") {
+                    console.log(resolution.data);
+
+                    this.setState({
+                        photos: [...this.state.photos, { source: { uri: `data:${data.type};base64,${data.base64}`, generatedID: resolution.data.generatedID }, }]     
+                    })
+                }
+            }).catch((error) => {
+                console.log(error);
             })
         }
     }
@@ -250,7 +267,7 @@ constructor(props) {
                     textContent={'Loading...'}
                     textStyle={styles.spinnerTextStyle} 
                     overlayColor={"rgba(0, 0, 0, 0.75)"} 
-                    textContent={"Processing your photo uploads... Overlay will timeout after image upload completes"} 
+                    textContent={"Processing your photo uploads..."} 
                     textStyle={{ color: "white", margin: 10, textAlign: "center" }} 
                     cancelable={false}
                 />

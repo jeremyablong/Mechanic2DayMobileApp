@@ -1,8 +1,10 @@
-import React, { Fragment, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.js";
 import { Image, View, Text, FlatList, TouchableOpacity } from "react-native";
 import { AirbnbRating } from 'react-native-ratings';
-
+import axios from "axios";
+import { Config } from "react-native-config";
+import moment from "moment";
 
 const FillerContentMechanicsForHire = (props) => {
     const [data, setData] = useState([{
@@ -104,27 +106,52 @@ const FillerContentMechanicsForHire = (props) => {
         budget: 455,
         location: "Atlanta, GA"
     }]);
+    const [users, setUsers] = useState([]);
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            axios.get(`${Config.ngrok_url}/gather/mechanics/all`).then((res) => {
+                if (res.data.message === "Successfully gathered users!") {
+                    console.log(res.data);
+
+                    const { users } = res.data;
+
+                    setUsers(users);
+                } else {
+                    console.log("err", res.data);
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        },  400);
+    }, []);
+    const calculateBirthdate = (birthdate, gender) => {
+        const years = moment().diff(birthdate, 'years');
+
+        return `${years} old - ${gender}`;
+    }
     return (
         <View style={{ marginTop: -100 }}>
             <Text style={styles.flatlistTitle}>Mechanics For Hire</Text>
             <Text style={{ paddingLeft: 15, paddingBottom: 15 }}>Hire top tier mechanics or find lower rate mechanics if you're on a budget! We cover every area</Text>
             <FlatList 
                 style={styles.flatListMain}
-                data={data}
+                data={users.slice(0, 8)}
                 renderItem={({ item }) => {
                     return (
                         <TouchableOpacity onPress={() => {
                             props.props.navigation.navigate("mechanic-for-hire-individual");
                         }} style={styles.flatlistItem}>
-                            <Image source={{ uri: item.background }} style={styles.specialImage} />
+                            <Image source={{ uri: typeof item.profilePics !== "undefined" && item.profilePics.length > 0 ? item.profilePics[item.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg" }} style={styles.specialImage} />
                             <View style={styles.specialRow}>
                                 <View style={styles.left}>
-                                    <Image source={require("../../assets/icons/location-small.png")} style={{ maxWidth: 15, maxHeight: 15, marginRight: 10 }} />
-                                    <Text>{item.location}</Text>
+                                    {/* <Image source={require("../../assets/icons/location-small.png")} style={{ maxWidth: 15, maxHeight: 15, marginRight: 10 }} /> */}
+                                    <Text>{item.fullName}</Text>
                                 </View>
                             </View>
                             <View style={styles.specialRow}>
-                                <Text style={styles.mainTitle}>Transmission</Text>
+                                <Text style={styles.mainTitle}>{calculateBirthdate(item.birthdate, item.gender)}</Text>
                             </View>
                             <View style={styles.specialRow}>
                                 <View style={styles.floatLeft}>
@@ -139,7 +166,7 @@ const FillerContentMechanicsForHire = (props) => {
                                 </View>
                             </View>
                             <View style={styles.specialRow}>
-                                <Text style={styles.pricePrice}>Min Rate: ${item.budget.toString()}</Text>
+                                <Text style={styles.pricePrice}>Min Rate: ${null}</Text>
                             </View>
                         </TouchableOpacity>
                     );

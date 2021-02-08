@@ -146,7 +146,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 system_date: Date.now(),
                                 date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                                 data: {
-                                    title: `${fullName} ACCEPTED your proposal to a job you applied for 💰`,
+                                    title: `${fullName} ACCEPTED your proposal to a job you applied for ${Math.round((total  * 100) + (total * 0.20))} 💰`,
                                     body: `${fullName} ACCEPTED your application/proposal to fix their vehicle. Congrats!`
                                 },
                                 from: signed_in_user_id,

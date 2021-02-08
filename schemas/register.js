@@ -52,6 +52,9 @@ const UserSchema =  new mongoose.Schema({
     profilePics: {
         type: Array
     },
+    review_count: {
+        type: Number
+    },
     phoneNumberAuth: {
         type: String
     },

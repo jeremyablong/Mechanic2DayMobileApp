@@ -45,12 +45,25 @@ constructor(props) {
         showDialog: false,
         showOrderDetails: false,
         item: null,
-        initiator: null
+        initiator: null,
+        alreadyMarkedComplete: false,
+        alreadyMarkedCompleteOther: false
     }
 }
     componentDidMount() {
 
         const vehicle = this.props.props.route.params.vehicle;
+
+        const initiator = this.props.props.route.params.item.initiator;
+
+        const item = this.props.props.route.params.item;
+
+        const other_user_id = this.props.props.route.params.item.other_user;
+
+        this.setState({
+            alreadyMarkedComplete: item.other_user_agrees_completion,
+            alreadyMarkedCompleteOther: item.poster_agrees_completion
+        })
 
         const { location } = vehicle;
 
@@ -157,7 +170,6 @@ constructor(props) {
         }).catch((err) => {
             console.log(err);
         })
-        const other_user_id = this.props.props.route.params.item.other_user;
 
         axios.post(`${Config.ngrok_url}/gather/applied/information`, {
             other_user_id 
@@ -370,7 +382,8 @@ constructor(props) {
             id: this.props.unique_id,
             vehicle,
             agreement,
-            other_user_id: vehicle.poster
+            other_user_id: vehicle.poster,
+            vehicle
         }).then((res) => {
             if (res.data.message === "Successfully notifed user of completion and updated data in db!") {
                 console.log(res.data);
@@ -379,7 +392,8 @@ constructor(props) {
 
                 socket.emit("completed-repair-mechanic-review", {
                     approved: true,
-                    user_id: vehicle.poster
+                    user_id: vehicle.poster,
+                    item: agreement
                 })
 
                 Toast.show({
@@ -419,7 +433,12 @@ constructor(props) {
                 socket.emit("notify-other-user-of-completion", {
                     notify: true,
                     user_id: vehicle.poster,
-                    fullName: this.props.fullName
+                    fullName: this.props.fullName,
+                    item: agreement
+                })
+
+                this.setState({
+                    alreadyMarkedComplete: true
                 })
 
                 Toast.show({
@@ -447,7 +466,8 @@ constructor(props) {
             id: this.props.unique_id,
             vehicle,
             agreement,
-            other_user_id: this.state.other_user.unique_id
+            other_user_id: this.state.other_user.unique_id,
+            vehicle
         }).then((res) => {
             if (res.data.message === "Successfully notifed user of completion and updated data in db!") {
                 console.log(res.data);
@@ -456,7 +476,8 @@ constructor(props) {
 
                 socket.emit("successfully-completed-repair", {
                     approved: true,
-                    user_id: this.state.other_user.unique_id
+                    user_id: this.state.other_user.unique_id,
+                    item: agreement
                 })
 
                 Toast.show({
@@ -475,7 +496,8 @@ constructor(props) {
 
                 socket.emit("successfully-completed-repair", {
                     approved: true,
-                    user_id: this.state.other_user.unique_id
+                    user_id: this.state.other_user.unique_id,
+                    item: agreement
                 })
 
                 Toast.show({
@@ -497,6 +519,10 @@ constructor(props) {
                     notify: true,
                     user_id: this.state.other_user.unique_id,
                     fullName: this.props.fullName
+                })
+
+                this.setState({
+                    alreadyMarkedCompleteOther: true
                 })
 
                 Toast.show({
@@ -585,7 +611,7 @@ constructor(props) {
                                     {vehicle.description}
                                 </Text>
                             </ReadMore>
-                            <Text style={[styles.agreed, { marginTop: 15 }]}>Agreed Amount: <Text style={{ color: "blue" }}>${itemmm.agreed_amount}</Text></Text>
+                            <Text style={[styles.agreed, { marginTop: 15 }]}>Agreed Amount: <Text style={{ color: "blue" }}>${itemmm.agreed_amount + (itemmm.agreed_amount * 0.20) + (itemmm.agreed_amount * 0.03)}</Text></Text>
                             <Text style={[styles.textText, { marginBottom: -30 }]}>Agreement made on <Text style={{ fontWeight: "bold" }}>{itemmm.agreement_date}</Text></Text>
 
                             {/* card details go here... */}
@@ -694,9 +720,9 @@ constructor(props) {
                                 }} width={width * 0.90} type="secondary">Update Payment</AwesomeButtonRick></View> : null} */}
                                 
                                 <View style={{ marginTop: 15 }}>
-                                    <AwesomeButtonBlue stretch={true} onPress={() => {
+                                    {this.state.alreadyMarkedCompleteOther === false ? <AwesomeButtonBlue stretch={true} onPress={() => {
                                         this.markJobAsCompleteClient();
-                                    }} type={"primary"}>Mark job as complete</AwesomeButtonBlue>
+                                    }} type={"primary"}>Mark job as complete</AwesomeButtonBlue> : null}
                                     <View style={styles.hr} />
                                     <AwesomeButtonBlue stretch={true} onPress={() => {}} type={"secondary"}>Request cancellation</AwesomeButtonBlue>
                                 </View> 
@@ -729,15 +755,15 @@ constructor(props) {
                         <ScrollView style={styles.container}>
                             
                             <View style={{ margin: 20, marginTop: 40 }}>
-                                <Text style={styles.payerText}>You have received ${itemmm.agreed_amount.toFixed(2)}!</Text>
+                                <Text style={styles.payerText}>You have received ${(itemmm.agreed_amount + (itemmm.agreed_amount * 0.20) + (itemmm.agreed_amount * 0.03)).toFixed(2)}!</Text>
                                 <Text style={{ marginTop: 20 }}>ONLY accept the payment upon the completion of the auto repair. Once you accept this payment you're acknowledging that the job is done and complete. This will end the contract between you and {this.state.other_user.fullName}</Text>
                                 <View style={[styles.hr, { marginTop: 20, marginBottom: 20 }]} />
                                 
 
                                 <View style={{ marginTop: 15 }}>
-                                    <AwesomeButtonBlue stretch={true} onPress={() => {
+                                    {this.state.alreadyMarkedComplete === false ? <AwesomeButtonBlue stretch={true} onPress={() => {
                                         this.markJobAsCompleteMechanic();
-                                    }} type={"secondary"}>Mark job as complete</AwesomeButtonBlue>
+                                    }} type={"secondary"}>Mark job as complete</AwesomeButtonBlue>: null}
                                     <View style={styles.hr} />
                                     <AwesomeButtonBlue stretch={true} onPress={() => {}} type={"primary"}>Request cancellation</AwesomeButtonBlue>
                                 </View> 

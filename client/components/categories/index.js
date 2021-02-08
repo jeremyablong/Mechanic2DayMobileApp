@@ -8,7 +8,7 @@ import axios from "axios";
 import { Config } from 'react-native-config';
 import Gallery from 'react-native-image-gallery';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-
+import _ from 'lodash';
 
 const { height, width } = Dimensions.get("window");
 
@@ -213,6 +213,9 @@ constructor(props) {
                                                     <View style={{ marginBottom: 15, flexDirection: "row" }}>
                                                         <Image source={require("../../assets/icons/small-star.png")} style={styles.starIcon} />
                                                         <Text style={styles.reviewText}> 4.92 (76)</Text>
+                                                    </View>
+                                                    <View>
+                                                        <Text style={styles.cardText}><Text style={{ color: "blue", fontWeight: "bold"}}>{_.has(listing, "applicants_proposals") && listing.applicants_proposals.length ? listing.applicants_proposals.length : 0}</Text> person(s) have already applied</Text>
                                                     </View>
                                                     <View style={styles.hr} />
                                                     <ReadMore

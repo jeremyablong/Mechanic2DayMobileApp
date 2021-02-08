@@ -15,7 +15,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const { id, title, description, listing, location, manual_entry } = req.body;
 
-        collection.findOne({ unique_id: id }).then((user) => {
+        collection.findOne({ unique_id: id }).then(async (user) => {
             if (user) {
 
                 if (user.broken_vehicles_listings) {
@@ -32,12 +32,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             console.log("vehicle_listing", vehicle_listing);
 
-                            collection.save(user);
+                            await collection.save(user);
 
-                            res.json({
-                                message: "Successfully added new data to your post!",
-                                listing: vehicle_listing
-                            })
+                            setTimeout(() => {
+                                res.json({
+                                    message: "Successfully added new data to your post!",
+                                    listing: vehicle_listing
+                                })
+                            }, 1250);
                         } 
                     }
                 } else {

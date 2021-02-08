@@ -27,7 +27,7 @@ constructor(props) {
         knowledgable: false,
         expectation: "",
         user: null,
-        pickup_times_rating: 0,
+        arrived_when_expected: 0,
         communication_rating: 0,
         speed_and_careful: 0,
         informational_rating: 0,
@@ -57,15 +57,15 @@ constructor(props) {
         })
     }
     handleSubmission = () => {
-        const { hospitality, communicative, respectful, quickResponses, informational, knowledgable, expectation, user, pickup_times_rating, communication_rating, speed_and_careful, informational_rating, honest_polite_rating, overall_interaction_rating, happy_with_repair, privateMessage, publicMessage } = this.state;
+        const { hospitality, communicative, respectful, quickResponses, informational, knowledgable, expectation, user, arrived_when_expected, communication_rating, speed_and_careful, informational_rating, honest_polite_rating, overall_interaction_rating, happy_with_repair, privateMessage, publicMessage } = this.state;
 
         const agreement = this.props.props.route.params.agreement;
 
-        if (pickup_times_rating !== 0 && communication_rating !== 0 && speed_and_careful !== 0 && informational_rating !== 0 && honest_polite_rating !== 0 && overall_interaction_rating !== 0 && happy_with_repair && typeof expectation !== "undefined" && expectation.length > 0 && typeof publicMessage !== "undefined" && publicMessage.length > 0) {
+        if (arrived_when_expected !== 0 && communication_rating !== 0 && speed_and_careful !== 0 && informational_rating !== 0 && honest_polite_rating !== 0 && overall_interaction_rating !== 0 && happy_with_repair && typeof expectation !== "undefined" && expectation.length > 0 && typeof publicMessage !== "undefined" && publicMessage.length > 0) {
             console.log("submit!");
 
             axios.post(`${Config.ngrok_url}/submit/feedback/review/mechanic/broken/vehicle`, {
-                pickup_times_rating, 
+                arrived_when_expected, 
                 communication_rating, 
                 expectation,
                 speed_and_careful, 
@@ -285,7 +285,7 @@ constructor(props) {
                                 size={30}
                                 onFinishRating={(value) => {
                                     this.setState({
-                                        pickup_times_rating: value
+                                        arrived_when_expected: value
                                     })
                                 }}
                             />

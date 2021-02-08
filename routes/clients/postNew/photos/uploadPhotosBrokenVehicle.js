@@ -43,38 +43,24 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                         for (let index = 0; index < photos.length; index++) {
                             const photo = photos[index];
-                            
-                            const generatedID = uuidv4();
 
-                            const bufferImage = new Buffer(photo.source.uri.replace(/^data:image\/\w+;base64,/, ""),'base64');
+                            const uploaded_photo = photo.source.generatedID;
 
-                            photo_array.push(`https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`);
+                            photo_array.push(`https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${uploaded_photo}`);
 
-                            s3.putObject({
-                                Body: bufferImage,
-                                Bucket: "mechanic-mobile-app",
-                                Key: generatedID,
-                                ContentEncoding: 'base64'
-                            }, (errorr, dataaa) => {
-                                if (errorr) {
-                                    console.log(errorr);
-                                }
-                                console.log(dataaa);
-            
-                                if ((photos.length - 1) === index) {
+                            if ((photos.length - 1) === index) {
 
-                                    listinggggg["photos"] = photo_array;
-                                    listinggggg.page = 4;
+                                listinggggg["photos"] = photo_array;
+                                listinggggg.page = 4;
 
-                                    collection.save(user);
+                                collection.save(user);
 
-                                    res.json({
-                                        message: "Successfully updated/posted photos!",
-                                        user,
-                                        listing: listinggggg
-                                    })
-                                }
-                            });
+                                res.json({
+                                    message: "Successfully updated/posted photos!",
+                                    user,
+                                    listing: listinggggg
+                                })
+                            }
                         }
                     }
                 }

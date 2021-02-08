@@ -16,7 +16,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         const collection = database.collection("users");
 
         const { 
-            pickup_times_rating, 
+            arrived_when_expected, 
             communication_rating, 
             expectation,
             speed_and_careful, 
@@ -36,7 +36,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             agreement,
             profilePic,
             publicMessage,
-            privateMessage
+            privateMessage,
+            vehicle
         } = req.body;
 
         collection.find({ unique_id: { "$in": [other_user, id]}}).toArray((err, users) => {
@@ -103,7 +104,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             if (user.review_categories) {
                                 user.review_categories = {
-                                    pickup_times_rating: (user.review_categories.pickup_times_rating + pickup_times_rating) / user.review_count,
+                                    arrived_when_expected: (user.review_categories.arrived_when_expected + arrived_when_expected) / user.review_count,
                                     communication_rating: (user.review_categories.communication_rating + communication_rating) / user.review_count,
                                     speed_and_careful: (user.review_categories.speed_and_careful + speed_and_careful) / user.review_count,
                                     informational_rating: (user.review_categories.informational_rating + informational_rating) / user.review_count,
@@ -113,7 +114,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 }
                             } else {
                                 user["review_categories"] = {
-                                    pickup_times_rating, 
+                                    arrived_when_expected, 
                                     communication_rating, 
                                     speed_and_careful, 
                                     informational_rating, 

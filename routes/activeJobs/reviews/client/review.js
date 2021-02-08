@@ -25,7 +25,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             descriptive, 
             expectation, 
             safe, 
-            pickup_accurate_rating, 
+            accurate_repair_location, 
             communication_rating, 
             informational_rating, 
             safe_during_interaction,
@@ -36,7 +36,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             profilePic,
             privateMessage,
             publicMessage,
-            agreement
+            agreement,
+            vehicle
         } = req.body;
 
 
@@ -103,7 +104,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             if (user.review_categories) {
                                 user.review_categories = {
-                                    pickup_accurate_rating: (user.review_categories.pickup_accurate_rating + pickup_accurate_rating) / user.review_count,
+                                    accurate_repair_location: (user.review_categories.accurate_repair_location + accurate_repair_location) / user.review_count,
                                     communication_rating: (user.review_categories.communication_rating + communication_rating) / user.review_count,
                                     informational_rating: (user.review_categories.informational_rating + informational_rating) / user.review_count,
                                     safe_during_interaction: (user.review_categories.safe_during_interaction + safe_during_interaction) / user.review_count,
@@ -113,7 +114,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 }
                             } else {
                                 user["review_categories"] = {
-                                    pickup_accurate_rating, 
+                                    accurate_repair_location, 
                                     communication_rating,
                                     informational_rating,
                                     safe_during_interaction,
@@ -229,7 +230,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     user.accepted_jobs.splice(idxxxx, 1);
 
                                     collection.save(user);
-                                    
+
                                     res.json({
                                         message: "Successfully submitted review and completed job!",
                                         user

@@ -26,6 +26,12 @@ export default StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center"
     },
+    reviewCount: {
+        fontSize: 22,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "gold"
+    },
     centered: {
         justifyContent: "center",
         alignContent: "center",
@@ -62,6 +68,7 @@ export default StyleSheet.create({
     scrollViewTwo: {
         flex: 1,
         zIndex: 999,
+        marginBottom: 0,
         top: -250
     },
     contentContainerTwo: {
@@ -82,7 +89,7 @@ export default StyleSheet.create({
         padding: 12
     },
     firstText: {
-        fontSize: 20,
+        fontSize: 30,
         fontWeight: "bold",
         color: "white",
         textAlign: "center"

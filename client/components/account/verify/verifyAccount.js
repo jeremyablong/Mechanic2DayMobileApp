@@ -233,7 +233,10 @@ constructor(props) {
                 <Fragment>
                         <Text style={styles.textOne}>You have <Text style={{ fontWeight: "bold", color: "blue" }}>SUCCESSFULLY</Text> completed your stripe account verfication.</Text>
                         <View style={styles.hr} />
-                        <Text style={[styles.textOne, { marginBottom: 20 }]}>You may now <Text style={{ fontWeight: "bold", color: "blue" }}>ACCEPT PAYMENTS</Text> and <Text style={{ fontWeight: "bold", color: "blue" }}>CASH-OUT</Text> "PAYOUTS" to your account!</Text>
+                        <Text style={[styles.textOne, { marginBottom: 20 }]}>We will now need to add a <Text style={{ fontWeight: "bold", color: "blue" }}>PAYOUT METHOD</Text> or <Text style={{ fontWeight: "bold", color: "blue" }}>DEBIT-CARD/BANK ACCOUNT</Text> so you can receive your funds when its time to get paid!</Text>
+                        <AwesomeButtonBlue style={{ marginBottom: 15 }} textColor={"black"} stretch={true} onPress={() => {
+                            this.props.props.navigation.push("payouts-main-homepage");
+                        }} type={"secondary"}>Add a "cash-out" method</AwesomeButtonBlue>
                         <ProgressiveImage
                             source={require("../../../assets/images/stripe.png")}
                             style={styles.stripe}
@@ -282,3 +285,16 @@ const mapStateToProps = (state) => {
     }
 }
 export default connect(mapStateToProps, { })(VerifyAndValidateAccountStripeHelper);
+
+
+// <Fragment>
+//         <Text style={styles.textOne}>You have <Text style={{ fontWeight: "bold", color: "blue" }}>SUCCESSFULLY</Text> completed your stripe account verfication.</Text>
+//         <View style={styles.hr} />
+//         <Text style={[styles.textOne, { marginBottom: 20 }]}>You may now <Text style={{ fontWeight: "bold", color: "blue" }}>ACCEPT PAYMENTS</Text> and <Text style={{ fontWeight: "bold", color: "blue" }}>CASH-OUT</Text> "PAYOUTS" to your account!</Text>
+//         <ProgressiveImage
+//             source={require("../../../assets/images/stripe.png")}
+//             style={styles.stripe}
+//             height={200}
+//             width={width - 40}
+//         />
+// </Fragment>

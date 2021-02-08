@@ -10,7 +10,10 @@ const path = require("path");
 const http = require("http");
 const server = http.createServer(app);
 const io = require('socket.io')(server);
-
+const xss = require('xss-clean');
+const helmet = require("helmet");
+const mongoSanitize = require('express-mongo-sanitize');
+const rateLimit = require("express-rate-limit");
 
 const PORT = process.env.PORT || 5000;
 
@@ -27,6 +30,19 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json({
 	limit: "500mb"
 }));
+
+const limiter = rateLimit({
+    max: 100,// max requests
+    windowMs: 60 * 60 * 1000 * 1000, // remove the last 1000 for production
+    message: 'Too many requests' // message to send
+});
+
+app.use(xss());
+app.use(helmet());
+app.use(mongoSanitize());
+app.use(limiter);
+
+app.use("/webhook", require("./routes/webhook/stripe/main.js"));
 app.use("/register/user/customer", require("./routes/auth/registerCustomer.js"));
 app.use("/send/confirmation/email", require("./routes/auth/verifcationEmail.js"));
 app.use("/check/email/code", require("./routes/auth/checkEmailCode.js"));
@@ -108,7 +124,6 @@ app.use("/intiate/tow/add/to/queue", require("./routes/roadsideAssistance/initia
 app.use("/add/to/queue", require("./routes/roadsideAssistance/initiate/addToQueue.js"));
 app.use("/gather/requested/tow/information", require("./routes/roadsideAssistance/queue/gatherRequestInfo.js"));
 app.use("/gather/queued/jobs", require("./routes/roadsideAssistance/queue/gatherQueuedJobs.js"));
-// initiate tow finale
 app.use("/assign/driver/roadside/assistance", require("./routes/roadsideAssistance/towTransaction/assignDriverAndNotify.js"));
 app.use("/update/both/users/start/tow", require("./routes/roadsideAssistance/towTransaction/startTow.js"));
 app.use("/gather/user/location/in/transit", require("./routes/roadsideAssistance/active/snagLocationTowTruckTransit.js"));
@@ -140,6 +155,13 @@ app.use("/mark/complete/broken/vehicle/listing/mechanic/user", require("./routes
 app.use("/mark/complete/broken/vehicle/listing/client/user", require("./routes/brokenVehicleListings/completion/client/markAsComplete.js"));
 app.use("/submit/feedback/review/client/broken/vehicle/listing", require("./routes/activeJobs/reviews/client/review.js"));
 app.use("/submit/feedback/review/mechanic/broken/vehicle", require("./routes/activeJobs/reviews/mechanic/review.js"));
+app.use("/remove/broken/vehicle/listing", require("./routes/brokenVehicleListings/removeListing.js"));
+app.use("/upload/individual/photo/on/select", require("./routes/clients/postNew/photos/uploadIndividual.js"));
+app.use("/gather/mechanics/all", require("./routes/homepage/gatherAllMechanics.js"));
+app.use("/gather/general/info/with/balance", require("./routes/account/general/generalAccountInfoAndBalance.js"));
+app.use("/list/all/payouts", require("./routes/account/payments/payouts/listAll/listAllPayoutMethods.js"));
+app.use("/create/new/payout/bank/account/information", require("./routes/account/payments/payouts/create/craeteNewBankAccountAdd.js"));
+app.use("/cashout/payout/instant", require("./routes/account/payments/payouts/cashout/cashout.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

@@ -93,6 +93,11 @@ import SubscriptionPlansSelectionPage from "./pages/signup/subscriptionPlans/sub
 import VerifyAndValidateAccountStripePage from "./pages/account/verify/verifyAccount.js";
 import ReviewMechanicFixedVehiclePage from "./pages/activeRepairs/reviews/mechanic/review.js";
 import ReviewClientFixedVehicleHelper from "./pages/activeRepairs/reviews/client/review.js";
+import PayoutsHomepagePage from "./pages/account/payments/payouts/index.js";
+import PayoutMethodAddNewPayoutPage from "./pages/account/payments/payouts/addNew/addNewPayoutMethod.js";
+import BankTransferBeginPage from "./pages/account/payments/payouts/addNew/bankTransfer/index.js";
+import BankAccountInfoPage from "./pages/account/payments/payouts/addNew/bankInfo/index.js";
+import PayoutsManageOptionsMainPage from "./pages/account/payments/payouts/options/main.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -435,12 +440,12 @@ constructor(props) {
   })
   socket.on("completed-repair-client", (data) => {
     if (data.approved === true && data.user_id === this.props.unique_id) {
-      this.navigationRef.navigate("broken-vehicle-review-client", null);
+      this.navigationRef.navigate("broken-vehicle-review-client", { agreement: data.item });
     }
   })
   socket.on("completed-repair-mechanic", (data) => {
     if (data.approved === true && data.user_id === this.props.unique_id) {
-      this.navigationRef.navigate("broken-vehicle-review-mechanic", null);
+      this.navigationRef.navigate("broken-vehicle-review-mechanic", { agreement: data.item });
     }
   })
   socket.on("completed-partial", (data) => {
@@ -687,6 +692,11 @@ constructor(props) {
               <Stack.Screen name="verify-validate-account-stripe" component={VerifyAndValidateAccountStripePage} />
               <Stack.Screen name="broken-vehicle-review-mechanic" component={ReviewMechanicFixedVehiclePage} />
               <Stack.Screen name="broken-vehicle-review-client" component={ReviewClientFixedVehicleHelper} />
+              <Stack.Screen name="payouts-main-homepage" component={PayoutsHomepagePage} />
+              <Stack.Screen name="add-payout-method-new" component={PayoutMethodAddNewPayoutPage} />
+              <Stack.Screen name="bank-account-start-verifcation" component={BankTransferBeginPage} />
+              <Stack.Screen name="add-bank-account-payout-information" component={BankAccountInfoPage} />
+              <Stack.Screen name="manage-payout-options-menu-main" component={PayoutsManageOptionsMainPage} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>

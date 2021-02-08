@@ -21,8 +21,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             const generated_unique_id = uuidv4();
 
             const account = await stripe.accounts.create({
-                type: 'express',
-                country: 'US'
+                type: 'custom',
+                country: 'US',
+                capabilities: {
+                    card_payments: {
+                        requested: true,
+                    },
+                    transfers: {
+                        requested: true,
+                    }
+                }
             }, (errrrrr, account) => {
                 if (errrrrr) {
                     console.log(errrrrr);
@@ -36,6 +44,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         gender, 
                         fullName, 
                         active_employee,
+                        review_count: 0,
                         password,  
                         stripe_connect_account: account,
                         pending_application: false,
@@ -102,8 +111,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             const generated_unique_id = uuidv4();
 
             const account = await stripe.accounts.create({
-                type: 'express',
-                country: 'US'
+                type: 'custom',
+                country: 'US',
+                capabilities: {
+                    card_payments: {
+                      requested: true,
+                    },
+                    transfers: {
+                      requested: true,
+                    }
+                }
             }, (errrrrr, account) => {
                 if (errrrrr) {
                     console.log(errrrrr);
@@ -117,6 +134,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         gender, 
                         fullName, 
                         active_employee,
+                        review_count: 0,
                         stripe_connect_account: account,
                         pending_application: false,
                         password,  

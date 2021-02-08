@@ -33,14 +33,14 @@ export default StyleSheet.create({
         width: width - 40,
         maxWidth: width - 40,
         minWidth: width - 40,
-        height: height - (Platform.OS === "ios" ? 100 : 80),
-        minHeight: height - (Platform.OS === "ios" ? 100 : 80)
+        height: height - (Platform.OS === "ios" ? 150 : 80),
+        minHeight: height - (Platform.OS === "ios" ? 150 : 80)
     },
     containerStyle: {
         width: width - 40,
         maxWidth: width - 40,
         minWidth: width - 40,
-        height: height - (Platform.OS === "ios" ? 100 : 80),
-        minHeight: height - (Platform.OS === "ios" ? 100 : 80)
+        height: height - (Platform.OS === "ios" ? 150 : 80),
+        minHeight: height - (Platform.OS === "ios" ? 150 : 80)
     }
 })

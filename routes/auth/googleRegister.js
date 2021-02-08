@@ -93,6 +93,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                         const UserData = new User({
                             fullName, 
+                            review_count: 0,
                             email,
                             profilePics: [{
                                 id: uuidv4(),

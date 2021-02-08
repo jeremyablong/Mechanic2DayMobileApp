@@ -29,7 +29,7 @@ constructor(props) {
         expectation: "",
         user: null,
         refreshing: false,
-        pickup_accurate_rating: 0, 
+        accurate_repair_location: 0, 
         communication_rating: 0, 
         informational_rating: 0, 
         safe_during_interaction: 0, 
@@ -63,11 +63,11 @@ constructor(props) {
     }
     handleSubmission = () => {
 
-        const { accurate_pickup_location, helpful, user, respectful, quickResponses, descriptive, expectation, safe, pickup_accurate_rating, communication_rating, informational_rating, safe_during_interaction, overall_interaction_rating, honest_polite_rating, as_described, privateMessage, publicMessage } = this.state;
+        const { accurate_pickup_location, helpful, user, respectful, quickResponses, descriptive, expectation, safe, accurate_repair_location, communication_rating, informational_rating, safe_during_interaction, overall_interaction_rating, honest_polite_rating, as_described, privateMessage, publicMessage } = this.state;
 
         const agreement = this.props.props.route.params.agreement;
 
-        if (pickup_accurate_rating !== 0 && communication_rating !== 0 && informational_rating !== 0 && safe_during_interaction !== 0 && overall_interaction_rating !== 0 && honest_polite_rating !== 0 && as_described !== 0 && typeof expectation !== "undefined" && expectation.length > 0 && (typeof publicMessage !== "undefined" && publicMessage.length > 0)) {
+        if (accurate_repair_location !== 0 && communication_rating !== 0 && informational_rating !== 0 && safe_during_interaction !== 0 && overall_interaction_rating !== 0 && honest_polite_rating !== 0 && as_described !== 0 && typeof expectation !== "undefined" && expectation.length > 0 && (typeof publicMessage !== "undefined" && publicMessage.length > 0)) {
             console.log("submit!");
 
             axios.post(`${Config.ngrok_url}/submit/feedback/review/client/broken/vehicle/listing`, {
@@ -81,7 +81,7 @@ constructor(props) {
                 descriptive, 
                 expectation, 
                 safe, 
-                pickup_accurate_rating, 
+                accurate_repair_location, 
                 communication_rating, 
                 informational_rating, 
                 safe_during_interaction,
@@ -114,7 +114,7 @@ constructor(props) {
         }
     }
     renderConditional = () => {
-        const { accurate_pickup_location, helpful, user, respectful, quickResponses, descriptive, expectation, safe, pickup_accurate_rating, communication_rating, informational_rating, safe_during_interaction, overall_interaction_rating, honest_polite_rating, as_described } = this.state;
+        const { accurate_pickup_location, helpful, user, respectful, quickResponses, descriptive, expectation, safe, accurate_repair_location, communication_rating, informational_rating, safe_during_interaction, overall_interaction_rating, honest_polite_rating, as_described } = this.state;
 
         if (user !== null) {
             return (
@@ -292,7 +292,7 @@ constructor(props) {
                                     size={30}
                                     onFinishRating={(value) => {
                                         this.setState({
-                                            pickup_accurate_rating: value
+                                            accurate_repair_location: value
                                         })
                                     }}
                                 />

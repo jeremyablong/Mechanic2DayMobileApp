@@ -191,7 +191,7 @@ constructor(props) {
                                         {description}
                                     </Text>
                                 </ReadMore>
-                                <Text style={styles.name}>Agreed Price: ${item.agreed_amount}</Text>
+                                <Text style={styles.name}>Agreed Price: ${(item.agreed_amount + (item.agreed_amount * 0.20) + (item.agreed_amount * 0.03)).toFixed(2)}</Text>
                                 <Text style={styles.position}>{`${year} ${make} ${model}`}</Text>
                                 <AwesomeButtonBlue width={width * 0.75} backgroundShadow={"#E8CEE4"} onPress={() => {
                                     console.log("clicked", item);

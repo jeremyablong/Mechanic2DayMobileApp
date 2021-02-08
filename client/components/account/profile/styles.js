@@ -6,8 +6,8 @@ const { height, width } = Dimensions.get("window");
 export default StyleSheet.create({
     topContainer: {
         flex: 1,
-        minHeight: 110,
-        maxHeight: 110,
+        minHeight: 125,
+        maxHeight: 125,
         backgroundColor: "white",
         borderBottomWidth: 2,
         borderBottomColor: "lightgrey",

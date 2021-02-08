@@ -89,7 +89,7 @@ export default StyleSheet.create({
         width: width * 0.65
     },
     flatListMain: {
-        minHeight: 500,
+        minHeight: 750,
         minWidth: width,
         flex: 1
     },
