@@ -49,7 +49,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         "sound": "Tri-tone"
                     },
                 "data": {
-                        "url": profile_pic !== null ? profile_pic : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
+                        "url": profile_pic !== null ? profile_pic : `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/not-availiable.jpg`,
                         "dl": "notifications"
                     }
                 }, configgg).then((res) => {

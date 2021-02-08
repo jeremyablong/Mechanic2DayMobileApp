@@ -267,7 +267,7 @@ constructor(props) {
                         {this.state.stripe_balance !== null ? <TouchableOpacity onPress={() => {
                             this.props.props.navigation.push("view-public-profile-page");
                         }}>
-                            <Text style={styles.subText}>View Profile {"\n"}Account Balance (${this.state.stripe_balance.available[0].amount})</Text>
+                            <Text style={styles.subText}>View Profile {"\n"}Avaliable Balance (${(this.state.stripe_balance.available[0].amount / 100).toFixed(2)})</Text>
                         </TouchableOpacity> : <TouchableOpacity onPress={() => {
                             this.props.props.navigation.push("view-public-profile-page");
                         }}>

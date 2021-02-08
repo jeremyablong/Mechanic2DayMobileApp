@@ -145,7 +145,7 @@ constructor(props) {
                 <Header>
                     <Left style={{ flexDirection: "row" }}>
                         <Button onPress={() => {
-                            this.props.props.navigation.push("homepage-main");
+                            this.props.props.navigation.goBack();
                         }} transparent>
                             <Image style={styles.headerIcon} source={require('../../../assets/icons/go-back.png')} />
                         </Button>

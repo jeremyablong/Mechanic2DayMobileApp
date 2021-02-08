@@ -33,7 +33,8 @@ constructor(props) {
         selected: null,
         spinner: false,
         listing: null,
-        changed: false
+        changed: false,
+        spinnerTwo: false
     }
 
     this._panResponder = PanResponder.create({
@@ -117,22 +118,45 @@ constructor(props) {
 
 
         if (data.didCancel !== true) {
-            axios.post(`${Config.ngrok_url}/upload/individual/photo/on/select`, {
-                photo: `data:${data.type};base64,${data.base64}`,
-                id: this.props.unique_id,
-                selected: selected || listinggg
-            }).then((resolution) => {
-                if (resolution.data.message === "Uploaded!") {
-                    console.log(resolution.data);
-
+            const timer = () => setTimeout(() => {
+                if (this.state.spinnerTwo === true) {
                     this.setState({
-                        photos: [...this.state.photos, { source: { uri: `data:${data.type};base64,${data.base64}`, generatedID: resolution.data.generatedID }, }]     
+                        spinnerTwo: false
                     })
                 }
-            }).catch((error) => {
-                console.log(error);
+            }, 25000);
+
+            this.setState({
+                spinnerTwo: true,
+                timerID: timer()
+            }, () => {
+                axios.post(`${Config.ngrok_url}/upload/individual/photo/on/select`, {
+                    photo: `data:${data.type};base64,${data.base64}`,
+                    id: this.props.unique_id,
+                    selected: selected || listinggg
+                }).then((resolution) => {
+                    if (resolution.data.message === "Uploaded!") {
+                        console.log(resolution.data);
+    
+                        this.setState({
+                            photos: [...this.state.photos, { source: { uri: `data:${data.type};base64,${data.base64}`, generatedID: resolution.data.generatedID }, }],
+                            spinnerTwo: false 
+                        })
+                    }
+                }).catch((error) => {
+                    console.log(error);
+
+                    this.setState({
+                        spinnerTwo: false
+                    })
+                })
             })
         }
+    }
+    componentDidUpdate(prevProps, prevState) {
+        console.log("updated.");
+
+        clearTimeout(this.state.timerID);
     }
     handleChangeCustom = (value) => {
         console.log("value", value);
@@ -224,7 +248,7 @@ constructor(props) {
                 this.setState({
                     spinner: false
                 })
-            },  20000);
+            },  30000);
         }
     }
     render() {
@@ -268,6 +292,15 @@ constructor(props) {
                     textStyle={styles.spinnerTextStyle} 
                     overlayColor={"rgba(0, 0, 0, 0.75)"} 
                     textContent={"Processing your photo uploads..."} 
+                    textStyle={{ color: "white", margin: 10, textAlign: "center" }} 
+                    cancelable={false}
+                />
+                <Spinner
+                    visible={this.state.spinnerTwo}
+                    textContent={'Loading...'}
+                    textStyle={styles.spinnerTextStyle} 
+                    overlayColor={"rgba(0, 0, 0, 0.75)"} 
+                    textContent={"Processing your photo upload!"} 
                     textStyle={{ color: "white", margin: 10, textAlign: "center" }} 
                     cancelable={false}
                 />

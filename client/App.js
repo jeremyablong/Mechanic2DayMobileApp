@@ -98,6 +98,7 @@ import PayoutMethodAddNewPayoutPage from "./pages/account/payments/payouts/addNe
 import BankTransferBeginPage from "./pages/account/payments/payouts/addNew/bankTransfer/index.js";
 import BankAccountInfoPage from "./pages/account/payments/payouts/addNew/bankInfo/index.js";
 import PayoutsManageOptionsMainPage from "./pages/account/payments/payouts/options/main.js";
+import PaymentAnalyticsDashboardPage from "./pages/account/payments/payouts/analytics/index.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -697,6 +698,7 @@ constructor(props) {
               <Stack.Screen name="bank-account-start-verifcation" component={BankTransferBeginPage} />
               <Stack.Screen name="add-bank-account-payout-information" component={BankAccountInfoPage} />
               <Stack.Screen name="manage-payout-options-menu-main" component={PayoutsManageOptionsMainPage} />
+              <Stack.Screen name="payout-analytics-data" component={PaymentAnalyticsDashboardPage} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>

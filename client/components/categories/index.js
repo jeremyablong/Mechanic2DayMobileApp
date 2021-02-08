@@ -9,6 +9,8 @@ import { Config } from 'react-native-config';
 import Gallery from 'react-native-image-gallery';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import _ from 'lodash';
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
 
 const { height, width } = Dimensions.get("window");
 
@@ -231,13 +233,18 @@ constructor(props) {
                                             </Body>
                                             </CardItem>
                                             <CardItem>
-                                            <Left>
-                                                <Button transparent textStyle={{ color: '#87838B' }}>
-                                               
-                                                <Text style={{ fontSize: 24 }}><Text style={{ fontWeight: "bold" }}>Budget:</Text> ${Math.floor(Math.random() * 500) + 1}</Text>
-                                                </Button>
-                                            </Left>
-                                        </CardItem>
+                                                <Left>
+                                                    <Button transparent textStyle={{ color: '#87838B' }}>
+
+                                                        <Text style={{ fontSize: 24 }}><Text style={{ fontWeight: "bold" }}>Budget:</Text> ${Math.floor(Math.random() * 500) + 1}</Text>
+                                                    </Button>
+                                                </Left>
+                                            </CardItem>
+                                            <CardItem>
+                                                <AwesomeButtonBlue onPress={() => {
+                                                    this.props.props.navigation.navigate("individual-broken-listing", { listing });
+                                                }} stretch={true} type={"secondary"}>Visit Listing</AwesomeButtonBlue>
+                                            </CardItem>
                                     </Card>
                                 </Fragment>
                             );

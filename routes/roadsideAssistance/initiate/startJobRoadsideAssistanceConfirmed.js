@@ -112,7 +112,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                                     const configgg = {
                                         headers: {
-                                            "Authorization": "key=AAAA9zUSz2E:APA91bGvAIR1QhFku2iMGYp_nh6z6nDPRFiwqD6ORRo2vOkYBq8zs61RBFFPxOdVAdqJao98bIu4Y_I8enD-DNY05kyb5Jza1UlHJ4D73aUQuzhEsZ37LNaUgYrW3r8LFpsvdhDMPCMs",
+                                            "Authorization": `key=${config.get("firebaseCloudMessagingServerKey")}`,
                                             "Content-Type": "application/json"
                                         }
                                     }
@@ -126,7 +126,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                             "sound": "Tri-tone"
                                         },
                                     "data": {
-                                            "url": user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
+                                            "url": user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/not-availiable.jpg`,
                                             "dl": "notifications"
                                         }
                                     }, configgg).then(async (responseeeeee) => {

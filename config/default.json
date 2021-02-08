@@ -17,5 +17,8 @@
     "stripePublishableKey": "pk_test_51IEjoaIfXpf42s2bBlXxGyErATvfyGa6EZZtPJ3XRm3zVEQbQBWg2oqheH0sInEN8tf6K7kvNBXSkLR3fJWRmLgZ00Et9i51LT",
     "stripeSecretKey": "sk_test_51IEjoaIfXpf42s2bHZrck67yUp2yKGCYgUsmXS9mqBuA8SOgPxzmYWRGooHOcVGybtd8zRRAQRLvcS1oMJ3m66Mo00MpwjNyoh",
     "tomtomApiKey": "BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV",
-    "stripeWebhookSigningSecret": "whsec_IK3DFNK7t1zf0KdtYtlhbfDBaEhw9Cno"
+    "stripeWebhookSigningSecret": "whsec_IK3DFNK7t1zf0KdtYtlhbfDBaEhw9Cno",
+    "wasabiEndpoint": "s3.us-east-1.wasabisys.com",
+    "wasabiRegion": "us-east-1",
+    "wasabiBucket": "mechanic2day"
 }

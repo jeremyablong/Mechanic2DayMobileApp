@@ -351,7 +351,7 @@ constructor(props) {
                                             </ImageBackground>
                                             <View style={styles.rowCustom}>
                                                 <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWidth: 25, width: 25, height: 25 }} />
-                                                <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
+                                                <Text style={[styles.p, { marginTop: 5, fontSize: 18 }]}><Text style={{ fontWeight: "bold" }}>{listing.min_reviews_to_apply.min}</Text> review required to apply</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={[styles.biggerP, { fontWeight: "bold", color: "blue" }]}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim !== "unknown" ? listing.trim : ""}`}</Text>
@@ -396,7 +396,7 @@ constructor(props) {
                                            
                                             <View style={styles.rowCustom}>
                                                 <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWidth: 25, width: 25, height: 25 }} />
-                                                <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
+                                                <Text style={[styles.p, { marginTop: 5, fontSize: 18 }]}><Text style={{ fontWeight: "bold" }}>{listing.min_reviews_to_apply.min}</Text> review required to apply</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={[styles.biggerP, { fontWeight: "bold", color: "blue" }]}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim !== "unknown" ? listing.trim : ""}`}</Text>
@@ -441,7 +441,7 @@ constructor(props) {
                                             </ImageBackground>
                                             <View style={styles.rowCustom}>
                                                 <Image source={require("../../assets/icons/small-star.png")} style={{ maxHeight: 25, maxWidth: 25, width: 25, height: 25 }} />
-                                                <Text style={[styles.p], { marginTop: 5 }}>4.79 (156)</Text>
+                                                <Text style={[styles.p, { marginTop: 5, fontSize: 18 }]}><Text style={{ fontWeight: "bold" }}>{listing.min_reviews_to_apply.min}</Text> review required to apply</Text>
                                             </View>
                                             <View style={[styles.rowCustom, { marginTop: -4 }]}>
                                                 <Text style={[styles.biggerP, { fontWeight: "bold", color: "blue" }]}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim !== "unknown" ? listing.trim : ""}`}</Text>

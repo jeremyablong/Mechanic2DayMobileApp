@@ -198,7 +198,7 @@ constructor(props) {
                                             <Left>
                                                 <Body>
                                                 <Text style={{ fontSize: 18, color: "blue", fontWeight: "bold" }}>{`${listing.year} ${listing.make} ${listing.model} ${listing.trim}`}</Text>
-                                                <Text>{listing.description.slice(0, 125)}{typeof listing.description !== "undefined" && listing.description.length > 125 ? "..." : ""}</Text>
+                                                <Text>{listing.description.slice(0, 115)}{typeof listing.description !== "undefined" && listing.description.length > 115 ? "..." : ""}</Text>
                                                 </Body>
                                             </Left>
                                             </CardItem>
@@ -267,7 +267,7 @@ constructor(props) {
                                                 </View>
                                                 <CardItem>
                                                 <Body>
-                                                    {_.has(listing, "photos") ? <Image source={{ uri: listing.photos[0] }} style={{ width: "95%", height: 250 }} /> : null}
+                                                    {_.has(listing, "photos") ? <Image source={{ uri: listing.photos[0] }} style={{ width: "100%", height: 250 }} /> : null}
                                                     <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>Edit/manage your listing</Text>
                                                     <Text>You can edit and manage your listing from here</Text>
                                                     
@@ -339,7 +339,7 @@ constructor(props) {
                                                     </CardItem>
                                                     <CardItem>
                                                     <Body>
-                                                        {_.has(listing, "photos") ? <Image source={{ uri: listing.photos[0] }} style={{ width: "95%", height: 250 }} /> : null}
+                                                        {_.has(listing, "photos") ? <Image source={{ uri: listing.photos[0] }} style={{ width: "100%", height: 250 }} /> : null}
                                                         <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>Finish your listing</Text>
                                                         <Text>You're {this.renderPercentage(listing)} of the way there!</Text>
                                                         <View style={{ marginTop: 15 }}>

@@ -17,7 +17,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const { towPrice, tier, perMileFee } = price_tier;
 
-        collection.findOne({ unique_id: id }).then((user) => {
+        collection.findOne({ unique_id: id }).then(async (user) => {
             if (user) {
 
                 for (let index = 0; index < user.roadside_assistance_listings.length; index++) {
@@ -40,12 +40,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         listing.page = 6;
                         listing.live = true;
 
-                        collection.save(user);
+                        await collection.save(user);
 
-                        res.json({
-                            message: "Successfully updated listing pricing information!",
-                            listing
-                        })
+                        setTimeout(() => {
+                            res.json({
+                                message: "Successfully updated listing pricing information!",
+                                listing
+                            })
+                        }, 1000);
                     }
                 }
             } else {

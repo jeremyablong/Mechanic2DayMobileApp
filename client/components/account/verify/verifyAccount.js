@@ -12,7 +12,6 @@ import _ from "lodash";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 
-
 const { height, width } = Dimensions.get("window");
 
 
@@ -26,7 +25,9 @@ constructor(props) {
         ready: false,
         completed: false,
         uploaded_content: false,
-        user: null
+        user: null,
+        cards: [],
+        banks: []
     }
 }
     componentDidMount() {
@@ -49,6 +50,27 @@ constructor(props) {
                 }
             } else {
                 console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+
+        axios.get(`${Config.ngrok_url}/list/all/payouts`, {
+            params: {
+                id: this.props.unique_id
+            }
+        }).then((res) => {
+            if (res.data.message === "Successfully gathered cards!") {
+                console.log(res.data);
+
+                const { cards, banks } = res.data;
+
+                this.setState({
+                    banks,
+                    cards
+                })
+            } else {
+                console.log("err", res.data);
             }
         }).catch((err) => {
             console.log(err);
@@ -204,7 +226,7 @@ constructor(props) {
         })
     }
     renderWebView = () => {
-        const { completed, user } = this.state;
+        const { completed, user, cards, banks } = this.state;
 
         if (completed === false && !_.has(user, "completed_stripe_onboarding")) {
             return (
@@ -233,10 +255,10 @@ constructor(props) {
                 <Fragment>
                         <Text style={styles.textOne}>You have <Text style={{ fontWeight: "bold", color: "blue" }}>SUCCESSFULLY</Text> completed your stripe account verfication.</Text>
                         <View style={styles.hr} />
-                        <Text style={[styles.textOne, { marginBottom: 20 }]}>We will now need to add a <Text style={{ fontWeight: "bold", color: "blue" }}>PAYOUT METHOD</Text> or <Text style={{ fontWeight: "bold", color: "blue" }}>DEBIT-CARD/BANK ACCOUNT</Text> so you can receive your funds when its time to get paid!</Text>
+                        {(typeof banks !== "undefined" && banks.length > 0 && banks.data.length > 0) || (typeof cards !== "undefined" && cards.length > 0 && cards.data.length > 0) ? <Fragment><Text style={[styles.textOne, { marginBottom: 20 }]}>You have successfully verfied your account <Text style={{ fontWeight: "bold", color: "blue" }}>AND</Text> added a payout method. You're all set and <Text style={{ fontWeight: "bold", color: "blue" }}>READY TO GO!</Text></Text></Fragment> : <Fragment><Text style={[styles.textOne, { marginBottom: 20 }]}>We will now need to add a <Text style={{ fontWeight: "bold", color: "blue" }}>PAYOUT METHOD</Text> or <Text style={{ fontWeight: "bold", color: "blue" }}>DEBIT-CARD/BANK ACCOUNT</Text> so you can receive your funds when its time to get paid!</Text>
                         <AwesomeButtonBlue style={{ marginBottom: 15 }} textColor={"black"} stretch={true} onPress={() => {
                             this.props.props.navigation.push("payouts-main-homepage");
-                        }} type={"secondary"}>Add a "cash-out" method</AwesomeButtonBlue>
+                        }} type={"secondary"}>Add a "cash-out" method</AwesomeButtonBlue></Fragment>}
                         <ProgressiveImage
                             source={require("../../../assets/images/stripe.png")}
                             style={styles.stripe}
@@ -256,7 +278,7 @@ constructor(props) {
                  <Header>
                     <Left>
                         <Button onPress={() => {
-                            this.props.props.navigation.push("homepage-main");
+                            this.props.props.navigation.goBack();
                         }} transparent>
                             <Image source={require("../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>

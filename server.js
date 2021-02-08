@@ -162,6 +162,7 @@ app.use("/gather/general/info/with/balance", require("./routes/account/general/g
 app.use("/list/all/payouts", require("./routes/account/payments/payouts/listAll/listAllPayoutMethods.js"));
 app.use("/create/new/payout/bank/account/information", require("./routes/account/payments/payouts/create/craeteNewBankAccountAdd.js"));
 app.use("/cashout/payout/instant", require("./routes/account/payments/payouts/cashout/cashout.js"));
+app.use("/gather/past/payouts", require("./routes/account/payments/payouts/gatherAllPayouts/gatherPastPayouts.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

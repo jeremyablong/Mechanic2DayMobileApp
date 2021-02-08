@@ -10,7 +10,7 @@ const PaymentMainPageHelper =  (props) => {
                 <Header>
                     <Left style={{ flexDirection: "row" }}>
                         <Button onPress={() => {
-                            props.props.navigation.navigate("profile-main");
+                            props.props.navigation.push("profile-main");
                         }} transparent>
                             <Image source={require("../../../assets/icons/go-back.png")} style={styles.headerIcon} />
                         </Button>
@@ -36,6 +36,16 @@ const PaymentMainPageHelper =  (props) => {
                         </Left>
                         <Right>
                             <Image source={require("../../../assets/icons/request.png")} style={styles.icon} />
+                        </Right>
+                    </ListItem>
+                    <ListItem button={true} onPress={() => {
+                        props.props.navigation.push("payout-analytics-data");
+                    }}style={styles.listItem}>
+                        <Left>
+                            <NativeText>Payout Analytics & More</NativeText>
+                        </Left>
+                        <Right>
+                            <Image source={require("../../../assets/icons/analytics.png")} style={styles.icon} />
                         </Right>
                     </ListItem>
                     <ListItem button={true} onPress={() => {

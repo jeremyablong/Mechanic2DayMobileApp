@@ -6,7 +6,7 @@ const config = require("config");
 const cors = require('cors');
 const S3 = require('aws-sdk/clients/s3');
 const AWS = require('aws-sdk');
-const wasabiEndpoint = new AWS.Endpoint('s3.us-west-1.wasabisys.com');
+const wasabiEndpoint = new AWS.Endpoint(config.get("wasabiEndpoint"));
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment');
 
@@ -15,7 +15,7 @@ const secretAccessKey = config.get("wasabiSecretAccessKey");
 
 const s3 = new S3({
 	endpoint: wasabiEndpoint,
-	region: 'us-west-1',
+	region: config.get("wasabiRegion"),
 	accessKeyId,
 	secretAccessKey
 });
@@ -48,7 +48,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                         s3.putObject({
                             Body: bufferImage,
-                            Bucket: "mechanic-mobile-app",
+                            Bucket: config.get("wasabiBucket"),
                             Key: generatedID,
                             ContentEncoding: 'base64'
                         }, (errorr, dataaa) => {
@@ -62,7 +62,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     id: uuidv4(),
                                     date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                                     system_date: Date.now(),
-                                    full_url: `https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`,
+                                    full_url: `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/${generatedID}`,
                                     poster: user.unique_id
                                 });
                             } else {
@@ -70,7 +70,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     id: uuidv4(),
                                     date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                                     system_date: Date.now(),
-                                    full_url: `https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`,
+                                    full_url: `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/${generatedID}`,
                                     poster: user.unique_id
                                 }];
                             }
@@ -113,7 +113,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                         s3.putObject({
                             Body: bufferImage,
-                            Bucket: "mechanic-mobile-app",
+                            Bucket: config.get("wasabiBucket"),
                             Key: generatedID,
                             ContentEncoding: 'base64'
                         }, (errorr, dataaa) => {
@@ -127,7 +127,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     id: uuidv4(),
                                     date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                                     system_date: Date.now(),
-                                    full_url: `https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`,
+                                    full_url: `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/${generatedID}`,
                                     poster: user.unique_id
                                 });
                             } else {
@@ -135,7 +135,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     id: uuidv4(),
                                     date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
                                     system_date: Date.now(),
-                                    full_url: `https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/${generatedID}`,
+                                    full_url: `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/${generatedID}`,
                                     poster: user.unique_id
                                 }];
                             }

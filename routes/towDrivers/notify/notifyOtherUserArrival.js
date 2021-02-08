@@ -26,7 +26,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 axios.post(`${config.get("ngrok_url")}/notify/other/user/arrival/tow`, {
                     id: user.active_roadside_assistance_job.requestee_id,
                     fullName: user.fullName,
-                    profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
+                    profilePic: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/not-availiable.jpg`,
                     other_user_id: id
                 }).then((res) => {
                     if (res.data.message === "Notified!") {

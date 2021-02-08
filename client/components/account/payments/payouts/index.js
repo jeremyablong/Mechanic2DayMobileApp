@@ -26,7 +26,8 @@ constructor(props) {
         query: "",
         ready: false,
         hideResults: true,
-        selected: null
+        selected: null,
+        cashout: 0
     }
 }
     componentDidMount() {
@@ -82,6 +83,26 @@ constructor(props) {
                         text2: "Payout/payment is on the way! Check your account in a few minutes for your funds.",
                         type: "success",
                         visibilityTime: 4500,
+                        position: "top",
+                    })
+                }, 1500);
+            } else if (res.data.message === "You do NOT have enough 'avaliable' funds to cashout this amount") {
+                this.RBSheet.close();
+
+                const { avaliable } = res.data;
+
+                this.setState({
+                    cashout: 0,
+                    selected: null,
+                    query: ""
+                })
+
+                setTimeout(() => {
+                    Toast.show({
+                        text1: `You ONLY have $${avaliable} to cashout.`,
+                        text2: "You do NOT have enough funds to cashout this amount...",
+                        type: "error",
+                        visibilityTime: 5000,
                         position: "top",
                     })
                 }, 1500);

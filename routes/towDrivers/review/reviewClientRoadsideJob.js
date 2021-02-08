@@ -191,7 +191,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 },
                             "data": {
                                     // use company logo 
-                                    "url": profilePic !== null ? profilePic : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
+                                    "url": profilePic !== null ? profilePic : `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/not-availiable.jpg`,
                                     "dl": "notifications"
                                     // use company logo ^^^^^^^^^^^^^^^^^^^^^^^^^
                                 }

@@ -619,16 +619,18 @@ constructor(props) {
                         <View style={styles.container}>
                                 <View style={{ margin: 20 }}>
                                     <Text style={{ fontSize: 18 }}>What type of car do you have?</Text>
-                                    <ListItem style={{ marginTop: 15 }}>
-                                        <Left>
-                                            <NativeText>Identify your car</NativeText>
-                                        </Left>
-                                        <TouchableOpacity onPress={() => {
-                                            this._panel.show();
-                                        }}>
-                                            <NativeText style={{ color: "#6441A4", fontWeight: "bold" }}>START</NativeText>
-                                        </TouchableOpacity>
-                                    </ListItem>
+                                    <List>
+                                        <ListItem style={{ marginTop: 15 }}>
+                                            <Left>
+                                                <NativeText>Identify your car</NativeText>
+                                            </Left>
+                                            <TouchableOpacity onPress={() => {
+                                                this._panel.show();
+                                            }}>
+                                                <NativeText style={{ color: "#6441A4", fontWeight: "bold" }}>START</NativeText>
+                                            </TouchableOpacity>
+                                        </ListItem>
+                                    </List>
                                     {this.renderInfo()}
                                 </View>
                         </View>
