@@ -134,6 +134,11 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>Main Homepage</NativeText></Left><Right><Image source={require("../../../assets/icons/home.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
+                            <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("promote-account-main");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Promote your account</NativeText></Left><Right><Image source={require("../../../assets/icons/promotion.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem>
                             <ListItem style={styles.divider} itemDivider>
                              <Left><NativeText>ACCOUNT SETTINGS</NativeText></Left>
                             </ListItem>                    
@@ -194,7 +199,9 @@ constructor(props) {
                             <ListItem style={styles.listItem}>
                             <Left><NativeText><Text style={styles.bigger}>Gift cards</Text> {"\n"}Send or redeem gift card</NativeText></Left><Right><Image source={require("../../../assets/icons/gift-card.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
-                            <ListItem style={[styles.listItem, { minHeight: 100 }]}>
+                            <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("referral-system-main");
+                            }} style={[styles.listItem, { minHeight: 100 }]}>
                             <Left><NativeText><Text style={styles.bigger}>Invite friends</Text> {"\n"}When they join, your friends will get up to $65 off a qualifying repair.</NativeText></Left><Right><Image source={require("../../../assets/icons/invite.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             <ListItem style={styles.divider} itemDivider>

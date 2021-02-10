@@ -6,6 +6,7 @@ import Gallery from 'react-native-image-gallery';
 import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
 import MapView, { Marker } from 'react-native-maps';
 import _ from "lodash";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const { height, width } = Dimensions.get("window");
 
@@ -81,10 +82,9 @@ constructor(props) {
                         <View style={styles.hr} />
                         <View style={{ marginTop: 10 }}>
                             <AwesomeButtonBlue width={width * 0.90} type={"secondary"} onPress={() => {
-                                Linking.openURL(`tel:${company.company_phone_number}`)
+                                this.RBSheet.open();
                             }}>
-                                <Image source={require("../../../assets/icons/call.png")} style={{ maxWidth: 40, maxHeight: 40 }}/>
-                                <Text> Call company</Text>
+                                Request a tow from this company
                             </AwesomeButtonBlue>
                         </View>
                         <View style={[styles.hr, { marginTop: 20 }]} />
@@ -208,6 +208,28 @@ constructor(props) {
                         </View>
                     </View>
                 </ScrollView>
+                <RBSheet
+                    ref={ref => {
+                        this.RBSheet = ref;
+                    }}
+                    height={height}
+                    openDuration={250}
+                    customStyles={{
+                        container: {
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }
+                    }}
+                    >
+                        <View>
+
+                        </View> 
+                        <View style={styles.bottomButton}>
+                            <AwesomeButtonBlue type={"anchor"} textColor={"white"} onPress={() => {
+                                this.RBSheet.close();
+                            }} stretch={true}>Close/Exit</AwesomeButtonBlue>
+                        </View>
+                    </RBSheet>
             </Fragment>
         )
     }

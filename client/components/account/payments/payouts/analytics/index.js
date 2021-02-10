@@ -66,8 +66,8 @@ constructor(props) {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Analytics</Title>
-                        <Subtitle>Analytics, stats & more...</Subtitle>
+                        <Title>Payout Report</Title>
+                        <Subtitle>Payout report, stats & more...</Subtitle>
                     </Body>
                     <Right />
                 </Header>

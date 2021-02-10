@@ -23,13 +23,22 @@ app.options('*', cors());
 app.use('*', cors());
 app.use(cors());
 
-app.use(bodyParser.urlencoded({
-  limit: "500mb",
-  extended: false
-}));
-app.use(bodyParser.json({
+const maybe = (fn) => {
+    return function(req, res, next) {
+        if (req.path === '/webhook') {
+            next();
+        } else {
+            fn(req, res, next);
+        }
+    }
+}
+app.use(maybe(bodyParser.json({
 	limit: "500mb"
-}));
+})));
+app.use(maybe(bodyParser.urlencoded({
+	limit: "500mb",
+	extended: false
+})));
 
 const limiter = rateLimit({
     max: 100,// max requests
@@ -163,6 +172,8 @@ app.use("/list/all/payouts", require("./routes/account/payments/payouts/listAll/
 app.use("/create/new/payout/bank/account/information", require("./routes/account/payments/payouts/create/craeteNewBankAccountAdd.js"));
 app.use("/cashout/payout/instant", require("./routes/account/payments/payouts/cashout/cashout.js"));
 app.use("/gather/past/payouts", require("./routes/account/payments/payouts/gatherAllPayouts/gatherPastPayouts.js"));
+app.use("/successful/boost/purchase/tow/company", require("./routes/boost/successfulTowCompanyBoost.js"));
+app.use("/promote/driver/temp", require("./routes/boost/drivers/promoteDriver.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
