@@ -174,6 +174,9 @@ app.use("/cashout/payout/instant", require("./routes/account/payments/payouts/ca
 app.use("/gather/past/payouts", require("./routes/account/payments/payouts/gatherAllPayouts/gatherPastPayouts.js"));
 app.use("/successful/boost/purchase/tow/company", require("./routes/boost/successfulTowCompanyBoost.js"));
 app.use("/promote/driver/temp", require("./routes/boost/drivers/promoteDriver.js"));
+app.use("/gather/towtruck/drivers/promoted", require("./routes/promoted/towDrivers/promotedTowDriverProfiles.js"));
+app.use("/successful/boost/purchase/mechanic/listing", require("./routes/boost/successfulMechanicBoost.js"));
+app.use("/check/pending/boosted/profile/mechanic", require("./routes/boost/mechanic/boostMechanic.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')

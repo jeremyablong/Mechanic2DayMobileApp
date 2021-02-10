@@ -161,15 +161,45 @@ constructor(props) {
             requestPurchase(sku).then((result) => {
                 console.log("Result mechanic boost.", result);
                 
-                Toast.show({
-                    type: 'success',
-                    position: 'top',
-                    text1: 'Successfully purchased BOOST for 3 days! 👌',
-                    text2: "You've successfully purchased a boost and your profile is now active for 3 days!",
-                    visibilityTime: 4500
-                });
+                const { boostMechanic } = this.state;
 
-                this.purchaseConfirmed();
+                axios.post(`${Config.ngrok_url}/successful/boost/purchase/mechanic/listing`, {
+                    boost: boostMechanic,
+                    id: this.props.unique_id
+                }).then((res) => {
+                    if (res.data.message === "No existing boost and boost was activated!") {
+                        console.log(res.data);
+
+                        this.setState({
+                            boostMechanic: ""
+                        }, () => {
+                            Toast.show({
+                                type: 'success',
+                                position: 'top',
+                                text1: 'Successfully purchased boost(s) and activated promotion!',
+                                text2: "Boost(s) were successfully activated/purchased and we're credited to your account!",
+                                visibilityTime: 4500
+                            });
+                        })
+                    } else if (res.data.message === "User account is already boosted and you cannot double boost!") {
+
+                        this.setState({
+                            boostMechanic: ""
+                        }, () => {
+                            Toast.show({
+                                type: 'success',
+                                position: 'top',
+                                text1: `You are ALREADY boosted - Can't double boost.`,
+                                text2: "You've already boosted your account BUT your credits were SUCCESSFULLY added!",
+                                visibilityTime: 4500
+                            });
+                        })
+                    } else {
+                        console.log("err", res.data);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
             }).catch((err) => {
                 console.log("Critical purchase err", err);
             })
@@ -182,7 +212,7 @@ constructor(props) {
           requestPurchase(sku).then((result) => {
               console.log("Result tow truck co.", result);
 
-              Toast.show({
+            Toast.show({
                 type: 'success',
                 position: 'top',
                 text1: 'Successfully purchased BOOST for 3 days! 👌',
@@ -197,22 +227,6 @@ constructor(props) {
         } catch (err) {
           console.log('requestPurchase error => ', err);
         }
-    };
-    purchaseConfirmed = () => {
-        //you can code here for what changes you want to do in db on purchase successfull
-        console.log("successful payment/purchase.");
-
-        axios.post(`${Config.ngrok_url}/successful/boost/purchase`, {
-
-        }).then((res) => {
-            if (res.data.message === "") {
-                console.log(res.data);
-            } else {
-                console.log("err", res.data);
-            }
-        }).catch((err) => {
-            console.log(err);
-        })
     };
     purchaseConfirmedTowTruck = () => {
         console.log("purchaseConfirmedTowTruck clicked");
