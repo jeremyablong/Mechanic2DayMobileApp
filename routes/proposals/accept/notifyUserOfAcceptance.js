@@ -17,7 +17,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("users");
 
-        const { proposal, other, listinggg, fullName, total, customer_id, signed_in_user_id } = req.body;
+        const { proposal, other, listinggg, fullName, total, customer_id, signed_in_user_id, action } = req.body;
 
         collection.find({ unique_id: { "$in": [ proposal.applicant, signed_in_user_id ]}}).toArray(async (err, users) => {
             if (err) {
@@ -63,58 +63,169 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         // client
                         if (user.unique_id === signed_in_user_id) {
                             console.log("proposal.applicant...", user);
-                            const paymentIntent = await stripe.paymentIntents.create({
-                                amount: Math.round(total  * 100),
-                                currency: 'usd',
-                                payment_method_types: ['card'],
-                                application_fee_amount: Math.round((total * 100) * 0.20),
-                                customer: user.stripe_customer_account.id,
-                                transfer_data: {
-                                    destination: passedData,
-                                },
-                                confirm: true,
-                                capture_method: "manual"
-                            }, async (errorrrrrrrrr, intent) => {
-                                if (errorrrrrrrrr) {
-                                    console.log(errorrrrrrrrr);
-                                } else {
-                                    console.log("INTENT", intent);
 
-                                    if (user.accepted_jobs) {
-                                        user.accepted_jobs.push({
-                                            id: generatedUniqueID,
-                                            accepted_job_id: listinggg.id,
-                                            agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-                                            agreement_system_date: Date.now(),
-                                            agreed_amount: proposal.amount,
-                                            currency: "$ - USD",
-                                            initiator: signed_in_user_id,
-                                            other_user: proposal.applicant,
-                                            other_user_agrees_completion: false,
-                                            poster_agrees_completion: false,
-                                            payment_intent: intent
-                                        })
-
-                                        await collection.save(user);
+                            if (action === "standard-payment") {
+                                const paymentIntent = await stripe.paymentIntents.create({
+                                    amount: Math.round(total * 100),
+                                    currency: 'usd',
+                                    payment_method_types: ['card'],
+                                    application_fee_amount: Math.round((total * 100) * 0.20),
+                                    customer: user.stripe_customer_account.id,
+                                    transfer_data: {
+                                        destination: passedData
+                                    },
+                                    confirm: true,
+                                    capture_method: "manual"
+                                }, async (errorrrrrrrrr, intent) => {
+                                    if (errorrrrrrrrr) {
+                                        console.log(errorrrrrrrrr);
                                     } else {
-                                        user["accepted_jobs"] = [{
-                                            id: generatedUniqueID,
-                                            accepted_job_id: listinggg.id,
-                                            agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-                                            agreement_system_date: Date.now(),
-                                            agreed_amount: proposal.amount,
-                                            currency: "$ - USD",
-                                            initiator: signed_in_user_id,
-                                            other_user: proposal.applicant,
-                                            other_user_agrees_completion: false,
-                                            poster_agrees_completion: false,
-                                            payment_intent: intent
-                                        }]
-
-                                        await collection.save(user);
+                                        console.log("INTENT", intent);
+    
+                                        if (user.accepted_jobs) {
+                                            user.accepted_jobs.push({
+                                                id: generatedUniqueID,
+                                                accepted_job_id: listinggg.id,
+                                                agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                                agreement_system_date: Date.now(),
+                                                agreed_amount: proposal.amount,
+                                                currency: "$ - USD",
+                                                initiator: signed_in_user_id,
+                                                other_user: proposal.applicant,
+                                                other_user_agrees_completion: false,
+                                                poster_agrees_completion: false,
+                                                payment_intent: intent
+                                            })
+    
+                                            collection.save(user);
+                                        } else {
+                                            user["accepted_jobs"] = [{
+                                                id: generatedUniqueID,
+                                                accepted_job_id: listinggg.id,
+                                                agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                                agreement_system_date: Date.now(),
+                                                agreed_amount: proposal.amount,
+                                                currency: "$ - USD",
+                                                initiator: signed_in_user_id,
+                                                other_user: proposal.applicant,
+                                                other_user_agrees_completion: false,
+                                                poster_agrees_completion: false,
+                                                payment_intent: intent
+                                            }]
+    
+                                            collection.save(user);
+                                        }
                                     }
-                                }
-                            })
+                                }) 
+                            } else if (action === "cryptocurrency") {
+                                const paymentIntent = await stripe.paymentIntents.create({
+                                    amount: Math.round(total * 100),
+                                    currency: 'usd',
+                                    payment_method_types: ['card'],
+                                    application_fee_amount: Math.round(total * 100),
+                                    customer: user.stripe_customer_account.id,
+                                    transfer_data: {
+                                        destination: passedData
+                                    },
+                                    confirm: true,
+                                    capture_method: "manual"
+                                }, async (errorrrrrrrrr, intent) => {
+                                    if (errorrrrrrrrr) {
+                                        console.log(errorrrrrrrrr);
+                                    } else {
+                                        console.log("INTENT", intent);
+    
+                                        if (user.accepted_jobs) {
+                                            user.accepted_jobs.push({
+                                                id: generatedUniqueID,
+                                                accepted_job_id: listinggg.id,
+                                                agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                                agreement_system_date: Date.now(),
+                                                agreed_amount: proposal.amount,
+                                                currency: "cryptocurrency",
+                                                initiator: signed_in_user_id,
+                                                other_user: proposal.applicant,
+                                                other_user_agrees_completion: false,
+                                                poster_agrees_completion: false,
+                                                payment_intent: intent
+                                            })
+    
+                                            collection.save(user);
+                                        } else {
+                                            user["accepted_jobs"] = [{
+                                                id: generatedUniqueID,
+                                                accepted_job_id: listinggg.id,
+                                                agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                                agreement_system_date: Date.now(),
+                                                agreed_amount: proposal.amount,
+                                                currency: "cryptocurrency",
+                                                initiator: signed_in_user_id,
+                                                other_user: proposal.applicant,
+                                                other_user_agrees_completion: false,
+                                                poster_agrees_completion: false,
+                                                payment_intent: intent
+                                            }]
+    
+                                            collection.save(user);
+                                        }
+                                    }
+                                }) 
+                                // const customer = await stripe.customers.retrieve(
+                                //     user.stripe_customer_account.id
+                                // );
+
+                                // const default_source = customer.default_source;
+
+                                // const charge = await stripe.charges.create({
+                                //     amount: Math.round(total * 100),
+                                //     currency: 'usd',
+                                //     customer: user.stripe_customer_account.id,
+                                //     source: default_source,
+                                //     description: 'Auto repair transaction',
+                                // }, (err, payment) => {
+                                //     if (err) {
+                                //         console.log(err);
+                                //     } else {
+                                //         console.log("PAY", payment);
+
+                                //         if (user.accepted_jobs) {
+                                //             user.accepted_jobs.push({
+                                //                 id: generatedUniqueID,
+                                //                 accepted_job_id: listinggg.id,
+                                //                 agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                //                 agreement_system_date: Date.now(),
+                                //                 agreed_amount: proposal.amount,
+                                //                 currency: "$ - USD",
+                                //                 initiator: signed_in_user_id,
+                                //                 other_user: proposal.applicant,
+                                //                 other_user_agrees_completion: false,
+                                //                 poster_agrees_completion: false,
+                                //                 cryptocurrency_current_exchange_amount: config.get("cryptoICO") / blockchain.length
+                                //             })
+    
+                                //             // await collection.save(user);
+                                //         } else {
+                                //             user["accepted_jobs"] = [{
+                                //                 id: generatedUniqueID,
+                                //                 accepted_job_id: listinggg.id,
+                                //                 agreement_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                //                 agreement_system_date: Date.now(),
+                                //                 agreed_amount: proposal.amount,
+                                //                 currency: "$ - USD",
+                                //                 initiator: signed_in_user_id,
+                                //                 other_user: proposal.applicant,
+                                //                 other_user_agrees_completion: false,
+                                //                 poster_agrees_completion: false,
+                                //                 cryptocurrency_current_exchange_amount: config.get("cryptoICO") / blockchain.length
+                                //             }]
+    
+                                //             // await collection.save(user);
+                                //         }
+
+                                //         return;
+                                //     }
+                                // });
+                            }
                         }
                     }
                 }).then(async () => {
@@ -141,6 +252,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 user["accepted_jobs"] = [accepted];
                             }
 
+                            collection.save(user);
+
                             const notify_obj = {
                                 id: uuidv4(),
                                 system_date: Date.now(),
@@ -159,13 +272,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 user["notifications"] = [notify_obj];
                             }
             
-                            await collection.save(user);
+                            collection.save(user);
 
                             setTimeout(() => {
                                 res.json({
                                     message: "Succesfully notified user!"
                                 })
-                            }, 500);
+                            }, 2000);
                         }
                     }
                 })

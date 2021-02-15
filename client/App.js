@@ -101,6 +101,7 @@ import PayoutsManageOptionsMainPage from "./pages/account/payments/payouts/optio
 import PaymentAnalyticsDashboardPage from "./pages/account/payments/payouts/analytics/index.js";
 import ReferralSystemMainPage from "./pages/referral/main.js";
 import PromoteAccountMainPage from "./pages/promote/main.js";
+import LeaveFeedbackMechanic2DayPage from "./pages/account/feedback/leaveFeedback.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -703,6 +704,7 @@ constructor(props) {
               <Stack.Screen name="payout-analytics-data" component={PaymentAnalyticsDashboardPage} />
               <Stack.Screen name="referral-system-main" component={ReferralSystemMainPage} />
               <Stack.Screen name="promote-account-main" component={PromoteAccountMainPage} />
+              <Stack.Screen name="leave-feedback-company" component={LeaveFeedbackMechanic2DayPage} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>

@@ -19,6 +19,12 @@ const UserSchema =  new mongoose.Schema({
     password: {
         type: String
     },
+    boosts: {
+        type: Number
+    },
+    blockchainCredentials: {
+        type: Object
+    },
     phoneNumber: {
         type: Array
     },

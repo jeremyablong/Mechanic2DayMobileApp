@@ -24,11 +24,42 @@ export default StyleSheet.create({
         minHeight: 50,
         borderRadius: 40
     },
+    boxedOutline: {
+        minHeight: 100,
+        maxHeight: 100,
+        marginTop: 15,
+        flexDirection: "row",
+        borderWidth: 2,
+        borderColor: "lightgrey",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        borderWidth: 3,
+        borderColor: "#8884FF"
+    },
+    boxed: {
+        minHeight: 100,
+        maxHeight: 100,
+        marginTop: 15,
+        flexDirection: "row",
+        borderWidth: 2,
+        borderColor: "lightgrey",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
     header: {
         fontSize: 24,
         fontWeight: "bold",
         marginBottom: 15
     },  
+    greyButton: {
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        width: width * 0.85,
+        backgroundColor: "lightgrey"
+    },
     specialButton: {
         justifyContent: "center",
         alignItems: "center",

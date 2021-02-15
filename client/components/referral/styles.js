@@ -26,6 +26,18 @@ export default StyleSheet.create({
         borderBottomWidth: 2,
         marginTop: 15,
         marginBottom: 15
+    },
+    innerIcon: {
+        maxWidth: "100%", 
+        maxHeight: "100%"
+    },
+    listitem: {
+        width: width
+    },
+    absolute: {
+        position: "absolute",
+        top: 10,
+        right: 10
     }
 });
     

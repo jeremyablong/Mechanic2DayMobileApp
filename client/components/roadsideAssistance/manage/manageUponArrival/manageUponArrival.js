@@ -46,7 +46,8 @@ constructor(props) {
                     })
                 } else {
                     this.setState({
-                        user
+                        user,
+                        completed: user.active_roadside_assistance_job.agree_job_completed
                     })
                 }
             }
@@ -65,11 +66,11 @@ constructor(props) {
                             <Text style={[styles.headerMain, { marginBottom: 15, marginTop: 15 }]}>Tow Truck Driver - Manage Job</Text>
                             <Text style={[styles.p, { marginBottom: 15 }]}>Is your tow and/or roadside assistance job completed? Accepting this job will release the funds to the provider.</Text>
                             <View style={styles.hr} />
-                            <AwesomeButtonBlue type={"secondary"} textColor={"black"} onPress={() => {
+                            {this.state.completed === false ? <AwesomeButtonBlue type={"secondary"} textColor={"black"} onPress={() => {
                                 this.setState({
                                     isVisibleAgent: true
                                 })
-                            }} width={width * 0.90}>Complete transaction</AwesomeButtonBlue>
+                            }} width={width * 0.90}>Complete transaction</AwesomeButtonBlue> : null}
                             <View style={styles.hr} />
                             <AwesomeButtonBlue type={"primary"} textColor={"white"} onPress={() => {}} width={width * 0.90}>Contact support</AwesomeButtonBlue>
                             <View style={styles.hr} />
@@ -225,6 +226,10 @@ constructor(props) {
             console.log(res.data);
             if (res.data.message === "Marked as complete!") {
                 console.log(res.data);
+
+                this.setState({
+                    completed: true
+                })
 
                 socket.emit("mark-trip-complete", {
                     complete: true,

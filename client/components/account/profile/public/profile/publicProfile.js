@@ -77,7 +77,7 @@ constructor (props) {
     }
     _renderTruncatedFooter = (handlePress) => {
         return (
-            <Text style={{ fontSize: 20, color: "darkblue", marginTop: 5}} onPress={handlePress}>
+            <Text style={{ fontSize: 15, color: "blue", marginTop: 5}} onPress={handlePress}>
                 Read more
             </Text>
         );
@@ -85,9 +85,9 @@ constructor (props) {
  
     _renderRevealedFooter = (handlePress) => {
         return (
-        <Text style={{ fontSize: 20, color: "darkblue", marginTop: 5}} onPress={handlePress}>
-            Show less
-        </Text>
+            <Text style={{ fontSize: 15, color: "blue", marginTop: 5}} onPress={handlePress}>
+                Show less
+            </Text>
         );
     }
  
@@ -273,10 +273,12 @@ constructor (props) {
         });
 
         setTimeout(() => {
-            this.setState({
-                visible: false
-            })
-        }, 15000);
+            if (this.state.visible === true) {
+                this.setState({
+                    visible: false
+                })
+            }
+        }, 30000);
     }
     renderProfilePic = () => {
         const { user, ready } = this.state;
@@ -344,14 +346,14 @@ constructor (props) {
                     <View style={styles.marginSpace}>
                         <Text style={styles.h3}>About</Text>
                         <Image source={require("../../../../../assets/icons/quotes-small.png")} style={styles.quotesIcon} />
-                        <ReadMore
+                        {user !== null && _.has(user, "general_information") ? <ReadMore
                             numberOfLines={3}
                             renderTruncatedFooter={this._renderTruncatedFooter}
                             renderRevealedFooter={this._renderRevealedFooter}
                             onReady={this._handleTextReady}
                         >
-                            <Text style={styles.descriptionText}>{user !== null && _.has(user, "general_information") ? user.general_information.about_me : "---------"}</Text>
-                        </ReadMore>
+                            <Text style={styles.descriptionText}>{user.general_information.about_me}</Text>
+                        </ReadMore> : <Text style={styles.descriptionText}>{"---------"}</Text>}
                         <View style={styles.shortHr} />
                         <View style={styles.customRow}>
                             <Image source={require("../../../../../assets/icons/home.png")} style={styles.helperIcon} />
@@ -401,6 +403,45 @@ constructor (props) {
                     <View style={styles.hr} />
                     <View style={styles.marginSpace}>
                         <Text style={styles.h3}>{_.has(user, "review_count") ? user.review_count : 0} Reviews</Text>
+                        {user !== null && _.has(user, "review_overviews_list") ? user.review_overviews_list.map((review, index) => {
+                            return (
+                                <Fragment>
+                                    <View style={{ marginTop: 20 }}>
+                                        <Text style={{ fontWeight: "bold" }}>Public Review</Text>
+                                        <ReadMore
+                                            numberOfLines={3}
+                                            renderTruncatedFooter={this._renderTruncatedFooter}
+                                            renderRevealedFooter={this._renderRevealedFooter}
+                                            onReady={this._handleTextReady}>
+                                            <Text style={styles.cardText}>
+                                                {review.public_message}
+                                            </Text>
+                                        </ReadMore>
+                                        <View style={{ marginTop: 15 }} />
+                                        <Text style={{ fontWeight: "bold" }}>Private Review</Text>
+                                        <ReadMore
+                                            numberOfLines={3}
+                                            renderTruncatedFooter={this._renderTruncatedFooter}
+                                            renderRevealedFooter={this._renderRevealedFooter}
+                                            onReady={this._handleTextReady}>
+                                            <Text style={styles.cardText}>
+                                                {review.private_message}
+                                            </Text>
+                                        </ReadMore>
+                                        <View style={{ flexDirection: "row", marginTop: 15, maxHeight: 75 }}>
+                                            <View style={{ flexDirection: "column", width: width * 0.15 }}>
+                                                <Image source={require("../../../../../assets/images/me.jpg")} style={{ maxWidth: 45, maxHeight: 45 }} />
+                                            </View>
+                                            <View style={{ flexDirection: "column", width: width * 0.70 }}>
+                                                <Text style={{ fontWeight: "bold" }}>Jeremy Blong</Text>
+                                                <Text>{review.date}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+                                    <View style={styles.hr} />
+                                </Fragment>
+                            );
+                        }) : null}
                     </View>
                 </ScrollView>
                 <RBSheet

@@ -36,7 +36,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === id) {
                             
                             user.active_roadside_assistance_job.agree_job_completed = true;
-                            user.active_roadside_assistance_job.current_page = "finale-review";
 
                             collection.save(user);
 
@@ -55,6 +54,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             if (passedData === true && user.towing_services_start.agree_job_completed === true) {
 
                                 user.towing_services_start.page = "driver-has-arrived-manage-listing-depatarture";
+
+                                for (let iddxxxxxxx = 0; iddxxxxxxx < users.length; iddxxxxxxx++) {
+                                    let userrrrr = users[iddxxxxxxx];
+
+                                    if (userrrrr.unique_id === id) {
+                                        userrrrr.active_roadside_assistance_job.current_page = "finale-review";
+
+                                        collection.save(userrrrr);
+                                    }
+                                }
 
                                 for (let iiiii = 0; iiiii < user.card_payment_methods.length; iiiii++) {
                                     const cardddd = user.card_payment_methods[iiiii];

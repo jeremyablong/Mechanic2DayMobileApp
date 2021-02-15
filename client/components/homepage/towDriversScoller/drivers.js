@@ -38,7 +38,7 @@ const TowTruckDriversHelper = (props) => {
                         <Text style={styles.clientsText}>These are promoted/boosted tow drivers from our top clients!</Text>
                         
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, minHeight: 300 }}>
                         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={styles.scrollViewTwo} contentContainerStyle={styles.contentContainerTwo}>
                             {data.slice(0, 9).map((driver, index) => {
                                 console.log("driver ACCOUNT", driver);
@@ -69,7 +69,7 @@ const TowTruckDriversHelper = (props) => {
                         </ScrollView>
                     </View>
                 </View>
-                <View style={[styles.outterContainer, { top: -150, marginBottom: -300 }]}>
+                <View style={[styles.outterContainer, { top: -150, marginBottom: -100 }]}>
                     <View style={styles.boxOne}>
                         <Text style={styles.mainText}>Promoted Tow Truck Drivers - Batch #2</Text>
                         <Text style={styles.clientsText}>These are promoted/boosted tow drivers from our top clients!</Text>

@@ -491,7 +491,7 @@ constructor(props) {
                     </View>
                     <View style={[styles.centered, { marginTop: 20 }]}>
                         <View style={styles.centered}>
-                            {myLocation !== null || serviceRequired !== null ? <Button onPress={() => {
+                            {myLocation !== null && serviceRequired !== null ? <Button onPress={() => {
                                 this.RBSheet.close();
 
                                 this.setState({
@@ -674,7 +674,8 @@ constructor(props) {
                                         towNeeded: value,
                                         towDesination: null, 
                                         serviceRequired: null, 
-                                        towDesinationFull: null
+                                        towDesinationFull: null,
+                                        myLocation: null
                                     })
                                 }}
                                 style={styles.switchButton}

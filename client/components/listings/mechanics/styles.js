@@ -17,6 +17,10 @@ export default StyleSheet.create({
     heading1: {
         fontSize: 30
     },
+    skelatonBox: {
+        height: 250, 
+        width: "100%"
+    },
     row: {
         flexDirection: 'row'
     },
@@ -34,6 +38,8 @@ export default StyleSheet.create({
     profilePicOne: {
         maxWidth: 80,
         borderRadius: 45,
+        minHeight: 80,
+        minWidth: 80,
         maxHeight: 80
     },
     underline: {

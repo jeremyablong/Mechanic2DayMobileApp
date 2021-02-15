@@ -25,7 +25,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         const collection = database.collection("users");
 
         const trimmed = email_phone.toLowerCase().trim();
-        
 
         collection.findOne({ $or: [
             { email: trimmed },

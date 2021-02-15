@@ -8,7 +8,6 @@ export default StyleSheet.create({
         flex: 1,
         minHeight: 125,
         maxHeight: 125,
-        backgroundColor: "white",
         borderBottomWidth: 2,
         borderBottomColor: "lightgrey",
         flexDirection: "row"
@@ -17,7 +16,8 @@ export default StyleSheet.create({
         zIndex: 99999
     },
     subText: {
-        color: "darkblue",
+        color: "black",
+        fontWeight: "bold",
         fontSize: 17
     },
     inlineIcon: {
@@ -32,7 +32,8 @@ export default StyleSheet.create({
     },
     name: {
         fontSize: 24,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: "blue"
     },  
     profilePic: {
         maxWidth: 65,

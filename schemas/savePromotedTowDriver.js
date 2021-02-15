@@ -26,6 +26,9 @@ const UserSchema =  new mongoose.Schema({
     company_id: {
         type: String
     },
+    birthdate: {
+        type: String
+    },
     company_name: {
         type: String
     },

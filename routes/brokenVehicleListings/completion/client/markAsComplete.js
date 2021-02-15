@@ -6,6 +6,7 @@ const config = require("config");
 const cors = require('cors');
 const stripe = require('stripe')(config.get("stripeSecretKey"));
 const axios = require('axios');
+const { decrypt } = require("../../../../crypto");
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, mainResponse) => {
@@ -43,14 +44,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                                     collection.save(user);
 
-                                    resolve();
+                                    resolve(user);
                                 }
                             }
                         }
                     }
                 })
 
-                promiseee.then(async () => {
+                promiseee.then(async (mechanicUser) => {
                     for (let index = 0; index < users.length; index++) {
                         const user = users[index];
                         // client user
@@ -80,18 +81,46 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                                     job.payment_intent.id
                                                 ).catch((response) => {
                                                     console.log("RESponse", response);
-        
+
                                                     if (response.raw.message === "This PaymentIntent could not be captured because it has already been captured.") {
-                                                        mainResponse.json({
-                                                            message: "STRIPE error occurred...",
-                                                            err: response.raw.message
+
+                                                        console.log("ERROR ALREADY PAID RAN...");
+                                                        
+                                                        axios.post(`${config.get("ngrok_url")}/transaction/broadcast`, {
+                                                            amount: (job.agreed_amount / (config.get("investmentAmountCrypto") / config.get("cryptoICO"))),
+                                                            recipient: decrypt(mechanicUser.blockchainCredentials.publicKey),
+                                                            sender: "00"
+                                                        }).then((dattaaaaa) => {
+                                                            console.log(dattaaaaa.data);
+    
+                                                            mainResponse.json({
+                                                                message: "STRIPE error occurred...",
+                                                                err: response.raw.message
+                                                            })
+                                                        }).catch((errorrrrrrrrrrrrr) => {
+                                                            console.log(errorrrrrrrrrrrrr);
                                                         })
                                                     }
                                                 });
+
+                                                
         
                                                 if (paymentIntent) {
-                                                    mainResponse.json({
-                                                        message: "Successfully notifed user of completion and updated data in db!"
+
+                                                    console.log("PAYMENT INTENT RAN....")
+
+                                                    axios.post(`${config.get("ngrok_url")}/transaction/broadcast`, {
+                                                        amount: (job.agreed_amount / (config.get("investmentAmountCrypto") / config.get("cryptoICO"))),
+                                                        recipient: decrypt(mechanicUser.blockchainCredentials.publicKey),
+                                                        sender: "00"
+                                                    }).then((dattaaaaa) => {
+                                                        console.log(dattaaaaa.data);
+
+                                                        mainResponse.json({
+                                                            message: "Successfully notifed user of completion and updated data in db!"
+                                                        })
+                                                    }).catch((errorrrrrrrrrrrrr) => {
+                                                        console.log(errorrrrrrrrrrrrr);
                                                     })
                                                 }
                                             } else {

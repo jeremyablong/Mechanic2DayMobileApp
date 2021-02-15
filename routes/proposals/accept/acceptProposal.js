@@ -23,7 +23,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
             id, 
             fullName,
             other_user,
-            total
+            total,
+            action
         } = req.body;
 
         collection.findOne({ unique_id: id }).then(async (user) => {
@@ -53,7 +54,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                         other_user,
                                         total,
                                         fullName,
-                                        customer_id: user.stripe_customer_account.id
+                                        customer_id: user.stripe_customer_account.id,
+                                        action
                                     }).then((res) => {
                                         if (res.data.message === "Succesfully notified user!") {
                                             console.log(res.data);

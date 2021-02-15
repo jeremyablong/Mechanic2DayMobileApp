@@ -174,12 +174,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                                         } else {
                                                             console.log("charge", charge);
 
-                                                            user.towing_services_start.charge = charge;
-                                                            userrr.active_roadside_assistance_job.charge = charge;
+                                                            user.towing_services_start["charge"] = charge;
+                                                            userrr.active_roadside_assistance_job["charge"] = charge;
 
-                                                            collection.save(user);
+                                                            await collection.save(user);
     
-                                                            collection.save(userrr);
+                                                            await collection.save(userrr);
 
                                                             axios.post(`${config.get("ngrok_url")}/remove/queued/item`, {
                                                                 selected

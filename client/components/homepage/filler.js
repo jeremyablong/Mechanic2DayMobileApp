@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles.js";
 import { Image, View, Text, FlatList, TouchableOpacity } from "react-native";
-import { AirbnbRating } from 'react-native-ratings';
 import axios from "axios";
 import { Config } from "react-native-config";
 import moment from "moment";
@@ -111,7 +110,7 @@ const FillerContentMechanicsForHire = (props) => {
 
     useEffect(() => {
         setTimeout(() => {
-            axios.get(`${Config.ngrok_url}/gather/mechanics/all`).then((res) => {
+            axios.get(`${Config.ngrok_url}/gather/mechanics/promoted/all`).then((res) => {
                 if (res.data.message === "Successfully gathered users!") {
                     console.log(res.data);
 
@@ -131,6 +130,7 @@ const FillerContentMechanicsForHire = (props) => {
 
         return `${years} old - ${gender}`;
     }
+    console.log("USERS!:", users);
     return (
         <View style={{ marginTop: -100 }}>
             <Text style={styles.flatlistTitle}>Mechanics For Hire</Text>
@@ -141,7 +141,7 @@ const FillerContentMechanicsForHire = (props) => {
                 renderItem={({ item }) => {
                     return (
                         <TouchableOpacity onPress={() => {
-                            props.props.navigation.navigate("mechanic-for-hire-individual");
+                            props.props.navigation.navigate("mechanic-for-hire-individual", { mechanic: item });
                         }} style={styles.flatlistItem}>
                             <Image source={{ uri: typeof item.profilePics !== "undefined" && item.profilePics.length > 0 ? item.profilePics[item.profilePics.length - 1].full_url : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg" }} style={styles.specialImage} />
                             <View style={styles.specialRow}>
@@ -154,19 +154,13 @@ const FillerContentMechanicsForHire = (props) => {
                                 <Text style={styles.mainTitle}>{calculateBirthdate(item.birthdate, item.gender)}</Text>
                             </View>
                             <View style={styles.specialRow}>
-                                <View style={styles.floatLeft}>
-                                    <AirbnbRating
-                                        count={5}
-                                        defaultRating={item.rating}
-                                        size={15} 
-                                        isDisabled={true} 
-                                        selectedColor={"blue"} 
-                                        showRating={false}
-                                    />
+                                <View style={[styles.floatLeft, { flexDirection: "row" }]}>
+                                    <Image source={require("../../assets/icons/small-star.png")} style={{ maxWidth: 20, maxHeight: 20 }} />
+                                    <Text style={{ fontSize: 18 }}>({item.review_count}) Review(s)</Text>
                                 </View>
                             </View>
                             <View style={styles.specialRow}>
-                                <Text style={styles.pricePrice}>Min Rate: ${null}</Text>
+                                <Text style={styles.pricePrice}>Member since {moment(item.register_system_date).format("MM-YYYY")}</Text>
                             </View>
                         </TouchableOpacity>
                     );

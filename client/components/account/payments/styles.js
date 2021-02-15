@@ -22,5 +22,19 @@ export default StyleSheet.create({
     lastListItem: {
         minHeight: 70,
         maxHeight: 70
+    },
+    margin: {
+        margin: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center"
+    },
+    absolute: {
+        position: "absolute",
+        bottom: 10,
+        right: 10
+    },
+    row: {
+        flexDirection: "row"
     }
 })

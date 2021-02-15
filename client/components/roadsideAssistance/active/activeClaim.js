@@ -82,7 +82,7 @@ constructor(props) {
                                 }
                             }
 
-                            axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${location.coords.latitude},${location.coords.longitude}/json?key=${Config.tomtom_api_key}`, configuration).then((resolution) => {
+                            axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${location.coords.latitude},${location.coords.longitude}/json?key=${Config.tomtom_api_key}`).then((resolution) => {
                                 console.log("Inner API Request: ", resolution.data);
                                 
                                 const { routes } = resolution.data;
@@ -134,7 +134,7 @@ constructor(props) {
                                 }
                             }
 
-                            axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${location.coords.latitude},${location.coords.longitude}/json?key=${Config.tomtom_api_key}`, configuration).then((resolution) => {
+                            axios.get(`https://api.tomtom.com/routing/1/calculateRoute/${user.current_location.coords.latitude},${user.current_location.coords.longitude}:${location.coords.latitude},${location.coords.longitude}/json?key=${Config.tomtom_api_key}`).then((resolution) => {
                                 console.log("Inner API Request: ", resolution.data);
                                 
                                 const { routes } = resolution.data;

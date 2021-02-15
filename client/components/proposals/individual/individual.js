@@ -1,12 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import styles from './styles.js';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { Button, Left, Header, Title, Text as NativeText, ListItem, Icon, Body, Right, List } from "native-base";
 import axios from "axios";
 import { Config } from "react-native-config";
 import ReadMore from 'react-native-read-more-text';
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
+
+const { height, width } = Dimensions.get("window");
 
 
 class IndividualProposalViewHelper extends Component {
@@ -16,7 +18,8 @@ constructor(props) {
     this.state = { 
         listing: null,
         declineTerms: false,
-        acceptTermsModal: false
+        acceptTermsModal: false,
+        action: ""
     }
 }
 
@@ -48,7 +51,7 @@ constructor(props) {
 
         const passedData = this.props.props.route.params.proposal;
 
-        const { listing } = this.state;
+        const { listing, action } = this.state;
 
         const total = passedData.amount + (passedData.amount * 0.20) + (passedData.amount * 0.03);
 
@@ -58,13 +61,14 @@ constructor(props) {
             id: this.props.unique_id,
             fullName: this.props.fullName,
             other_user: passedData.applicant,
-            total
+            total,
+            action
         }).then((res) => {
             if (res.data.message === "Succesfully notfied other un-selected users and notified selected user!") {
                 console.log(res.data);
 
                 setTimeout(() => {
-                    this.props.props.navigation.push("active-jobs");
+                    this.props.props.navigation.replace("active-jobs");
                 }, 1000);
             } else {
                 console.log("Err", res.data);
@@ -98,14 +102,14 @@ constructor(props) {
             }
         }).catch((err) => {
             console.log(err);
-        })
+        })  
 
         this.setState({
             declineTerms: false
         })
     }
     renderConditional = () => {
-        const { listing } = this.state;
+        const { listing, action } = this.state;
 
         const passedData = this.props.props.route.params.proposal;
         
@@ -194,17 +198,52 @@ constructor(props) {
                         </List>
                         <View style={styles.hr} />
                         <Text style={styles.marginTopMid}>We do not allow taking payments outside of our platform. Taking payments outside of the MechanicToday platform will result in both parties being permanatly terminated and REVOCATION of any funds in both parties accounts. We also hold the right to pursue legal action contingent upon the price of the repair.</Text>
-                        <Text></Text>
+                        <View style={[styles.hr, { marginTop: 20, marginBottom: 20 }]} />
+                        <View>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>What would you like to do?</Text>
+                            <TouchableOpacity onPress={() => {
+                                this.setState({
+                                    usage: true,
+                                    action: "cryptocurrency"
+                                })
+                            }}>
+                                    <View style={action === "cryptocurrency" ? styles.boxedOutline : styles.boxed}>
+                                        <View style={{ flexDirection: "column", width: width * 0.40 }}>
+                                            <Text style={styles.productText}>Collect payment as "gemshire" cryptocurrency</Text>
+                                        </View>
+                                        <View style={{ flexDirection: "column", width: width * 0.20 }}>
+                                            <Image source={require("../../../assets/icons/crypto.png")} style={{ maxHeight: 50, maxWidth: 50 }} />
+                                        </View>
+                                    </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => {
+                                this.setState({
+                                    usage: true,
+                                    action: "standard-payment"
+                                })
+                            }}>
+                                    <View style={action === "standard-payment" ? styles.boxedOutline : styles.boxed}>
+                                        <View style={{ flexDirection: "column", width: width * 0.40 }}>
+                                            <Text style={styles.productText}>Collect money as stardard USD ($)</Text>
+                                        </View>
+                                        <View style={{ flexDirection: "column", width: width * 0.20 }}>
+                                            <Image source={require("../../../assets/icons/usd.png")} style={{ maxHeight: 50, maxWidth: 50 }} />
+                                        </View>
+                                    </View>
+                            </TouchableOpacity>
+                        </View>
                         <View style={styles.marginTopMid}>
                             <View style={styles.centered}>
                                 <View style={styles.centered}>
-                                    <Button onPress={() => {
+                                    {typeof action !== "undefined" && action.length > 0 ? <Button onPress={() => {
                                         this.setState({
                                             acceptTermsModal: true
                                         })
                                     }} style={styles.specialButton}>
                                         <NativeText style={styles.boldWhite}>Accept Terms & Start Contract</NativeText>
-                                    </Button>
+                                    </Button> : <Button style={styles.greyButton}>
+                                        <NativeText style={styles.boldWhite}>Accept Terms & Start Contract</NativeText>
+                                    </Button>}
                                 </View>
                             </View>
                             <View style={[styles.centered, { marginTop: 20 }]}>

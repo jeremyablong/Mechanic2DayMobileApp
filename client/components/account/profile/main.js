@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, ImageBackground } from "react-native";
 import styles from "./styles.js";
 import { Container, Content, List, Left, Right, ListItem, Text as NativeText } from 'native-base';
 import FooterHelper from "../../footer/footer.js";
@@ -83,7 +83,7 @@ constructor(props) {
     renderConditionalAuth = () => {
         const { user } = this.state;
 
-        if (user !== null && (user.accountType === "mechanic" || user.accountType === "client")) {
+        if (user !== null && user.accountType === "client") {
             if (this.props.accountType === "CLIENT") {
                 return (
                     <Fragment>
@@ -219,7 +219,9 @@ constructor(props) {
                             <ListItem style={styles.listItem}>
                             <Left><NativeText>Get help</NativeText></Left><Right><Image source={require("../../../assets/icons/outline.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
-                            <ListItem style={styles.listItem}>
+                            <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("leave-feedback-company");
+                            }} style={styles.listItem}>
                             <Left><NativeText>Give us feedback</NativeText></Left><Right><Image source={require("../../../assets/icons/feedback.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             <ListItem style={styles.divider} itemDivider>
@@ -265,7 +267,7 @@ constructor(props) {
         console.log("this.state profile main.js", this.state);
         return (
             <Fragment>
-                <View style={styles.topContainer}>
+                <ImageBackground source={require("../../../assets/images/dotted.png")} style={styles.topContainer}>
                     <View>
                         {this.renderProfilePic()}
                     </View>
@@ -281,7 +283,7 @@ constructor(props) {
                             <Text style={styles.subText}>View Profile</Text>
                         </TouchableOpacity>}
                     </View>
-                </View>
+                </ImageBackground>
                 <View style={{ flex: 1 }}>
                     {this.renderConditional()}
                 </View>

@@ -23,6 +23,12 @@ const UserSchema =  new mongoose.Schema({
     phoneNumber: {
         type: Array
     },
+    register_system_date: {
+        type: Number
+    },
+    birthdate: {
+        type: String
+    },
     company_id: {
         type: String
     },

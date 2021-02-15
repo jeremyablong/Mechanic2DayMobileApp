@@ -9,9 +9,25 @@ const moment = require("moment");
 const { v4: uuidv4 } = require('uuid');
 const User = require("../../schemas/register.js");
 const request = require('request');
+const EC = require("elliptic").ec;
+const ec = new EC("secp256k1");
+const gemshire = require("../../main.js");
+const bcrypt = require("bcrypt-nodejs");
+const { encrypt } = require('../../crypto.js');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
+
+        const saltRounds = 10;
+
+        const key = ec.genKeyPair();
+
+        const publicKey = key.getPublic("hex");
+        const privateKey = key.getPrivate("hex");
+
+        console.log("private key is the ", privateKey);
+
+        console.log("public key is ", publicKey);
 
         const { email, fullName, google_id, google_pic, firebasePushNotificationToken } = req.body;
 
@@ -95,6 +111,11 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             fullName, 
                             review_count: 0,
                             email,
+                            blockchainCredentials: {
+                                publicKey: encrypt(publicKey),
+                                privateKey: encrypt(privateKey)
+                            },
+                            boosts: 0,
                             profilePics: [{
                                 id: uuidv4(),
                                 full_url: google_pic,

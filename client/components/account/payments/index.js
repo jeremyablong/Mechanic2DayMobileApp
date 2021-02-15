@@ -1,9 +1,30 @@
-import React, { Fragment } from 'react';
-import { View, Text, Image } from 'react-native';
+import React, { Fragment, useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Header, Left, Body, Right, Button, Title, Text as NativeText, ListItem, List } from 'native-base';
 import styles from './styles.js';
+import axios from "axios";
+import { connect } from "react-redux";
+import { Config } from "react-native-config";
 
 const PaymentMainPageHelper =  (props) => {
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+                console.log("RES.data:", res.data);
+
+                const { user } = res.data;
+
+                setUser(user);
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }, [])
     return (
         <Fragment>
             <View style={styles.container}>
@@ -18,7 +39,7 @@ const PaymentMainPageHelper =  (props) => {
                     </Left>
                 </Header>
                 <List>
-                    <ListItem button={true} onPress={() => {
+                    {user !== null && user.accountType === "client" ? <ListItem button={true} onPress={() => {
                         props.props.navigation.push("payments-cards");
                     }} style={styles.listItem}>
                         <Left>
@@ -27,8 +48,8 @@ const PaymentMainPageHelper =  (props) => {
                         <Right>
                             <Image source={require("../../../assets/icons/payment-methods.png")} style={styles.icon} />
                         </Right>
-                    </ListItem>
-                    <ListItem button={true} onPress={() => {
+                    </ListItem> : null}
+                    {user !== null && (user.accountType === "mechanic" || user.accountType === "tow-truck-company" || user.accountType === "tow-truck-driver") ? <ListItem button={true} onPress={() => {
                         props.props.navigation.push("payouts-main-homepage");
                     }}style={styles.listItem}>
                         <Left>
@@ -37,7 +58,7 @@ const PaymentMainPageHelper =  (props) => {
                         <Right>
                             <Image source={require("../../../assets/icons/request.png")} style={styles.icon} />
                         </Right>
-                    </ListItem>
+                    </ListItem> : null}
                     <ListItem button={true} onPress={() => {
                         props.props.navigation.push("payout-analytics-data");
                     }}style={styles.listItem}>
@@ -67,8 +88,24 @@ const PaymentMainPageHelper =  (props) => {
                         </Right>
                     </ListItem>
                 </List>
+                <View style={styles.margin}>
+                    <Text style={{ fontSize: 20, textAlign: "center", marginTop: 100 }}>Avaliable/Current Gemshire Balance - <Text style={{ fontWeight: "bold", color: "blue" }}>1.574628</Text> tokens</Text>
+                </View>
+                <View style={styles.absolute}>
+                    <View style={styles.row}>
+                        <Text style={{ fontSize: 18, marginTop: 20, marginRight: 15, textDecorationLine: "underline" }}>What is cryptocurrency?</Text>
+                        <TouchableOpacity onPress={() => {}}>
+                            <Image source={require("../../../assets/icons/info.png")} style={{ maxWidth: 75, maxHeight: 75 }} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         </Fragment>
     );
 }
-export default PaymentMainPageHelper;
+const mapStateToProps = (state) => {
+    return {
+        unique_id: state.auth.authenticated.unique_id
+    };
+}
+export default connect(mapStateToProps, {  })(PaymentMainPageHelper);

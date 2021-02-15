@@ -14,10 +14,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
         const collection = database.collection("promoted-mechanic-profiles");
 
-        const { id } = req.body;
+        const { id, user } = req.body;
 
-        collection.findOne({ unique_id: id }).then((user) => {
-            if (user) {
+        collection.findOne({ unique_id: id }).then((existingUser) => {
+            if (existingUser) {
                 rresponseeeee.json({
                     message: "User is ALREADY boosted and new boost is null and void!"
                 })
@@ -37,6 +37,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     firebasePushNotificationToken: user.firebasePushNotificationToken,
                     employed_by: user.employed_by,
                     gender: user.gender,
+                    birthdate: user.birthdate,
+                    register_system_date: user.register_system_date,
                     createdAt: Date.now()
                 });
 
@@ -49,9 +51,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             err
                         })
                     } else {
-                        
-                        collection.save(user);
-
 
                         rresponseeeee.json({
                             message: "No existing boost and boost was activated!",

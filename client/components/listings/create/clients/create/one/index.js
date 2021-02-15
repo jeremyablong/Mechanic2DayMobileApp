@@ -199,7 +199,7 @@ constructor(props) {
                             <TouchableOpacity onPress={() => {
                                 this.RBSheet.open();
                             }}>
-                                <NativeText style={{ color: "#6441A4", fontSize: 18, fontWeight: "bold" }}>EDIT</NativeText>
+                                <NativeText style={{ color: "#6441A4", fontSize: 18, fontWeight: "bold", minWidth: 50 }}>EDIT</NativeText>
                             </TouchableOpacity>
                         </Right>
                     </ListItem>

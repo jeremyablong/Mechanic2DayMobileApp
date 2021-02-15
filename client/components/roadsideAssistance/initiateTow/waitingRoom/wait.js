@@ -40,7 +40,7 @@ constructor(props) {
                 })
 
                 if (_.has(data.initial_location, "accuracy")) {
-                    axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${data.initial_location.latitude},${data.initial_location.longitude}.json?key=${Config.tomtom_api_key}`).then((resp) => {
+                    axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${data.initial_location.latitude},${data.initial_location.longitude}.json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`).then((resp) => {
                         console.log("resp.data", resp.data);
 
                         const { addresses } = resp.data;
@@ -59,7 +59,7 @@ constructor(props) {
                         "Content-Type": "application/json"
                     }
                 }
-                axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${data.tow_desination_information.position.lat},${data.tow_desination_information.position.lon}.json?key=${Config.tomtom_api_key}`, configgg).then((res) => {
+                axios.get(`https://api.tomtom.com/search/2/reverseGeocode/${data.tow_desination_information.position.lat},${data.tow_desination_information.position.lon}.json?key=BJ1sWg1ns63unrKLwmPOOQz9GE4V1qpV`, configgg).then((res) => {
                     if (res.data) {
                         console.log("This is the response im looking for:", res.data);
 

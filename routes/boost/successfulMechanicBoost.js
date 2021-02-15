@@ -23,7 +23,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     case "1-boost":
 
                         axios.post(`${config.get("ngrok_url")}/check/pending/boosted/profile/mechanic`, {
-                            id: user.unique_id
+                            id: user.unique_id,
+                            user
                         }).then((resolution) => {
                             if (resolution.data.message === "No existing boost and boost was activated!") {
                                 console.log(resolution.data);
@@ -67,7 +68,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     case "3-boosts":
                         
                         axios.post(`${config.get("ngrok_url")}/check/pending/boosted/profile/mechanic`, {
-                            id: user.unique_id
+                            id: user.unique_id,
+                            user
                         }).then((resolution) => {
                             if (resolution.data.message === "No existing boost and boost was activated!") {
                                 console.log(resolution.data);
@@ -111,7 +113,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     case "5-boosts":
 
                         axios.post(`${config.get("ngrok_url")}/check/pending/boosted/profile/mechanic`, {
-                            id: user.unique_id
+                            id: user.unique_id,
+                            user
                         }).then((resolution) => {
                             if (resolution.data.message === "No existing boost and boost was activated!") {
                                 console.log(resolution.data);

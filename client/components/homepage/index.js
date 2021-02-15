@@ -150,6 +150,13 @@ constructor(props) {
             })
         }
     }
+    mineCryptocurrency = () => {
+        axios.get(`${Config.ngrok_url}/mine`).then((res) => {
+            console.log(res.data);
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     renderButtonsConditionally = () => {
         const { user } = this.state;
 
@@ -162,6 +169,7 @@ constructor(props) {
                             <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
                                 this.props.props.navigation.push("tow-truck-driver-online-homepage");
                             }}>Go ONLINE and more!</AwesomeButtonBlue>
+                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
@@ -175,17 +183,19 @@ constructor(props) {
                             <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
                                 this.props.props.navigation.push("roadside-assistance-main-landing");
                             }}>Get roadside assistance</AwesomeButtonBlue>
+                            <View style={{ marginTop: 20 }} />
+                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
                 case "mechanic":
                     return (
                         <Fragment>
-                            <Button info onPress={() => {
+                            <AwesomeButtonBlue type={"primary"} onPress={() => {
                                 this.props.props.navigation.push("roadside-assistance-main-landing");
-                            }} style={styles.customButtonFive}>
-                                <NativeText style={{ color: "white", fontWeight: "bold" }}>Roadside Assistance</NativeText>
-                            </Button>
+                            }} width={width * 0.85}>Roadside Assistance</AwesomeButtonBlue>
+                            <View style={{ marginTop: 20 }} />
+                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
@@ -199,6 +209,8 @@ constructor(props) {
                             <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
                                 this.props.props.navigation.push("manage-tow-drivers");
                             }}>Manage Tow Drivers/Employees</AwesomeButtonBlue>
+                            <View style={{ marginTop: 20 }} />
+                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;

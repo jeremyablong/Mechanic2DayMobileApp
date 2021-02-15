@@ -24,6 +24,7 @@
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "native-base": "^2.15.0",
+    "qs": "^6.9.6",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-app-intro-slider": "^4.0.4",
