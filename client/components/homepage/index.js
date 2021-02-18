@@ -169,7 +169,6 @@ constructor(props) {
                             <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={() => {
                                 this.props.props.navigation.push("tow-truck-driver-online-homepage");
                             }}>Go ONLINE and more!</AwesomeButtonBlue>
-                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
@@ -184,7 +183,6 @@ constructor(props) {
                                 this.props.props.navigation.push("roadside-assistance-main-landing");
                             }}>Get roadside assistance</AwesomeButtonBlue>
                             <View style={{ marginTop: 20 }} />
-                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
@@ -195,7 +193,6 @@ constructor(props) {
                                 this.props.props.navigation.push("roadside-assistance-main-landing");
                             }} width={width * 0.85}>Roadside Assistance</AwesomeButtonBlue>
                             <View style={{ marginTop: 20 }} />
-                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
@@ -210,7 +207,6 @@ constructor(props) {
                                 this.props.props.navigation.push("manage-tow-drivers");
                             }}>Manage Tow Drivers/Employees</AwesomeButtonBlue>
                             <View style={{ marginTop: 20 }} />
-                            <AwesomeButtonBlue width={width * 0.85} type={"secondary"} onPress={this.mineCryptocurrency}>Mine Crypto-Currency</AwesomeButtonBlue>
                         </Fragment>
                     );
                     break;
@@ -249,7 +245,7 @@ constructor(props) {
                             </Item>
                             <View style={styles.centerContainer}>
                                 <AwesomeButtonRick width={width * 0.70} style={{ marginTop: 50, marginBottom: 20 }}  backgroundShadow={"#E8CEE4"} onPress={() => {
-
+                                    this.props.props.navigation.navigate("mechanics-main-search");
                                 }} type="secondary">
                                     <Image source={require("../../assets/icons/service.png")} style={{ maxWidth: 40, maxHeight: 40 }}/>
                                     <Text> Hire a mechanic</Text>

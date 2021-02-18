@@ -13,7 +13,7 @@ import Toast from 'react-native-toast-message';
 import { ToastConfig } from "../../../toastConfig.js";
 
 
-const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
+const socket = io(Config.ngrok_url, {transports: ['websocket', 'polling', 'flashsocket']});
 
 const { height, width } = Dimensions.get("window");
 

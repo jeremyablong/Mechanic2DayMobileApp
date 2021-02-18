@@ -86,19 +86,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                                                         console.log("ERROR ALREADY PAID RAN...");
                                                         
-                                                        axios.post(`${config.get("ngrok_url")}/transaction/broadcast`, {
-                                                            amount: (job.agreed_amount / (config.get("investmentAmountCrypto") / config.get("cryptoICO"))),
-                                                            recipient: decrypt(mechanicUser.blockchainCredentials.publicKey),
-                                                            sender: "00"
-                                                        }).then((dattaaaaa) => {
-                                                            console.log(dattaaaaa.data);
-    
-                                                            mainResponse.json({
-                                                                message: "STRIPE error occurred...",
-                                                                err: response.raw.message
-                                                            })
-                                                        }).catch((errorrrrrrrrrrrrr) => {
-                                                            console.log(errorrrrrrrrrrrrr);
+                                                        mainResponse.json({
+                                                            message: "STRIPE error occurred...",
+                                                            err: response.raw.message
                                                         })
                                                     }
                                                 });
@@ -109,18 +99,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                                                     console.log("PAYMENT INTENT RAN....")
 
-                                                    axios.post(`${config.get("ngrok_url")}/transaction/broadcast`, {
-                                                        amount: (job.agreed_amount / (config.get("investmentAmountCrypto") / config.get("cryptoICO"))),
-                                                        recipient: decrypt(mechanicUser.blockchainCredentials.publicKey),
-                                                        sender: "00"
-                                                    }).then((dattaaaaa) => {
-                                                        console.log(dattaaaaa.data);
-
-                                                        mainResponse.json({
-                                                            message: "Successfully notifed user of completion and updated data in db!"
-                                                        })
-                                                    }).catch((errorrrrrrrrrrrrr) => {
-                                                        console.log(errorrrrrrrrrrrrr);
+                                                    mainResponse.json({
+                                                        message: "Successfully notifed user of completion and updated data in db!"
                                                     })
                                                 }
                                             } else {

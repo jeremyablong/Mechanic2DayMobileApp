@@ -10,25 +10,12 @@ const { v4: uuidv4 } = require('uuid');
 const User = require("../../schemas/register.js");
 const axios = require('axios');
 const stripe = require('stripe')(config.get("stripeSecretKey"));
-const EC = require("elliptic").ec;
-const ec = new EC("secp256k1");
-const gemshire = require("../../main.js");
 const bcrypt = require("bcrypt-nodejs");
 const { encrypt } = require('../../crypto.js');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", async (req, res) => {
 
-        const saltRounds = 10;
-
-        const key = ec.genKeyPair();
-
-        const publicKey = key.getPublic("hex");
-        const privateKey = key.getPrivate("hex");
-
-        console.log("private key is the ", privateKey);
-
-        console.log("public key is ", publicKey);
 
         const { firebasePushNotificationToken, company_name, accountType, address, company_id, active_employee, authyID, birthdate, gender, unformatted, fullName, password, wholeAddress, phoneNumber, email } = req.body;
 
@@ -61,10 +48,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         fullName, 
                         active_employee,
                         review_count: 0,
-                        blockchainCredentials: {
-                            publicKey: encrypt(publicKey),
-                            privateKey: encrypt(privateKey)
-                        },
                         password,  
                         boosts: 0,
                         stripe_connect_account: account,
@@ -156,10 +139,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         fullName, 
                         active_employee,
                         review_count: 0,
-                        blockchainCredentials: {
-                            publicKey: encrypt(publicKey),
-                            privateKey: encrypt(privateKey)
-                        },
                         boosts: 0,
                         stripe_connect_account: account,
                         pending_application: false,

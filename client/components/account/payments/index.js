@@ -88,17 +88,6 @@ const PaymentMainPageHelper =  (props) => {
                         </Right>
                     </ListItem>
                 </List>
-                <View style={styles.margin}>
-                    <Text style={{ fontSize: 20, textAlign: "center", marginTop: 100 }}>Avaliable/Current Gemshire Balance - <Text style={{ fontWeight: "bold", color: "blue" }}>1.574628</Text> tokens</Text>
-                </View>
-                <View style={styles.absolute}>
-                    <View style={styles.row}>
-                        <Text style={{ fontSize: 18, marginTop: 20, marginRight: 15, textDecorationLine: "underline" }}>What is cryptocurrency?</Text>
-                        <TouchableOpacity onPress={() => {}}>
-                            <Image source={require("../../../assets/icons/info.png")} style={{ maxWidth: 75, maxHeight: 75 }} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
             </View>
         </Fragment>
     );

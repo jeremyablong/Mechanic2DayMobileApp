@@ -236,7 +236,7 @@ constructor(props) {
                                                 <Left>
                                                     <Button transparent textStyle={{ color: '#87838B' }}>
 
-                                                        <Text style={{ fontSize: 24 }}><Text style={{ fontWeight: "bold" }}>Budget:</Text> ${Math.floor(Math.random() * 500) + 1}</Text>
+                                                        <Text style={{ fontSize: 24 }}><Text style={{ fontWeight: "bold" }}>Budget:</Text> ${listing.budget.amount.toFixed(2).toString()}</Text>
                                                     </Button>
                                                 </Left>
                                             </CardItem>

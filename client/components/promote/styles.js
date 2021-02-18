@@ -21,7 +21,6 @@ export default StyleSheet.create({
         backgroundColor: "white",
         height: "100%",
         width: "100%",
-        borderWidth: 2,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

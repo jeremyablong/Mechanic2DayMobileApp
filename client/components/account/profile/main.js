@@ -208,7 +208,7 @@ constructor(props) {
                             <Left><NativeText>SUPPORT & HELP</NativeText></Left>
                             </ListItem> 
                             <ListItem style={styles.listItem}>
-                            <Left><NativeText>How (company name) works</NativeText></Left><Right><Image source={require("../../../assets/icons/outline.png")} style={styles.inlineIcon} /></Right>
+                            <Left><NativeText>How Mechanic2Day works</NativeText></Left><Right><Image source={require("../../../assets/icons/outline.png")} style={styles.inlineIcon} /></Right>
                             </ListItem>
                             <ListItem style={[styles.listItem, { minHeight: 100 }]}>
                             <Left><NativeText><Text style={styles.bigger}>Support center</Text> {"\n"}Get the support, tools, and information you need to be safe.</NativeText></Left><Right><Image source={require("../../../assets/icons/help.png")} style={styles.inlineIcon} /></Right>

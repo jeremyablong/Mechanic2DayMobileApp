@@ -44,7 +44,7 @@ const TowTruckDriversHelper = (props) => {
                                 console.log("driver ACCOUNT", driver);
                                 return (
                                     <TouchableOpacity key={index} onPress={() => {
-                                        // props.props.navigation.push("individual-listing-tow-driver-promoted", { driver });
+                                        props.props.navigation.push("tow-truck-drivers-request", { driver });
                                     }}>
                                         <ImageBackground key={index} source={{ uri: driver.profilePics.length > 0 ? driver.profilePics[driver.profilePics.length - 1].full_url : "https://s3.wasabisys.com/mechanic2day/not-availiable.jpg" }} style={styles.innerContainerTwo}>
                                             <View style={styles.innerBox}>
@@ -81,7 +81,7 @@ const TowTruckDriversHelper = (props) => {
                                 console.log("driver ACCOUNT", driver);
                                 return (
                                     <TouchableOpacity key={index} onPress={() => {
-                                        // props.props.navigation.push("individual-listing-tow-driver-promoted", { driver });
+                                        props.props.navigation.push("tow-truck-drivers-request", { driver });
                                     }}> 
                                         <ImageBackground key={index} source={{ uri: driver.profilePics.length > 0 ? driver.profilePics[driver.profilePics.length - 1].full_url : "https://s3.wasabisys.com/mechanic2day/not-availiable.jpg" }} style={styles.innerContainerTwo}>
                                             <View style={styles.innerBox}>

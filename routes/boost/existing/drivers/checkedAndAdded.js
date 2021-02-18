@@ -4,7 +4,7 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-const Driver = require("../../../schemas/savePromotedTowDriver.js");
+const Driver = require("../../../../schemas/savePromotedTowDriver.js");
 
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {

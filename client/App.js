@@ -102,6 +102,12 @@ import PaymentAnalyticsDashboardPage from "./pages/account/payments/payouts/anal
 import ReferralSystemMainPage from "./pages/referral/main.js";
 import PromoteAccountMainPage from "./pages/promote/main.js";
 import LeaveFeedbackMechanic2DayPage from "./pages/account/feedback/leaveFeedback.js";
+import SearchMechanicsPage from "./pages/mechanics/main/searchMechanics.js";
+import PromotionsMainHomepagePage from "./pages/promotions/main/main.js";
+import DriversHomepagePage from "./pages/drivers/main/index.js";
+import MapView, { Marker } from 'react-native-maps';
+
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -127,7 +133,12 @@ constructor(props) {
     lengthInMeters: 0,
     tow_driver_id: "",
     showCompletionModal: false,
-    fullUserName: ""
+    fullUserName: "",
+    showAlertCustom: false,
+    user: null,
+    tow_destination_full: null,
+    user_current_location: null,
+    tow_needed: false
   }
 }
 
@@ -452,6 +463,17 @@ constructor(props) {
       this.navigationRef.navigate("broken-vehicle-review-mechanic", { agreement: data.item });
     }
   })
+  socket.on("start-specific-tow", (data) => {
+    if (data.receiver === this.props.unique_id) {
+      this.setState({
+        showAlertCustom: true,
+        user: data.user,
+        tow_destination_full: data.tow_destination_full,
+        user_current_location: data.user_current_location,
+        tow_needed: data.tow_needed,
+      })
+    }
+  })
   socket.on("completed-partial", (data) => {
     if (data.notify === true && data.user_id === this.props.unique_id) {
       this.setState({
@@ -592,9 +614,81 @@ constructor(props) {
       console.log(err);
     })
   }
+  calculateReadinessUser = () => {
+    const { user } = this.state;
+
+    if (user !== null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  handleRedirectAndProcessPriceCalcRoadside = () => {
+    console.log("handleRedirectAndProcessPriceCalcRoadside clicked.");
+
+    // axios.post(`${Config.ngrok_url}/start/roadside/assistance/claim/two`, {
+    //   length_in_meters: lengthInMeters,
+    //   company_informtion,
+    //   selected,
+    //   fullName,
+    //   tow_driver_id,
+    //   client_id: this.props.unique_id
+    // }).then((res) => {
+    //   if (res.data.message === "Successfully executed logic!") {
+    //     console.log(res.data);
+
+    //     socket.emit("started-active-tow", {
+    //         started: true,
+    //         user_id: user.unique_id
+    //     })
+
+    //     setTimeout(() => {
+    //       this.navigationRef.navigate("in-progress-roadside-assistance");
+    //     }, 1000)
+    //   } else {
+    //     console.log(res.data);
+    //   }
+    // }).catch((err) => {
+    //   console.log(err);
+    // })
+    socket.emit("started-active-tow", {
+        started: true,
+        user_id: user.unique_id
+    })
+
+    setTimeout(() => {
+      this.navigationRef.navigate("in-progress-roadside-assistance");
+    }, 1000)
+  }
+  declineOfferTowRoadside = () => {
+    console.log("declineOfferTowRoadside clicked.");
+  }
+  renderModalContentCustom = () => {
+
+    const { user, tow_destination_full, user_current_location, tow_needed } = this.state;
+    return (
+      <Fragment>
+          <MapView
+            style={{ width: "100%", height: 225, minHeight: 225, marginTop: 15 }}
+            initialRegion={{
+              latitude: user.current_location.coords.latitude,
+              longitude: user.current_location.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          > 
+            <Marker 
+              coordinate={{ latitude: user.current_location.coords.latitude, longitude: user.current_location.coords.longitude }} title={"Requesting user's location..."} description={"The requesting user is located here."} />
+          </MapView>  
+          <View style={styles.hr} />
+          <Text><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
+          <Text><Text style={{ fontWeight: "bold", fontSize: 18 }}>Tow Destination</Text>: {tow_destination_full.address.freeformAddress}</Text>
+      </Fragment>
+    );
+  }
   render () {
     console.log("this.state APP.js", this.state);
-    const { selected, company_informtion } = this.state;
+    const { selected, company_informtion, user } = this.state;
     return (
       <>
         <View style={{ flex: 1 }}> 
@@ -705,6 +799,9 @@ constructor(props) {
               <Stack.Screen name="referral-system-main" component={ReferralSystemMainPage} />
               <Stack.Screen name="promote-account-main" component={PromoteAccountMainPage} />
               <Stack.Screen name="leave-feedback-company" component={LeaveFeedbackMechanic2DayPage} />
+              <Stack.Screen name="mechanics-main-search" component={SearchMechanicsPage} />
+              <Stack.Screen name="promotions-homepage-main" component={PromotionsMainHomepagePage} />
+              <Stack.Screen name="tow-truck-drivers-request" component={DriversHomepagePage} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>
@@ -770,6 +867,60 @@ constructor(props) {
                         ready: false
                       }, () => {
                         this.declineOffer();
+                      })
+                    }} textColor={"black"}>Decline Offer</AwesomeButtonBlue>
+                    <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+        </Modal> : null}
+        
+        {this.calculateReadinessUser() ? <Modal isVisible={this.state.showAlertCustom}>
+          <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: height - 25, minHeight: height - 25, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 50, maxWidth: width * 0.85 }} style={{ borderWidth: 2, borderColor: "darkgrey", marginBottom: 25 }}>
+              <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>
+                       You have a new tow request from {user.fullName}
+                    </Text>
+                </View>
+
+                <View style={styles.postContent}>
+                    <Text style={styles.postTitle}>
+                        They are requesting a tow from you specifically...
+                    </Text>
+
+                    <Text style={[styles.date, { fontSize: 18 }]}>
+                      {user.fullName} has {user.review_count} review(s)
+                    </Text>
+
+                    <View style={styles.profile}>
+                      <Image style={styles.avatar}
+                        source={{ uri: user.profilePics.length > 0 ? user.profilePics[user.profilePics.length - 1].full_url : Config.not_available }}/>
+
+                      <Text style={styles.name}>
+                          <Text style={{ textDecorationLine: "underline" }}>Requesting user</Text> {"\n"}{user.fullName}
+                      </Text>
+                    </View>
+                    <View style={styles.hr} />
+                      <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 18 }}>The requesting user is located around the destination below. {"\n"} More specific locations will be given upon booking...</Text>
+                      <View style={styles.hr} />
+                      {this.renderModalContentCustom()}
+                    <View style={styles.hr} />
+                    <AwesomeButtonBlue type={"primary"} textColor={"white"} stretch={true} onPress={() => {
+                      this.setState({
+                        showAlertCustom: false
+                      }, () => {
+                        this.handleRedirectAndProcessPriceCalcRoadside();
+                      })
+                    }}>Confirm tow & send rates</AwesomeButtonBlue>
+                    <View style={styles.hr} />
+                    <AwesomeButtonBlue type={"secondary"} stretch={true} onPress={() => {
+                      this.setState({
+                        showAlertCustom: false
+                      }, () => {
+                        this.declineOfferTowRoadside();
                       })
                     }} textColor={"black"}>Decline Offer</AwesomeButtonBlue>
                     <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />

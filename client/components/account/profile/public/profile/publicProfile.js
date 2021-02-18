@@ -62,6 +62,16 @@ constructor (props) {
                     }
                 })
 
+                if (_.has(user, "review_overviews_list")) {
+                    for (let index = 0; index < user.review_overviews_list.length; index++) {
+
+                        const element = user.review_overviews_list[index];
+                        
+                        console.log("review!!!!!!!!", element);
+
+                    }
+                }
+
                 promiseee.then((dataaa) => {
                     this.setState({
                         ready: true,

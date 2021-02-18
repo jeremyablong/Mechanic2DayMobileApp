@@ -155,7 +155,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     quick_responses: quickResponses,
                                     descriptive: descriptive, 
                                     safe: safe
-                                }
+                                },
+                                reviewer: id
                             };
 
                             if (user.review_overviews_list) {

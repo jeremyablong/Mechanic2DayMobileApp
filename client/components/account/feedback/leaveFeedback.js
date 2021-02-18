@@ -8,7 +8,8 @@ import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blu
 import Config from "react-native-config";
 import { connect } from "react-redux";
 import axios from "axios";
-
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from "../../toastConfig.js";
 
 const { height, width } = Dimensions.get("window");
 
@@ -114,7 +115,13 @@ constructor(props) {
                     category: "",
                     usage: false
                 }, () => {
-                    this.RBSheet.close();
+                    Toast.show({
+                        text1: "You have successfully notified Mechanic2Day of your concerns and/or feedback!",
+                        text2: "We have recieved your feedback successfully and will review it as soon as possible.",
+                        position: "top",
+                        visibilityTime: 5000,
+                        type: "success"
+                    })
                 })
             } else {
                 console.log("Err", res.data);
@@ -141,6 +148,7 @@ constructor(props) {
                     </Body>
                     <Right />
                 </Header>
+                <Toast config={ToastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <ScrollView contentContainerStyle={{ paddingBottom: 100 }} style={styles.container}>
                     <View style={styles.margin}>
                         <Text style={styles.mainText}>How are we doing?</Text>

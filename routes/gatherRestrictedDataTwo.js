@@ -32,6 +32,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 delete user.paypal_authorization;
                 delete user.phoneNumberAuth;
                 delete user.authyID;
+                delete user.stripe_connect_account;
+                delete user.stripe_customer_account;
 
                 res.json({
                     message: "Gathered user's data!",

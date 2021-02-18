@@ -105,8 +105,7 @@ constructor(props) {
                     ref={ref => {
                         this.RBSheet = ref;
                     }}
-                    height={height * 0.40}
-                    openDuration={250}
+                    height={height * 0.35}
                     customStyles={{
                         container: {
                             justifyContent: "center",

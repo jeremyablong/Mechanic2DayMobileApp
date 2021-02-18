@@ -30,6 +30,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         collection.save(user);
 
                         const promiseee = new Promise((resolve, reject) => {
+                            
                             for (let index = 0; index < user.tow_truck_drivers.length; index++) {
                                 const driver = user.tow_truck_drivers[index];
                                 
@@ -147,7 +148,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                             if ((user.tow_truck_drivers.length - 1) === index) {
                                                 resolve();
                                             }
-                                        } else {
+                                        } else if (resolution.data.message === "User is ALREADY registered and boosted!") {
                                             console.log("err", resolution.data);
 
                                             if ((user.tow_truck_drivers.length - 1) === index) {
