@@ -9,7 +9,11 @@ const mongoDB = require("./config/db.js");
 const path = require("path");
 const http = require("http");
 const server = http.createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+	cors: {
+		origin: '*',
+	}
+});
 const xss = require('xss-clean');
 const helmet = require("helmet");
 const mongoSanitize = require('express-mongo-sanitize');

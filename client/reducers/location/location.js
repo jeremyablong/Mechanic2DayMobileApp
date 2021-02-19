@@ -1,4 +1,4 @@
-import { LOCATION_GATHER } from "../../actions/types.js";
+import { LOCATION_GATHER, SAVE_LOCATION } from "../../actions/types.js";
 
 
 export default (state = {}, action) => {
@@ -7,6 +7,11 @@ export default (state = {}, action) => {
 			return {
 				...state,
 				location_initial: action.payload
+			}
+		case SAVE_LOCATION: 
+			return {
+				...state,
+				current_location_user: action.payload
 			}
 		default: 
 			return state;

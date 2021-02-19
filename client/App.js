@@ -106,7 +106,7 @@ import SearchMechanicsPage from "./pages/mechanics/main/searchMechanics.js";
 import PromotionsMainHomepagePage from "./pages/promotions/main/main.js";
 import DriversHomepagePage from "./pages/drivers/main/index.js";
 import MapView, { Marker } from 'react-native-maps';
-
+import { saveUsersLocation } from "./actions/location/location.js";
 
 
 const { width, height } = Dimensions.get("window");
@@ -239,17 +239,35 @@ constructor(props) {
             // run only every 12 cycles
             console.log("run only every 4 cycles")
             if (this.state.count === 4) {
+
+              this.props.saveUsersLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+              })
+
               this.handleDrivingLocationUpdate(location);
             }
           } else if (4 <= location.coords.speed && location.coords.speed <= 9) {
             // run only every 9 cycles
               console.log("run only every 5 cycles")
             if (this.state.count === 5) {
+
+              this.props.saveUsersLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+              })
+
               this.handleDrivingLocationUpdate(location);
             }
           } else if (10 <= location.coords.speed && location.coords.speed <= 15) {
             console.log("run only every 6 cycles")
             if (this.state.count === 6) {
+
+              this.props.saveUsersLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+              })
+
               this.handleDrivingLocationUpdate(location);
             }
             // run only every 8 cycles
@@ -257,12 +275,24 @@ constructor(props) {
             console.log("run only every 7 cycles")
             // run only every 6 cycles
             if (this.state.count === 7) {
+
+              this.props.saveUsersLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+              })
+
               this.handleDrivingLocationUpdate(location);
             }
           } else {
             console.log("run only every 8 cycles", this.state.count);
     
             if (this.state.count === 8) {
+
+              this.props.saveUsersLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+              })
+
               this.handleDrivingLocationUpdate(location);
             }
             // run only every 4 cycles
@@ -681,8 +711,8 @@ constructor(props) {
               coordinate={{ latitude: user.current_location.coords.latitude, longitude: user.current_location.coords.longitude }} title={"Requesting user's location..."} description={"The requesting user is located here."} />
           </MapView>  
           <View style={styles.hr} />
-          <Text><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
-          <Text><Text style={{ fontWeight: "bold", fontSize: 18 }}>Tow Destination</Text>: {tow_destination_full.address.freeformAddress}</Text>
+          <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
+          <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>Tow Destination</Text>: {tow_destination_full.address.freeformAddress}</Text>
       </Fragment>
     );
   }
@@ -1093,4 +1123,4 @@ const mapStateToProps = (state) => {
     }
   }
 }
-export default connect(mapStateToProps, { gatherLocationOnLoad, switchAccountType, checkToNavigatePushNotification, authenticated, finishedSignup, sendbirdLogin })(App);
+export default connect(mapStateToProps, { gatherLocationOnLoad, switchAccountType, checkToNavigatePushNotification, authenticated, finishedSignup, sendbirdLogin, saveUsersLocation })(App);

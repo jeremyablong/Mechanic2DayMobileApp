@@ -4,7 +4,7 @@ const app = express();
 const mongo = require("mongodb");
 const config = require("config");
 const cors = require('cors');
-
+const axios = require('axios');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
     router.post("/", (req, res) => {
@@ -30,16 +30,58 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             vehicle_listing.page = 3;
                             vehicle_listing["location_manual_entry"] = manual_entry;
 
-                            console.log("vehicle_listing", vehicle_listing);
+                            if (manual_entry === true) {
+                                // reverse geocode
 
-                            await collection.save(user);
+                                const headers = {
+                                    params: {
+                                        key: config.get("mapquest_api"),
+                                        street: location.street, 
+                                        city: location.city, 
+                                        state: location.state,
+                                        postalCode: location.zipCode
+                                    }
+                                };
+            
+                                axios.get("http://www.mapquestapi.com/geocoding/v1/address", headers).then(async (resolution) => {
+                                    console.log(resolution.data);
+        
+                                    if (resolution.data.results) {
 
-                            setTimeout(() => {
-                                res.json({
-                                    message: "Successfully added new data to your post!",
-                                    listing: vehicle_listing
+                                        vehicle_listing["location_coordinates"] = {
+                                            latitude: resolution.data.results[0].locations[0].latLng.lat,
+                                            longitude: resolution.data.results[0].locations[0].latLng.lng
+                                        }
+                                        vehicle_listing["lookup_coordinates"] = {
+                                            id: uuidv4(),
+                                            type: "Point",
+                                            loc: [resolution.data.results[0].locations[0].latLng.lon, resolution.data.results[0].locations[0].latLng.lat]
+                                        }
+
+                                        await collection.save(user);
+
+                                        setTimeout(() => {
+                                            res.json({
+                                                message: "Successfully added new data to your post!",
+                                                listing: vehicle_listing
+                                            })
+                                        }, 1250);
+                                    }
+                                }).catch((err) => {
+                                    console.log(err);
                                 })
-                            }, 1250);
+                            } else {
+                                await collection.save(user);
+
+                                setTimeout(() => {
+                                    res.json({
+                                        message: "Successfully added new data to your post!",
+                                        listing: vehicle_listing
+                                    })
+                                }, 1250);
+                            }
+
+                            console.log("vehicle_listing", vehicle_listing);
                         } 
                     }
                 } else {

@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { Config } from 'react-native-config';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import _ from 'lodash';
+import geodist from "geodist";
 
 const { width, height } = Dimensions.get("window");
 
@@ -57,11 +58,18 @@ constructor(props) {
             }
         })
 
-        axios.post(`${Config.ngrok_url}/gather/live/listings/vehicles`).then((res) => {
+        axios.post(`${Config.ngrok_url}/gather/live/listings/vehicles`, {
+            current_location: {
+                latitude: this.props.latitude,
+                longitude: this.props.longitude
+            }
+        }).then((res) => {
             if (res.data.message === "Successfully gathered the desired listings!") {
 
 
                 const { listings } = res.data;
+
+                console.log("LISTINGS", listings);
 
                 const sliced_listings = listings.slice(0, 20);
 
@@ -69,41 +77,14 @@ constructor(props) {
                     for (let index = 0; index < sliced_listings.length; index++) {
                         const element = sliced_listings[index];
                         
-                        if (_.has(element.location, "country")) {
-                            
+                        if (element.location_manual_entry === true) {
+                            console.log("elem ent", element);
 
-                            const headers = {
-                                params: {
-                                    key: Config.mapquest_api_key,
-                                    street: element.location.street, 
-                                    city: element.location.city, 
-                                    state: element.location.state,
-                                    postalCode: element.location.zipCode
-                                }
-                            };
-        
-                            axios.get("http://www.mapquestapi.com/geocoding/v1/address", headers).then((res) => {
-                                
-    
-                                if (res.data.results) {
-                                    element.location = {
-                                        latitude: res.data.results[0].locations[0].latLng.lat,
-                                        longitude: res.data.results[0].locations[0].latLng.lng,
-                                        latitudeDelta: 0.015,
-                                        longitudeDelta: 0.0121,
-                                    };
-    
-                                    if ((sliced_listings.length - 1) === index) {
-                                        resolve(sliced_listings);
-                                    }
-                                } else {
-                                    if ((sliced_listings.length - 1) === index) {
-                                        resolve(sliced_listings);
-                                    }
-                                }
-                            }).catch((err) => {
-                                console.log(err);
-                            })
+                            element.location = element.location_coordinates;
+
+                            if ((sliced_listings.length - 1) === index) {
+                                resolve(sliced_listings);
+                            }
                         } else {
                             if ((sliced_listings.length - 1) === index) {
                                 resolve(sliced_listings);
@@ -233,12 +214,39 @@ constructor(props) {
             destroyMap: false
         });
     }
+    regionChangeCompleted = (location) => {
+        console.log("regionChangeCompleted clicked", location);
+
+        axios.post(`${Config.ngrok_url}/gather/live/listings/vehicles`, {
+            current_location: {
+                latitude: location.latitude,
+                longitude: location.longitude
+            }
+        }).then((res) => {
+            if (res.data.message === "Successfully gathered the desired listings!") {
+                console.log(res.data);
+
+                const { listings } = res.data;
+
+                this.setState({
+                    listings
+                })
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+
+        console.log(geodist({ lat: location.latitude, lon: location.longitude }, { lat: 33.7489, lon: -84.3881 }))
+    }
     renderMapLogic = () => {
         const { listings } = this.state;
 
         if (this.state.destroyMap === true) {
             return (
                 <MapView  
+                    onRegionChangeComplete={this.regionChangeCompleted} 
                     provider={PROVIDER_GOOGLE}
                     ref={(ref) => this.customMap = ref}
                     style={styles.mapCustom} 
@@ -246,10 +254,11 @@ constructor(props) {
                     showsUserLocation={true}
                 >
                     {typeof listings !== "undefined" && listings.length > 0 ? listings.map((marker, index) => {
+                        console.log("MARKER", marker);
                         return (
                             <Fragment key={index}>
                                 <Marker 
-                                    coordinate={marker.location} 
+                                    coordinate={marker.location_manual_entry === true ? marker.location_coordinates : marker.location} 
                                     title={`${marker.year} ${marker.make} ${marker.model}`} 
                                     description={marker.description.slice(0, 40)} 
                                     image={require('../../assets/icons/car-marker.png')} 
@@ -526,7 +535,9 @@ constructor(props) {
 const mapStateToProps = (state) => {
     if (Object.keys(state.location.location_initial).length > 0) {
         return {
-            location: state.location.location_initial
+            location: state.location.location_initial,
+            latitude: state.location.current_location_user.latitude,
+            longitude: state.location.current_location_user.longitude
         };
     } else {
         return {

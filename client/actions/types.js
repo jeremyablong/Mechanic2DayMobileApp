@@ -6,3 +6,4 @@ export const DIAGNOSTICS = "DIAGNOSTICS";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAIL = "LOGIN_FAIL";
 export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
+export const SAVE_LOCATION = "SAVE_LOCATION";

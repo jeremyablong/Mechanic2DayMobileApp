@@ -23,5 +23,6 @@
     "wasabiBucket": "mechanic2day",
     "cryptoICO": 750000,
     "investmentAmountCrypto": 75000,
-    "cryptoTokenValue": 0.10
+    "cryptoTokenValue": 0.10,
+    "mapquest_api": "6PUQC2SEKtSIqMkBwd9Hoh15XnRfteO9"
 }

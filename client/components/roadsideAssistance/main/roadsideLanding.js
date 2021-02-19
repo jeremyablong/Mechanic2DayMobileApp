@@ -529,6 +529,11 @@ constructor(props) {
             }
         }
     }
+    regionChangeCompleted = () => {
+        console.log("regionChangeCompleted clicked");
+
+        
+    }
     render() {
         const { towDesination, selected, myLocation, serviceRequired, user } = this.state;
         console.log("this.state. roadsideLanding.js state", this.state);
@@ -554,7 +559,8 @@ constructor(props) {
                     </Right>
                 </Header>
                 <View style={styles.container}>
-                    {this.state.ready === true ? <MapView    
+                    {this.state.ready === true ? <MapView  
+                        onRegionChangeComplete={this.regionChangeCompleted} 
                         style={styles.map}
                         initialRegion={this.state.region}
                         showsUserLocation={true}

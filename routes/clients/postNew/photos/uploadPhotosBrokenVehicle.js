@@ -41,27 +41,35 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         
                         console.log("selected", selected);
 
-                        for (let index = 0; index < photos.length; index++) {
-                            const photo = photos[index];
+                        const promiseee = new Promise(async (resolve, reject) => {
+                            for (let index = 0; index < photos.length; index++) {
+                                const photo = photos[index];
+    
+                                const uploaded_photo = photo.source.generatedID;
+    
+                                photo_array.push(`https://${config.get("wasabiEndpoint")}/${config.get("wasabiBucket")}/${uploaded_photo}`);
+    
+                                if ((photos.length - 1) === index) {
+    
+                                    listinggggg["photos"] = photo_array;
+                                    listinggggg.page = 4;
+    
+                                    await collection.save(user);
 
-                            const uploaded_photo = photo.source.generatedID;
-
-                            photo_array.push(`https://${config.get("wasabiEndpoint")}/${config.get("wasabiBucket")}/${uploaded_photo}`);
-
-                            if ((photos.length - 1) === index) {
-
-                                listinggggg["photos"] = photo_array;
-                                listinggggg.page = 4;
-
-                                collection.save(user);
-
-                                res.json({
-                                    message: "Successfully updated/posted photos!",
-                                    user,
-                                    listing: listinggggg
-                                })
+                                    setTimeout(() => {
+                                        resolve(listinggggg);
+                                    }, 1500);
+                                }
                             }
-                        }
+                        })
+
+                        promiseee.then((value) => {
+                            res.json({
+                                message: "Successfully updated/posted photos!",
+                                user,
+                                listing: value
+                            })
+                        })
                     }
                 }
             } else {
