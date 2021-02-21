@@ -154,6 +154,8 @@ constructor(props) {
                                     this.props.props.navigation.push("driver-has-arrived-manage-listing-depatarture");
                                 } else if (_.has(user.active_roadside_assistance_job, "current_page") && user.active_roadside_assistance_job.current_page === "finale-review") {
                                     this.props.props.navigation.push("review-roadside-assistance-client");
+                                } else if (_.has(user.active_roadside_assistance_job, "current_page") && user.active_roadside_assistance_job.current_page === "complete-trip-no-tow") {
+                                    this.props.props.navigation.push("complete-trip-no-tow");
                                 } else {
                                     this.props.props.navigation.push("tow-activated-map-view");
                                 }

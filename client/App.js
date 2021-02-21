@@ -108,6 +108,7 @@ import DriversHomepagePage from "./pages/drivers/main/index.js";
 import MapView, { Marker } from 'react-native-maps';
 import { saveUsersLocation } from "./actions/location/location.js";
 import geodist from "geodist";
+import NoTowConfirmOnSitePage from "./pages/towTruckDriver/noTowRequiredComplete/confirm.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -146,7 +147,10 @@ constructor(props) {
     tow_destination_full_other_user: null,
     user_current_location_other_user: null,
     distanceInMeters: 0,
-    tow_driver_id_roadside: ""
+    tow_driver_id_roadside: "",
+    service_required: null,
+    tow_required: null,
+    roadside_service: null
   }
 }
 
@@ -506,6 +510,13 @@ constructor(props) {
       this.navigationRef.navigate("broken-vehicle-review-mechanic", { agreement: data.item });
     }
   })
+  socket.on("no-tow-end", (data) => {
+    if (data.user_id === this.props.unique_id && data.approved === true) {
+      console.log("no tow - data", data);
+
+      this.navigationRef.navigate("complete-trip-no-tow", null);
+    }
+  })
   socket.on("tow-rates", (data) => {
     if (data.other_user === this.props.unique_id) {
       console.log("MATCH", data);
@@ -532,6 +543,15 @@ constructor(props) {
             tow_driver_id_roadside: data.tow_driver_id
           })
         }
+      } else {
+        this.setState({
+          listing: data.listing,
+          showResponseModal: true,
+          is_tow_required: data.tow_needed,
+          user_current_location_other_user: data.user_current_location,
+          tow_driver_id_roadside: data.tow_driver_id,
+          service_required: data.service_required
+        })
       }
     }
   })
@@ -546,7 +566,8 @@ constructor(props) {
         requestee: data.requestee,
         tow_destination_full: data.tow_destination_full,
         user_current_location: data.user_current_location,
-        tow_needed: data.tow_needed
+        tow_needed: data.tow_needed,
+        service_required: data.service_required
       })
     }
   })
@@ -570,7 +591,9 @@ constructor(props) {
           company_informtion: data.company_informtion,
           tow_driver_id: data.tow_driver_id,
           showProposalModal: true,
-          ready: true
+          roadside_service: data.selected.roadside_service_required,
+          ready: true,
+          tow_required: data.selected.tow_required
         })
       }, 2000);
     }
@@ -644,52 +667,52 @@ constructor(props) {
     }
   }
   renderModalContentCustomOne = () => {
-    const { is_tow_required, tow_destination_full, listing } = this.state;
+    const { is_tow_required, service_required, listing } = this.state;
 
     if (listing !== null) {
 
       console.log("LISTING RAN!");
 
       if (is_tow_required === false) {
-        // switch (selected.roadside_service_required) {
-        //     case "door-unlocking":
-        //         return (
-        //           <Fragment>
-        //             <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.unlock_locked_door_cost}</Text>
-        //           </Fragment>
-        //         );
-        //         break;
-        //     case "gas-delivery":
-        //       return (
-        //         <Fragment>
-        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.gas_delivery_cost}</Text>
-        //         </Fragment>
-        //       );
-        //       break;
-        //     case "tire-change": 
-        //       return (
-        //         <Fragment>
-        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.change_tire_cost}</Text>
-        //         </Fragment>
-        //       );
-        //       break;
-        //     case "stuck-vehicle":
-        //       return (
-        //         <Fragment>
-        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.remove_stuck_vehicle}</Text>
-        //         </Fragment>
-        //       );
-        //       break;
-        //     case "jump-start":
-        //       return (
-        //         <Fragment>
-        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.jumpstart_cost}</Text>
-        //         </Fragment>
-        //       );
-        //       break;
-        //     default:
-        //         break;
-        // }
+        switch (service_required) {
+            case "door-unlocking":
+                return (
+                  <Fragment>
+                    <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${listing.services.unlock_locked_door_cost}</Text>
+                  </Fragment>
+                );
+                break;
+            case "gas-delivery":
+              return (
+                <Fragment>
+                  <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${listing.services.gas_delivery_cost}</Text>
+                </Fragment>
+              );
+              break;
+            case "tire-change": 
+              return (
+                <Fragment>
+                  <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${listing.services.change_tire_cost}</Text>
+                </Fragment>
+              );
+              break;
+            case "stuck-vehicle":
+              return (
+                <Fragment>
+                  <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${listing.services.remove_stuck_vehicle}</Text>
+                </Fragment>
+              );
+              break;
+            case "jump-start":
+              return (
+                <Fragment>
+                  <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${listing.services.jumpstart_cost}</Text>
+                </Fragment>
+              );
+              break;
+            default:
+                break;
+        }
       } else {
         return (
           <Fragment>
@@ -704,7 +727,7 @@ constructor(props) {
     }
   }
   handleRedirectAndProcessPriceCalc = () => {
-    const { lengthInMeters, company_informtion, selected, fullName, tow_driver_id } = this.state;
+    const { lengthInMeters, company_informtion, selected, fullName, tow_driver_id, roadside_service } = this.state;
 
     console.log("handleRedirectAndProcessPriceCalc clicked");
 
@@ -714,7 +737,9 @@ constructor(props) {
       selected,
       fullName,
       tow_driver_id,
-      client_id: this.props.unique_id
+      client_id: this.props.unique_id,
+      tow_required: this.state.tow_required,
+      roadside_service
     }).then((res) => {
       if (res.data.message === "Successfully executed logic!") {
         console.log(res.data);
@@ -778,7 +803,8 @@ constructor(props) {
             requestee: this.state.requestee,
             tow_destination_full: this.state.tow_destination_full,
             user_current_location: this.state.user_current_location,
-            tow_driver_id: this.props.unique_id
+            tow_driver_id: this.props.unique_id,
+            service_required: this.state.service_required
         });
       } else {
         console.log("err", res.data);
@@ -821,7 +847,7 @@ constructor(props) {
     console.log("declineOfferTowRoadside clicked.");
   }
   renderInternalContent = () => {
-    const { listing } = this.state;
+    const { listing, is_tow_required } = this.state;
 
     if (listing !== null) {
       return (
@@ -835,14 +861,14 @@ constructor(props) {
           </Text>
           
           <View style={styles.hr} />
-          <Text style={styles.postTitle}>
+          {is_tow_required === true ? <Fragment><Text style={styles.postTitle}>
               Standard Flat Rate {"\n"}<Text style={{ color: "darkblue", fontWeight: "bold" }}>${listing.standard_tow_fees.tow_price.toString()}</Text>
           </Text>
           <View style={styles.hr} />
           <Text style={styles.postTitle}>
               Price Per Mile {"\n"}<Text style={{ color: "darkblue", fontWeight: "bold" }}>${listing.standard_tow_fees.per_mile_fee.toString()}</Text> 
           </Text>
-          <View style={styles.hr} />
+          <View style={styles.hr} /></Fragment> : null}
 
           <Text style={styles.date}>
             Joined {listing.date}
@@ -902,6 +928,48 @@ constructor(props) {
               <View style={styles.hr} />
               <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
               <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>Tow Destination</Text>: {tow_destination_full.address.freeformAddress}</Text>
+          </Fragment>
+        );
+      }
+    } else {
+      if (_.has(user_current_location, "position")) {
+        return (
+          <Fragment>
+              <MapView
+                style={{ width: "100%", height: 225, minHeight: 225, marginTop: 15 }}
+                initialRegion={{
+                  latitude: user_current_location.position.lat,
+                  longitude: user_current_location.position.lon,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              > 
+                <Marker 
+                  coordinate={{ latitude: user_current_location.position.lat, longitude: user_current_location.position.lon }} title={"Requesting user's location..."} description={"The requesting user is located here."} />
+              </MapView>  
+              <View style={styles.hr} />
+              <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>This request does NOT required a tow - just roadside assistance</Text>
+          </Fragment>
+        );
+      } else {
+        return (
+          <Fragment>
+              <MapView
+                style={{ width: "100%", height: 225, minHeight: 225, marginTop: 15 }}
+                initialRegion={{
+                  latitude: user.current_location.coords.latitude,
+                  longitude: user.current_location.coords.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              > 
+                <Marker 
+                  coordinate={{ latitude: user.current_location.coords.latitude, longitude: user.current_location.coords.longitude }} title={"Requesting user's location..."} description={"The requesting user is located here."} />
+              </MapView>  
+              <View style={styles.hr} />
+              <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>This request does NOT required a tow - just roadside assistance</Text>
           </Fragment>
         );
       }
@@ -1054,6 +1122,7 @@ constructor(props) {
               <Stack.Screen name="mechanics-main-search" component={SearchMechanicsPage} />
               <Stack.Screen name="promotions-homepage-main" component={PromotionsMainHomepagePage} />
               <Stack.Screen name="tow-truck-drivers-request" component={DriversHomepagePage} />
+              <Stack.Screen name="complete-trip-no-tow" component={NoTowConfirmOnSitePage} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>

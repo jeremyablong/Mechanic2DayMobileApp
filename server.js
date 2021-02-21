@@ -200,6 +200,10 @@ app.use("/boost/tow/driver/using/existing/boost", require("./routes/boost/existi
 app.use("/promote/driver/temp/checked", require("./routes/boost/existing/drivers/checkedAndAdded.js"));
 app.use("/start/roadside/assistance/claim/two", require("./routes/roadsideAssistance/initiate/startRoadsideAssistanceTwo.js"));
 app.use("/gather/associated/company/rates", require("./routes/towDrivers/sendTowRates.js"));
+app.use("/notifiy/of/arrival/tow/driver/no-tow", require("./routes/towDrivers/notify/noTow.js"));
+app.use("/second/step/confirm/drivers/arrival/no-tow", require("./routes/roadsideAssistance/active/confirmDriverArrivalNoTow.js"));
+app.use("/complete/no-tow/roadside/assistance/job", require("./routes/roadsideAssistance/completeTrip/noTowComplete/noTowCompleteClient.js"));
+app.use("/complete/no-tow/roadside/assistance/job/agent", require("./routes/towDrivers/noTowComplete/noTowCompleteAgent.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
@@ -283,6 +287,11 @@ io.on("connection", socket => {
 		console.log("fire sockets one!!!", data);
 
 		io.sockets.emit("fire-off", data);
+	})
+	socket.on("approve-next-page-no-tow", (data) => {
+		console.log("approve-next-page-no-tow", data);
+
+		io.sockets.emit("no-tow-end", data);
 	})
 	socket.on("mark-trip-complete", (data) => {
 

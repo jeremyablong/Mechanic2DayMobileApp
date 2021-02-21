@@ -102,13 +102,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             if (user.review_categories) {
                                 user.review_categories = {
-                                    pickup_accurate_rating: (user.review_categories.pickup_accurate_rating + pickup_accurate_rating) / user.review_count,
-                                    communication_rating: (user.review_categories.communication_rating + communication_rating) / user.review_count,
-                                    informational_rating: (user.review_categories.informational_rating + informational_rating) / user.review_count,
-                                    safe_during_interaction: (user.review_categories.safe_during_interaction + safe_during_interaction) / user.review_count,
-                                    overall_interaction_rating: (user.review_categories.overall_interaction_rating + overall_interaction_rating) / user.review_count,
-                                    honest_polite_rating: (user.review_categories.honest_polite_rating + honest_polite_rating) / user.review_count,
-                                    as_described: (user.review_categories.as_described + as_described) / user.review_count
+                                    pickup_accurate_rating: (Number(user.review_categories.pickup_accurate_rating + pickup_accurate_rating)) / user.review_count,
+                                    communication_rating: (Number(user.review_categories.communication_rating + communication_rating)) / user.review_count,
+                                    informational_rating: (Number(user.review_categories.informational_rating + informational_rating)) / user.review_count,
+                                    safe_during_interaction: (Number(user.review_categories.safe_during_interaction + safe_during_interaction)) / user.review_count,
+                                    overall_interaction_rating: (Number(user.review_categories.overall_interaction_rating + overall_interaction_rating)) / user.review_count,
+                                    honest_polite_rating: (Number(user.review_categories.honest_polite_rating + honest_polite_rating)) / user.review_count,
+                                    as_described: (Number(user.review_categories.as_described + as_described)) / user.review_count
                                 }
                             } else {
                                 user["review_categories"] = {

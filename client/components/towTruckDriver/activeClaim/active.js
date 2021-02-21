@@ -144,96 +144,190 @@ constructor(props) {
 
         // CHANGE 10 TO 1 IN PRODUCTION
 
-        if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
-            // tow REQUIRED
-            if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
-                console.log("ONE:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }));
-
-                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }) <= 10) {
-                    axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
-                        id: this.props.unique_id,
-                        location: myLocation
-                    }).then((res) => {
-                        if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
-
-                            console.log(res.data);
-
-                            socket.emit("approve-next-page", {
-                                approved: true,
-                                user_id: user.active_roadside_assistance_job.requestee_id
-                            })
-
-                            setTimeout(() => {
-                                this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
-                            }, 1000)
-
-                        } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
-                            console.log("Err", res.data);
-
-                            Toast.show({
-                                text1: "The client has not confirmed your arrival yet...",
-                                text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
-                                visibilityTime: 5500,
-                                position: "top",
-                                type: "info"
-                            })
-                        }
-                    }).catch((err) => {
-                        console.log(err);
-                    })
-                } else {
-                    this.setState({
-                        isVisible: true
-                    })
+        if (user.active_roadside_assistance_job.dropoff_location !== "tow-not-required") {
+            if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
+                // tow REQUIRED
+                if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
+                    console.log("ONE:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }));
+    
+                    if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }) <= 10) {
+                        axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
+                            id: this.props.unique_id,
+                            location: myLocation
+                        }).then((res) => {
+                            if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
+    
+                                console.log(res.data);
+    
+                                socket.emit("approve-next-page", {
+                                    approved: true,
+                                    user_id: user.active_roadside_assistance_job.requestee_id
+                                })
+    
+                                setTimeout(() => {
+                                    this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
+                                }, 1000)
+    
+                            } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
+                                console.log("Err", res.data);
+    
+                                Toast.show({
+                                    text1: "The client has not confirmed your arrival yet...",
+                                    text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                    visibilityTime: 5500,
+                                    position: "top",
+                                    type: "info"
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    } else {
+                        this.setState({
+                            isVisible: true
+                        })
+                    }
+                } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
+                    console.log("TWO:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }));
+    
+                    if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }) <= 10) {
+                        axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
+                            id: this.props.unique_id,
+                            location: myLocation
+                        }).then((res) => {
+                            if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
+                                console.log(res.data);
+    
+                                socket.emit("approve-next-page", {
+                                    approved: true,
+                                    user_id: user.active_roadside_assistance_job.requestee_id
+                                })
+    
+                                setTimeout(() => {
+                                    this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
+                                }, 1000)
+    
+                            } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
+                                console.log("Err", res.data);
+    
+                                Toast.show({
+                                    text1: "The client has not confirmed your arrival yet...",
+                                    text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                    visibilityTime: 5500,
+                                    position: "top",
+                                    type: "info"
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    } else {
+                        this.setState({
+                            isVisible: true
+                        })
+                    }
                 }
-            } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
-                console.log("TWO:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }));
-
-                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }) <= 10) {
-                    axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
-                        id: this.props.unique_id,
-                        location: myLocation
-                    }).then((res) => {
-                        if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
-                            console.log(res.data);
-
-                            socket.emit("approve-next-page", {
-                                approved: true,
-                                user_id: user.active_roadside_assistance_job.requestee_id
-                            })
-
-                            setTimeout(() => {
-                                this.props.props.navigation.replace("settings-active-roadside-assistance-manage");
-                            }, 1000)
-
-                        } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
-                            console.log("Err", res.data);
-
-                            Toast.show({
-                                text1: "The client has not confirmed your arrival yet...",
-                                text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
-                                visibilityTime: 5500,
-                                position: "top",
-                                type: "info"
-                            })
-                        }
-                    }).catch((err) => {
-                        console.log(err);
-                    })
-                } else {
-                    this.setState({
-                        isVisible: true
-                    })
-                }
+            } else {
+                Toast.show({
+                    text1: "Critical error occurred...",
+                    text2: "Cannot find pickup location & can't caculate distance.",
+                    type: "error",
+                    visibilityTime: 4500,
+                    position: "top"
+                })
             }
         } else {
-            Toast.show({
-                text1: "Critical error occurred...",
-                text2: "Cannot find pickup location & can't caculate distance.",
-                type: "error",
-                visibilityTime: 4500,
-                position: "top"
-            })
+            if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
+                // tow REQUIRED
+                if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
+                    console.log("ONE:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }));
+    
+                    if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, { lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }) <= 10) {
+                        axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver/no-tow`, {
+                            id: this.props.unique_id,
+                            location: myLocation
+                        }).then((res) => {
+                            if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
+    
+                                console.log(res.data);
+    
+                                socket.emit("approve-next-page-no-tow", {
+                                    approved: true,
+                                    user_id: user.active_roadside_assistance_job.requestee_id
+                                })
+    
+                                setTimeout(() => {
+                                    this.props.props.navigation.replace("complete-trip-no-tow");
+                                }, 1000)
+    
+                            } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
+                                console.log("Err", res.data);
+    
+                                Toast.show({
+                                    text1: "The client has not confirmed your arrival yet...",
+                                    text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                    visibilityTime: 5500,
+                                    position: "top",
+                                    type: "info"
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    } else {
+                        this.setState({
+                            isVisible: true
+                        })
+                    }
+                } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
+                    console.log("TWO:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }));
+    
+                    if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }) <= 10) {
+                        axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver/no-tow`, {
+                            id: this.props.unique_id,
+                            location: myLocation
+                        }).then((res) => {
+                            if (res.data.message === "Notified other user successfully and both users have agreed the driver has arrived!") {
+                                console.log(res.data);
+    
+                                socket.emit("approve-next-page-no-tow", {
+                                    approved: true,
+                                    user_id: user.active_roadside_assistance_job.requestee_id
+                                })
+    
+                                setTimeout(() => {
+                                    this.props.props.navigation.replace("complete-trip-no-tow");
+                                }, 1000)
+    
+                            } else if (res.data.message === "Only ONE user has agreed that the driver has arrived.") {
+                                console.log("Err", res.data);
+    
+                                Toast.show({
+                                    text1: "The client has not confirmed your arrival yet...",
+                                    text2: "The client hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                                    visibilityTime: 5500,
+                                    position: "top",
+                                    type: "info"
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    } else {
+                        this.setState({
+                            isVisible: true
+                        })
+                    }
+                }
+            } else {
+                Toast.show({
+                    text1: "Critical error occurred...",
+                    text2: "Cannot find pickup location & can't caculate distance.",
+                    type: "error",
+                    visibilityTime: 4500,
+                    position: "top"
+                })
+            }
         }
     }
     renderConditionalContent = () => {

@@ -102,13 +102,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             if (user.review_categories) {
                                 user.review_categories = {
-                                    pickup_times_rating: (user.review_categories.pickup_times_rating + pickup_times_rating) / user.review_count,
-                                    communication_rating: (user.review_categories.communication_rating + communication_rating) / user.review_count,
-                                    drove_safely_rating: (user.review_categories.drove_safely_rating + drove_safely_rating) / user.review_count,
-                                    informational_rating: (user.review_categories.informational_rating + informational_rating) / user.review_count,
-                                    honest_polite_rating: (user.review_categories.honest_polite_rating + honest_polite_rating) / user.review_count,
-                                    overall_interaction_rating: (user.review_categories.overall_interaction_rating + overall_interaction_rating) / user.review_count,
-                                    proper_vehicle_condition_rating: (user.review_categories.proper_vehicle_condition_rating + proper_vehicle_condition_rating) / user.review_count
+                                    pickup_times_rating: (Number(user.review_categories.pickup_times_rating + pickup_times_rating)) / user.review_count,
+                                    communication_rating: (Number(user.review_categories.communication_rating + communication_rating)) / user.review_count,
+                                    drove_safely_rating: (Number(user.review_categories.drove_safely_rating + drove_safely_rating)) / user.review_count,
+                                    informational_rating: (Number(user.review_categories.informational_rating + informational_rating)) / user.review_count,
+                                    honest_polite_rating: (Number(user.review_categories.honest_polite_rating + honest_polite_rating)) / user.review_count,
+                                    overall_interaction_rating: (Number(user.review_categories.overall_interaction_rating + overall_interaction_rating)) / user.review_count,
+                                    proper_vehicle_condition_rating: (Number(user.review_categories.proper_vehicle_condition_rating + proper_vehicle_condition_rating)) / user.review_count
                                 }
                             } else {
                                 user["review_categories"] = {

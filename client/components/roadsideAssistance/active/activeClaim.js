@@ -163,38 +163,71 @@ constructor(props) {
     confirmDriverHasArrived = () => {
         console.log("confirmDriverHasArrived clicked.");
 
-        const { towTruckDriverInfo } = this.state;
+        const { towTruckDriverInfo, user } = this.state;
 
-        axios.post(`${Config.ngrok_url}/second/step/confirm/drivers/arrival`, {
-            id: this.props.unique_id,
-            other_user_id: towTruckDriverInfo.unique_id
-        }).then((res) => {
-            if (res.data.message === "Both users have confirmed the arrival!") {
-                console.log(res.data);
+        if (user.towing_services_start.tow_required === true) {
+            axios.post(`${Config.ngrok_url}/second/step/confirm/drivers/arrival`, {
+                id: this.props.unique_id,
+                other_user_id: towTruckDriverInfo.unique_id
+            }).then((res) => {
+                if (res.data.message === "Both users have confirmed the arrival!") {
+                    console.log(res.data);
+    
+                    socket.emit("approved-driver-arrival", {
+                        approved: true,
+                        user_id: towTruckDriverInfo.unique_id
+                    })
+    
+                    setTimeout(() => {
+                        this.props.props.navigation.replace("driver-has-arrived-manage-listing-depatarture");
+                    }, 1500);
+    
+                } else if (res.data.message === "User has NOT yet marked that they've arrived...") {
+                    console.log("ERR: ", res.data);
+    
+                    Toast.show({
+                        text1: "The driver has not confirmed your arrival yet...",
+                        text2: "The driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                        visibilityTime: 5500,
+                        position: "top",
+                        type: "info"
+                    })
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        } else {
+            axios.post(`${Config.ngrok_url}/second/step/confirm/drivers/arrival/no-tow`, {
+                id: this.props.unique_id,
+                other_user_id: towTruckDriverInfo.unique_id
+            }).then((res) => {
+                if (res.data.message === "Both users have confirmed the arrival!") {
+                    console.log(res.data);
 
-                socket.emit("approved-driver-arrival", {
-                    approved: true,
-                    user_id: towTruckDriverInfo.unique_id
-                })
+                    socket.emit("approve-next-page-no-tow", {
+                        approved: true,
+                        user_id: towTruckDriverInfo.unique_id
+                    })
 
-                setTimeout(() => {
-                    this.props.props.navigation.replace("driver-has-arrived-manage-listing-depatarture");
-                }, 1500);
-
-            } else if (res.data.message === "User has NOT yet marked that they've arrived...") {
-                console.log("ERR: ", res.data);
-
-                Toast.show({
-                    text1: "The driver has not confirmed your arrival yet...",
-                    text2: "The driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
-                    visibilityTime: 5500,
-                    position: "top",
-                    type: "info"
-                })
-            }
-        }).catch((err) => {
-            console.log(err);
-        })
+                    setTimeout(() => {
+                        this.props.props.navigation.replace("complete-trip-no-tow");
+                    }, 1500);
+    
+                } else if (res.data.message === "User has NOT yet marked that they've arrived...") {
+                    console.log("ERR: ", res.data);
+    
+                    Toast.show({
+                        text1: "The driver has not confirmed your arrival yet...",
+                        text2: "The driver hasn't confirmed your arrival. Once they do you will be able to proceed!",
+                        visibilityTime: 5500,
+                        position: "top",
+                        type: "info"
+                    })
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
     }
     renderConditional = () => {
         const { user, region, towDriverLocation, polyline } = this.state;

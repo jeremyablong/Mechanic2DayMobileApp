@@ -111,9 +111,9 @@ constructor(props) {
                 requestee: this.props.unique_id,
                 receiver: user.unique_id,
                 user: signedInUser,
-                tow_destination_full: towDesinationFull,
                 user_current_location: myLocation || full,
-                tow_needed: false
+                tow_needed: false,
+                service_required: serviceRequired
             })    
         } else {
             console.log("tow needed.");

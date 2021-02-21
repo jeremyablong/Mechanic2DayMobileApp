@@ -67,6 +67,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     })
                                 });
                             }
+                        } else {
+                            // does NOT require tow...
+                            responseeee.json({
+                                message: "Gathered company info!",
+                                listing
+                            })
                         }
                     }
                 }

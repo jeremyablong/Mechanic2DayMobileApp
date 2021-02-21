@@ -18,13 +18,32 @@ constructor(props) {
         routes: null,
         passed: null,
         location: null,
-        distance: 0
+        distance: 0,
+        user: null
     }
 }
     componentDidMount() {
         const { data } = this.state
 
         console.log("CDM data:", data);
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+                console.log(res.data);
+
+                const { user } = res.data;
+
+                this.setState({
+                    user
+                })
+            } else {
+                console.log("errrrroorrr", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
 
         const config = {
             headers: {
@@ -236,7 +255,7 @@ constructor(props) {
         })
     }
     renderConditional = () => {
-        const { data, routes, location } = this.state;
+        const { data, routes, location, user } = this.state;
 
         if (data.tow_required === true && routes !== null) {
             const arrival = routes.summary.arrivalTime;
