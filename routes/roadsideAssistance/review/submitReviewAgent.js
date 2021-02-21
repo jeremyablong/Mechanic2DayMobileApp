@@ -180,6 +180,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 from: id,
                                 link: "notifications"
                             }
+
+                            collection.save(user);
             
                             axios.post("https://fcm.googleapis.com/fcm/send", {
                                 "to": user.firebasePushNotificationToken,

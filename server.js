@@ -199,6 +199,7 @@ app.use("/boost/mechanic/using/existing/boost", require("./routes/boost/existing
 app.use("/boost/tow/driver/using/existing/boost", require("./routes/boost/existing/drivers/boostUsingExisting.js"));
 app.use("/promote/driver/temp/checked", require("./routes/boost/existing/drivers/checkedAndAdded.js"));
 app.use("/start/roadside/assistance/claim/two", require("./routes/roadsideAssistance/initiate/startRoadsideAssistanceTwo.js"));
+app.use("/gather/associated/company/rates", require("./routes/towDrivers/sendTowRates.js"));
 
 app.get('*', function(req, res) {
   res.sendFile(__dirname, './client/public/index.html')
@@ -311,6 +312,12 @@ io.on("connection", socket => {
 
 		io.sockets.emit("start", data);
 	});
+	socket.on("started-active-tow-personalized", (data) => {
+
+		console.log("JACKPOT TWO DELIVERED!:", data);
+
+		io.sockets.emit("start-personalized", data);
+	});
 	socket.on("send-invitation-request", (data) => {
 
 		console.log("INVITE DELIVERED!:", data);
@@ -322,6 +329,12 @@ io.on("connection", socket => {
 		console.log("INITIATE SPECIFIC ROADSIDE AGENT!:", data);
 
 		io.sockets.emit("start-specific-tow", data);
+	});
+	socket.on("send-tow-rates", (data) => {
+
+		console.log("INITIATE SPECIFIC ROADSIDE AGENT!:", data);
+
+		io.sockets.emit("tow-rates", data);
 	});
 	socket.on("disconnect", () => console.log("Client disconnected"));
 });

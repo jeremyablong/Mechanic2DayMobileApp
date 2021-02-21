@@ -35,7 +35,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     firebasePushNotificationToken: user.firebasePushNotificationToken,
                     employed_by: user.employed_by,
                     gender: user.gender,
-                    createdAt: Date.now()
+                    createdAt: Date.now(),
+                    completed_stripe_onboarding: user.completed_stripe_onboarding
                 });
                 Driver.count({ unique_id: user.unique_id }, (err, count) => { 
                     if (err) {

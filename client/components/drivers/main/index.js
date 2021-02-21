@@ -49,7 +49,8 @@ constructor(props) {
         queryTwo: "",
         hideOrNotFour: false,
         mechanics: [],
-        active: 0
+        active: 0,
+        signedInUser: null
     }
 }
     componentDidMount() {
@@ -82,24 +83,44 @@ constructor(props) {
         }).catch((err) => {
             console.log(err);
         })
+
+        axios.post(`${Config.ngrok_url}/gather/general/info`, {
+            id: this.props.unique_id
+        }).then((res) => {
+            if (res.data.message === "Found user!") {
+                console.log(res.data);
+
+                const { user } = res.data;
+                
+                this.setState({
+                    signedInUser: user
+                })
+            } else {
+                console.log("Err", res.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
     handleRequestAndRedirect = () => {
-        const { user, towDesinationFull, myLocation, full, serviceRequired, towNeeded } = this.state;
+        const { user, signedInUser, towDesinationFull, myLocation, full, serviceRequired, towNeeded } = this.state;
 
         if (towNeeded === false) {
+            console.log("no tow needed.");
             socket.emit("start-roadside-assistance-specific-agent", {
                 requestee: this.props.unique_id,
                 receiver: user.unique_id,
-                user,
+                user: signedInUser,
                 tow_destination_full: towDesinationFull,
                 user_current_location: myLocation || full,
                 tow_needed: false
             })    
         } else {
+            console.log("tow needed.");
             socket.emit("start-roadside-assistance-specific-agent", {
                 requestee: this.props.unique_id,
                 receiver: user.unique_id,
-                user,
+                user: signedInUser,
                 tow_destination_full: towDesinationFull,
                 user_current_location: myLocation || full,
                 tow_needed: true

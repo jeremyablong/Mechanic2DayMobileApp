@@ -376,6 +376,7 @@ constructor(props) {
                 return (
                     <View style={styles.containerView}>
                         <View style={{ margin: 20 }}>
+                            <Text style={{ fontSize: 18, textAlign: "center" }}>Please make sure any active drivers have COMPLETED their <Text style={{ fontWeight: "bold" }}>"stripe onboarding"</Text> process - otherwise they will not be shown when boosted.</Text>
                             <AwesomeButtonBlue style={{ marginTop: 25, marginBottom: 20 }} type={"secondary"} onPress={() => {
                             this.setState({
                                 showExistingTwo: true

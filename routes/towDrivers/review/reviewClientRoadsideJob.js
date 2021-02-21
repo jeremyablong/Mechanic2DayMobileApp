@@ -162,6 +162,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 user["review_overviews_list"] = [review_overview];
                             }
 
+                            collection.save(user);
+
                             const configgg = {
                                 headers: {
                                     "Authorization": `key=${config.get("firebaseCloudMessagingServerKey")}`,

@@ -11,6 +11,9 @@ import { Config } from "react-native-config";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { sendbirdLogin } from "../../../actions/sendbird/user.js";
 import _ from "lodash";
+import {
+    BarIndicator
+} from 'react-native-indicators';
 
 class ProfileMainHelper extends Component {
 constructor(props) {
@@ -241,7 +244,13 @@ constructor(props) {
                 </ScrollView>
             );
         } else {
-            
+            return (
+                <View style={[styles.centered, { marginTop: 100 }]}>
+                    <View style={styles.centered}>
+                        <BarIndicator count={14} color='blue' />
+                    </View>
+                </View>
+            );
         }
     }
     renderProfilePic = () => {

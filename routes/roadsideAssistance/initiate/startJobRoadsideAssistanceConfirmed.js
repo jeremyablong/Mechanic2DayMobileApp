@@ -168,6 +168,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                                         transfer_data: {
                                                           destination: stripe_account_id,
                                                         },
+                                                        customer: user.stripe_customer_account.id
                                                     }, async (errrrrrrr, charge) => {
                                                         if (errrrrrrr) {
                                                             console.log(errrrrrrr);

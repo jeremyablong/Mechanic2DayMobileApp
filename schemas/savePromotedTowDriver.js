@@ -46,6 +46,9 @@ const UserSchema =  new mongoose.Schema({
     },
     gender: {
         type: String
+    },
+    completed_stripe_onboarding: {
+        type: Boolean
     }
 });
 

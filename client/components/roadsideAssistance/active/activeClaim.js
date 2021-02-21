@@ -39,6 +39,7 @@ constructor(props) {
     }
 }
     componentDidMount() {
+
         axios.post(`${Config.ngrok_url}/gather/general/info`, {
             id: this.props.unique_id
         }).then((res) => {

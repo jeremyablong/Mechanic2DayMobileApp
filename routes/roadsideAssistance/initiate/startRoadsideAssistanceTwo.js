@@ -19,7 +19,11 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         const collection = database.collection("users");
 
         const { 
-            length_in_meters,
+            milage_price,
+            flat_rate,
+            current_location,
+            tow_destination_full,
+            is_tow_required,
             company_informtion,
             selected,
             fullName,
@@ -42,12 +46,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     id: uuidv4(),
                     start_system_date: Date.now(),
                     start_date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-                    pickup_location: selected.initial_location,
-                    dropoff_location: selected.tow_desination_information ? selected.tow_desination_information : "tow-not-required",
-                    dropoff_location_street: selected.tow_desination_street_address ? selected.tow_desination_street_address : "tow-not-required",
-                    requestee_picture: selected.profile_picture,
-                    requesee_full_name: selected.fullName,
-                    requestee_id: selected.requested_by,
+                    pickup_location: current_location,
+                    dropoff_location: is_tow_required === true ? tow_destination_full : "tow-not-required",
+                    dropoff_location_street: is_tow_required === true ? tow_destination_full.address.freeformAddress : "tow-not-required",
+                    requestee_picture: config.get("notAvailiable"),
+                    requesee_full_name: fullName,
+                    requestee_id: client_id,
                     active: true
                 };
                 const promiseee = new Promise((resolve, reject) => {
@@ -77,11 +81,18 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         const user = users[index];
                         // CLIENT USER
                         if (user.unique_id === client_id) {
-                            user.towing_services_start.order_status = "in-progress";
-                            user.towing_services_start.page = "mapview-in-progress";
+                            // user.towing_services_start.order_status = "in-progress";
+                            // user.towing_services_start.page = "mapview-in-progress";
 
-
-                            collection.save(user);
+                            user["towing_services_start"] = {
+                                order_status: "in-progress",
+                                page: "mapview-in-progress",
+                                pickup_location: is_tow_required === true ? tow_destination_full : "tow-not-required",
+                                initiator: client_id,
+                                tow_destination: is_tow_required === true ? tow_destination_full.address.freeformAddress : "tow-not-required",
+                                tow_destination_information: tow_destination_full,
+                                tow_required: is_tow_required
+                            }
                             
                             for (let indxxxxxx = 0; indxxxxxx < users.length; indxxxxxx++) {
                                 const userrr = users[indxxxxxx];
@@ -95,8 +106,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                     };
 
                                     user.towing_services_start.assigned_company = userrr.company_name;
-
-                                    collection.save(user);
 
                                     const custom_notification = {
                                         id: uuidv4(),
@@ -138,71 +147,65 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                             userrr["notifications"] = [custom_notification];
                                         }
 
-
-                                        collection.save(user);
-
-                                        const cost_milage = (length_in_meters / 1609.34) * company_informtion.standard_tow_fees.per_mile_fee;
                                         const cost_flat_rate = company_informtion.standard_tow_fees.tow_price;
 
-                                        console.log("cost_milage", cost_milage, "cost_flat_rate", cost_flat_rate);
+                                        console.log(cost_flat_rate, milage_price)
 
-                                        for (let indxxxxxxxx = 0; indxxxxxxxx < user.card_payment_methods.length; indxxxxxxxx++) {
-                                            const cardddd = user.card_payment_methods[indxxxxxxxx];
-                                            
-                                            if (cardddd.primary === true) {
-
-                                                axios.get(`${config.get("ngrok_url")}/gather/company/related/information`, {
-                                                    params: {
-                                                        company_id: userrr.company_id
-                                                    }
-                                                }).then(async (resppppppppp) => {
-                                                    console.log(resppppppppp.data);
-
-                                                    const { stripe_account_id } = resppppppppp.data;
-
-                                                    const paymentIntent = await stripe.paymentIntents.create({
-                                                        payment_method_types: ['card'],
-                                                        amount: Math.round((cost_milage + cost_flat_rate) * 100),
-                                                        currency: 'usd',
-                                                        application_fee_amount: 500,
-                                                        transfer_data: {
-                                                          destination: stripe_account_id,
-                                                        },
-                                                    }, async (errrrrrrr, charge) => {
-                                                        if (errrrrrrr) {
-                                                            console.log(errrrrrrr);
-                                                        } else {
-                                                            console.log("charge", charge);
-
-                                                            user.towing_services_start["charge"] = charge;
-                                                            userrr.active_roadside_assistance_job["charge"] = charge;
-
-                                                            await collection.save(user);
+                                        const prom = new Promise((resolveeee, rejecttttt) => {
+                                            for (let indxxxxxxxx = 0; indxxxxxxxx < user.card_payment_methods.length; indxxxxxxxx++) {
+                                                const cardddd = user.card_payment_methods[indxxxxxxxx];
+                                                
+                                                if (cardddd.primary === true) {
     
-                                                            await collection.save(userrr);
-
-                                                            axios.post(`${config.get("ngrok_url")}/remove/queued/item`, {
-                                                                selected
-                                                            }).then((responseeeeeeeeeeeeeeeeeee) => {
-    
-                                                                console.log("CHARGE: ", charge);
-
-                                                                if (responseeeeeeeeeeeeeeeeeee) {
-                                                                    responseeeeeeeee.json({
-                                                                        message: "Successfully executed logic!"
-                                                                    })
-                                                                }
-                                                            }).catch((critical_err) => {
-                                                                console.log(critical_err);
-                                                            })
+                                                    axios.get(`${config.get("ngrok_url")}/gather/company/related/information`, {
+                                                        params: {
+                                                            company_id: userrr.company_id
                                                         }
-                                                    });
-                                                   
-                                                }).catch((errrrrrrrooooooooor) => {
-                                                    console.log(errrrrrrrooooooooor);
-                                                })
+                                                    }).then(async (resppppppppp) => {
+                                                        console.log(resppppppppp.data);
+    
+                                                        const { stripe_account_id } = resppppppppp.data;
+    
+                                                        const paymentIntent = await stripe.paymentIntents.create({
+                                                            payment_method_types: ['card'],
+                                                            amount: Math.round((Number(milage_price) + cost_flat_rate) * 100),
+                                                            currency: 'usd',
+                                                            application_fee_amount: Math.round(Math.round((Number(milage_price) + cost_flat_rate) * 100) * 0.23),
+                                                            transfer_data: {
+                                                              destination: stripe_account_id,
+                                                            },
+                                                            customer: user.stripe_customer_account.id,
+                                                            capture_method: "manual"
+                                                        }, async (errrrrrrr, charge) => {
+                                                            if (errrrrrrr) {
+                                                                console.log(errrrrrrr);
+                                                            } else {
+                                                                console.log("charge", charge);
+    
+                                                                user.towing_services_start["charge"] = charge;
+                                                                userrr.active_roadside_assistance_job["charge"] = charge;
+    
+                                                                collection.save(user);
+        
+                                                                collection.save(userrr);
+    
+                                                                setTimeout(() => {
+                                                                    resolveeee();
+                                                                }, 1500)
+                                                            }
+                                                        });
+                                                       
+                                                    }).catch((errrrrrrrooooooooor) => {
+                                                        console.log(errrrrrrrooooooooor);
+                                                    })
+                                                }
                                             }
-                                        }
+                                        })
+                                        prom.then(() => {
+                                            responseeeeeeeee.json({
+                                                message: "Successfully executed logic!"
+                                            })
+                                        })
                                     }).catch((errorrrrrrr) => {
                                         console.log(errorrrrrrr);
                                     })

@@ -71,23 +71,22 @@ constructor(props) {
 
                 console.log("LISTINGS", listings);
 
-                const sliced_listings = listings.slice(0, 20);
 
                 const promiseee = new Promise((resolve, reject) => {
-                    for (let index = 0; index < sliced_listings.length; index++) {
-                        const element = sliced_listings[index];
+                    for (let index = 0; index < listings.length; index++) {
+                        const element = listings[index];
                         
                         if (element.location_manual_entry === true) {
                             console.log("elem ent", element);
 
                             element.location = element.location_coordinates;
 
-                            if ((sliced_listings.length - 1) === index) {
-                                resolve(sliced_listings);
+                            if ((listings.length - 1) === index) {
+                                resolve(listings);
                             }
                         } else {
-                            if ((sliced_listings.length - 1) === index) {
-                                resolve(sliced_listings);
+                            if ((listings.length - 1) === index) {
+                                resolve(listings);
                             }
                         }
                     }

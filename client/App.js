@@ -107,13 +107,13 @@ import PromotionsMainHomepagePage from "./pages/promotions/main/main.js";
 import DriversHomepagePage from "./pages/drivers/main/index.js";
 import MapView, { Marker } from 'react-native-maps';
 import { saveUsersLocation } from "./actions/location/location.js";
-
+import geodist from "geodist";
 
 const { width, height } = Dimensions.get("window");
 
 const Stack = createStackNavigator();
 
-const socket = io('http://mental-health-mobile-app.ngrok.io', {transports: ['websocket', 'polling', 'flashsocket']});
+const socket = io(Config.ngrok_url, {transports: ['websocket', 'polling', 'flashsocket']});
 
 
 class App extends Component {
@@ -138,7 +138,15 @@ constructor(props) {
     user: null,
     tow_destination_full: null,
     user_current_location: null,
-    tow_needed: false
+    tow_needed: false,
+    requestee: "",
+    showResponseModal: false,
+    listing: null,
+    is_tow_required: false,
+    tow_destination_full_other_user: null,
+    user_current_location_other_user: null,
+    distanceInMeters: 0,
+    tow_driver_id_roadside: ""
   }
 }
 
@@ -483,6 +491,11 @@ constructor(props) {
       this.navigationRef.navigate("tow-activated-map-view", null);
     }
   })
+  socket.on("start-personalized", (data) => {
+    if (data.user_id === this.props.unique_id) {
+      this.navigationRef.navigate("tow-activated-map-view", null);
+    }
+  })
   socket.on("completed-repair-client", (data) => {
     if (data.approved === true && data.user_id === this.props.unique_id) {
       this.navigationRef.navigate("broken-vehicle-review-client", { agreement: data.item });
@@ -493,14 +506,47 @@ constructor(props) {
       this.navigationRef.navigate("broken-vehicle-review-mechanic", { agreement: data.item });
     }
   })
+  socket.on("tow-rates", (data) => {
+    if (data.other_user === this.props.unique_id) {
+      console.log("MATCH", data);
+
+      if (data.tow_needed === true) {
+        if (_.has(data.user_current_location, "accuracy")) {
+          this.setState({
+            listing: data.listing,
+            showResponseModal: true,
+            is_tow_required: data.tow_needed,
+            tow_destination_full_other_user: data.tow_destination_full,
+            user_current_location_other_user: data.user_current_location,
+            distanceInMeters: geodist({ lat: data.user_current_location.latitude, lon: data.user_current_location.longitude }, { lat: data.tow_destination_full.position.lat, lon: data.tow_destination_full.position.lon }, { unit: "meters" }),
+            tow_driver_id_roadside: data.tow_driver_id
+          })
+        } else {
+          this.setState({
+            listing: data.listing,
+            showResponseModal: true,
+            is_tow_required: data.tow_needed,
+            tow_destination_full_other_user: data.tow_destination_full,
+            user_current_location_other_user: data.user_current_location,
+            distanceInMeters: geodist({ lat: data.tow_destination_full.position.lat, lon: data.tow_destination_full.position.lon }, { lat: data.user_current_location.position.lat, lon: data.user_current_location.position.lon }, { unit: "meters" }),
+            tow_driver_id_roadside: data.tow_driver_id
+          })
+        }
+      }
+    }
+  })
   socket.on("start-specific-tow", (data) => {
     if (data.receiver === this.props.unique_id) {
+
+      console.log("start-specific-tow DATA", data);
+
       this.setState({
         showAlertCustom: true,
         user: data.user,
+        requestee: data.requestee,
         tow_destination_full: data.tow_destination_full,
         user_current_location: data.user_current_location,
-        tow_needed: data.tow_needed,
+        tow_needed: data.tow_needed
       })
     }
   })
@@ -597,6 +643,66 @@ constructor(props) {
       );
     }
   }
+  renderModalContentCustomOne = () => {
+    const { is_tow_required, tow_destination_full, listing } = this.state;
+
+    if (listing !== null) {
+
+      console.log("LISTING RAN!");
+
+      if (is_tow_required === false) {
+        // switch (selected.roadside_service_required) {
+        //     case "door-unlocking":
+        //         return (
+        //           <Fragment>
+        //             <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.unlock_locked_door_cost}</Text>
+        //           </Fragment>
+        //         );
+        //         break;
+        //     case "gas-delivery":
+        //       return (
+        //         <Fragment>
+        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.gas_delivery_cost}</Text>
+        //         </Fragment>
+        //       );
+        //       break;
+        //     case "tire-change": 
+        //       return (
+        //         <Fragment>
+        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.change_tire_cost}</Text>
+        //         </Fragment>
+        //       );
+        //       break;
+        //     case "stuck-vehicle":
+        //       return (
+        //         <Fragment>
+        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.remove_stuck_vehicle}</Text>
+        //         </Fragment>
+        //       );
+        //       break;
+        //     case "jump-start":
+        //       return (
+        //         <Fragment>
+        //           <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${company_informtion.services.jumpstart_cost}</Text>
+        //         </Fragment>
+        //       );
+        //       break;
+        //     default:
+        //         break;
+        // }
+      } else {
+        return (
+          <Fragment>
+            <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${listing.standard_tow_fees.tow_price} flat rate</Text>
+            <Text style={{ textAlign: "center" }}>+ Plus +</Text>
+            <Text style={{ fontWeight: "bold", color: "darkred", textAlign: "center", fontSize: 24 }}>${((this.state.distanceInMeters / 1609.34) * listing.standard_tow_fees.per_mile_fee).toFixed(2)} in milage</Text>
+          </Fragment>
+        );
+      }
+    } else {
+      console.log("listing is null.");
+    }
+  }
   handleRedirectAndProcessPriceCalc = () => {
     const { lengthInMeters, company_informtion, selected, fullName, tow_driver_id } = this.state;
 
@@ -656,6 +762,31 @@ constructor(props) {
   handleRedirectAndProcessPriceCalcRoadside = () => {
     console.log("handleRedirectAndProcessPriceCalcRoadside clicked.");
 
+    axios.post(`${Config.ngrok_url}/gather/associated/company/rates`, {
+      id: this.props.company_id,
+      company_name: this.props.company_name
+    }).then((res) => {
+      if (res.data.message === "Successfully located tow company rates!") {
+        console.log(res.data);
+
+        const { listing } = res.data;
+
+        socket.emit("send-tow-rates", {
+            listing,
+            other_user: this.state.requestee,
+            tow_needed: this.state.tow_needed,
+            requestee: this.state.requestee,
+            tow_destination_full: this.state.tow_destination_full,
+            user_current_location: this.state.user_current_location,
+            tow_driver_id: this.props.unique_id
+        });
+      } else {
+        console.log("err", res.data);
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+
     // axios.post(`${Config.ngrok_url}/start/roadside/assistance/claim/two`, {
     //   length_in_meters: lengthInMeters,
     //   company_informtion,
@@ -681,44 +812,135 @@ constructor(props) {
     // }).catch((err) => {
     //   console.log(err);
     // })
-    socket.emit("started-active-tow", {
-        started: true,
-        user_id: user.unique_id
-    })
 
-    setTimeout(() => {
-      this.navigationRef.navigate("in-progress-roadside-assistance");
-    }, 1000)
+    // setTimeout(() => {
+    //   this.navigationRef.navigate("in-progress-roadside-assistance");
+    // }, 1000)
   }
   declineOfferTowRoadside = () => {
     console.log("declineOfferTowRoadside clicked.");
   }
+  renderInternalContent = () => {
+    const { listing } = this.state;
+
+    if (listing !== null) {
+      return (
+        <Fragment>
+          <Text style={styles.postDescription}>
+              Changing a tire: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>${listing.services.change_tire_cost}{"\n"}</Text>
+              Gas Delivery: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>${listing.services.gas_delivery_cost}{"\n"}</Text>
+              Jumpstart: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>${listing.services.jumpstart_cost}{"\n"}</Text>
+              Remove Stuck Vehicle: <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>${listing.services.remove_stuck_vehicle}{"\n"}</Text>
+              Unlock Door(s): <Text style={{ fontWeight: "bold", textDecorationLine: "underline" }}>${listing.services.unlock_locked_door_cost}{"\n"}</Text>
+          </Text>
+          
+          <View style={styles.hr} />
+          <Text style={styles.postTitle}>
+              Standard Flat Rate {"\n"}<Text style={{ color: "darkblue", fontWeight: "bold" }}>${listing.standard_tow_fees.tow_price.toString()}</Text>
+          </Text>
+          <View style={styles.hr} />
+          <Text style={styles.postTitle}>
+              Price Per Mile {"\n"}<Text style={{ color: "darkblue", fontWeight: "bold" }}>${listing.standard_tow_fees.per_mile_fee.toString()}</Text> 
+          </Text>
+          <View style={styles.hr} />
+
+          <Text style={styles.date}>
+            Joined {listing.date}
+          </Text>
+
+          <View style={styles.profile}>
+            <Image style={styles.avatar}
+              source={{uri: listing.company_image }}/>
+
+            <Text style={styles.name}>
+                <Text style={{ textDecorationLine: "underline" }}>Driver</Text> {"\n"}{"Jeremy Blong"}
+            </Text>
+          </View>
+        </Fragment>
+      );
+    }
+  }
   renderModalContentCustom = () => {
 
     const { user, tow_destination_full, user_current_location, tow_needed } = this.state;
-    return (
-      <Fragment>
-          <MapView
-            style={{ width: "100%", height: 225, minHeight: 225, marginTop: 15 }}
-            initialRegion={{
-              latitude: user.current_location.coords.latitude,
-              longitude: user.current_location.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-          > 
-            <Marker 
-              coordinate={{ latitude: user.current_location.coords.latitude, longitude: user.current_location.coords.longitude }} title={"Requesting user's location..."} description={"The requesting user is located here."} />
-          </MapView>  
-          <View style={styles.hr} />
-          <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
-          <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>Tow Destination</Text>: {tow_destination_full.address.freeformAddress}</Text>
-      </Fragment>
-    );
+    if (tow_needed === true) {
+      if (_.has(user_current_location, "position")) {
+        return (
+          <Fragment>
+              <MapView
+                style={{ width: "100%", height: 225, minHeight: 225, marginTop: 15 }}
+                initialRegion={{
+                  latitude: user_current_location.position.lat,
+                  longitude: user_current_location.position.lon,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              > 
+                <Marker 
+                  coordinate={{ latitude: user_current_location.position.lat, longitude: user_current_location.position.lon }} title={"Requesting user's location..."} description={"The requesting user is located here."} />
+              </MapView>  
+              <View style={styles.hr} />
+              <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
+              <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>Tow Destination</Text>: {tow_destination_full.address.freeformAddress}</Text>
+          </Fragment>
+        );
+      } else {
+        return (
+          <Fragment>
+              <MapView
+                style={{ width: "100%", height: 225, minHeight: 225, marginTop: 15 }}
+                initialRegion={{
+                  latitude: user.current_location.coords.latitude,
+                  longitude: user.current_location.coords.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              > 
+                <Marker 
+                  coordinate={{ latitude: user.current_location.coords.latitude, longitude: user.current_location.coords.longitude }} title={"Requesting user's location..."} description={"The requesting user is located here."} />
+              </MapView>  
+              <View style={styles.hr} />
+              <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>User requires tow or just roadside assistance?</Text> {tow_needed === true ? "Requires-tow" : "No tow needed - just roadside assistance."}</Text>
+              <Text style={{ fontSize: 18 }}><Text style={{ fontWeight: "bold", fontSize: 18 }}>Tow Destination</Text>: {tow_destination_full.address.freeformAddress}</Text>
+          </Fragment>
+        );
+      }
+    }
+  }
+  confirmTowAndStart = () => {
+    console.log("confirmTowAndStart clicked");
+
+    const { listing, distanceInMeters, tow_destination_full_other_user, user_current_location_other_user, is_tow_required, tow_driver_id_roadside } = this.state;
+
+    axios.post(`${Config.ngrok_url}/start/roadside/assistance/claim/two`, {
+      milage_price: ((distanceInMeters / 1609.34) * listing.standard_tow_fees.per_mile_fee).toFixed(2),
+      flat_rate: listing.standard_tow_fees.tow_price,
+      company_informtion: listing,
+      tow_destination_full: tow_destination_full_other_user,
+      current_location: user_current_location_other_user,
+      is_tow_required,
+      client_id: this.props.unique_id,
+      tow_driver_id: tow_driver_id_roadside,
+      fullName: this.props.fullName
+    }).then((res) => {
+      if (res.data.message === "Successfully executed logic!") {
+        console.log(res.data);
+
+        socket.emit("started-active-tow-personalized", {
+          user_id: tow_driver_id_roadside
+        })
+
+        setTimeout(() => {
+          this.navigationRef.navigate("in-progress-roadside-assistance");
+        }, 2000);
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
   }
   render () {
     console.log("this.state APP.js", this.state);
-    const { selected, company_informtion, user } = this.state;
+    const { selected, company_informtion, user, listing } = this.state;
     return (
       <>
         <View style={{ flex: 1 }}> 
@@ -959,6 +1181,36 @@ constructor(props) {
             </ScrollView>
           </View>
         </Modal> : null}
+        <View>
+          <Modal style={{ width: width * 0.90 }} isVisible={this.state.showResponseModal}>
+            <ScrollView contentContainerStyle={{ paddingBottom: 50, paddingTop: 15, justifyContent: "center", alignItems: "center", padding: 10 }} style={{ backgroundColor: "white", width: "100%", maxHeight: 550, minHeight: 550, alignContent: "center" }}>
+            <View style={{ minWidth: "90%" }}>
+                    <Text style={styles.postTitle}>
+                        Services Fee's - Specific Tasks
+                    </Text>
+                    {this.renderInternalContent()}
+                    <View style={styles.hr} />
+                    <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 26 }}>You'll pay....</Text>
+                    {this.renderModalContentCustomOne()}
+                    <View style={styles.hr} />
+                    <AwesomeButtonBlue type={"primary"} textColor={"white"} width={width * 0.85} onPress={() => {
+                      this.setState({
+                        showResponseModal: false
+                      }, () => {
+                        this.confirmTowAndStart();
+                      })
+                    }}>Accept Offer & Redirect</AwesomeButtonBlue>
+                    <View style={styles.hr} />
+                    <AwesomeButtonBlue type={"secondary"} width={width * 0.85} onPress={() => {
+                      this.setState({
+                        showResponseModal: false
+                      })
+                    }} textColor={"black"}>Decline Offer</AwesomeButtonBlue>
+                    <View style={{ borderBottomColor: "lightgrey", borderBottomWidth: 2, marginBottom: 15, marginTop: 15 }} />
+                </View>
+            </ScrollView>
+          </Modal>
+        </View>
           {this.renderSockets()}
           <Modal isVisible={this.state.showModalOne}>
           <View style={{ flex: 1, backgroundColor: "white", width: width * 0.90, maxHeight: 500, justifyContent: "center", alignItems: "center", alignContent: "center", padding: 20 }}>
@@ -1106,20 +1358,29 @@ const mapStateToProps = (state) => {
         return {
           finished: state.auth.finished,
           unique_id: null,
-          authenticateddd: null
+          authenticateddd: null,
+          company_id: state.auth.authenticated.company_id,
+          company_name: state.auth.authenticated.company_name,
+          fullName: state.auth.authenticated.fullName
         }
     } else {
         return {
           page: state.auth.authenticated.page,
           finished: state.auth.finished,
           unique_id: state.auth.authenticated.unique_id,
-          authenticateddd: state.auth.authenticated
+          authenticateddd: state.auth.authenticated,
+          company_id: state.auth.authenticated.company_id,
+          company_name: state.auth.authenticated.company_name,
+          fullName: state.auth.authenticated.fullName
         }
     } 
   } else {
     return {
       unique_id: null,
-      authenticateddd: null
+      authenticateddd: null,
+      company_id: null,
+      company_name: null,
+      fullName: null
     }
   }
 }

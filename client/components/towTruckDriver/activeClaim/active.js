@@ -142,12 +142,14 @@ constructor(props) {
 
         const { myLocation, user } = this.state;
 
+        // CHANGE 10 TO 1 IN PRODUCTION
+
         if (_.has(user.active_roadside_assistance_job, "pickup_location")) {
             // tow REQUIRED
             if (_.has(user.active_roadside_assistance_job.pickup_location, "verticalAccuracy")) {
                 console.log("ONE:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }));
 
-                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }) <= 1.5) {
+                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.latitude, lon: user.active_roadside_assistance_job.pickup_location.longitude }) <= 10) {
                     axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
                         id: this.props.unique_id,
                         location: myLocation
@@ -187,7 +189,7 @@ constructor(props) {
             } else if (_.has(user.active_roadside_assistance_job.pickup_location, "position")) {
                 console.log("TWO:", geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }));
 
-                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }) <= 1.5) {
+                if (geodist({ lat: myLocation.latitude, lon: myLocation.longitude }, {lat: user.active_roadside_assistance_job.pickup_location.position.lat, lon: user.active_roadside_assistance_job.pickup_location.position.lon }) <= 10) {
                     axios.post(`${Config.ngrok_url}/notifiy/of/arrival/tow/driver`, {
                         id: this.props.unique_id,
                         location: myLocation

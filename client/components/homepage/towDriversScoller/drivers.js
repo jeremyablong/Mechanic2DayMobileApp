@@ -42,29 +42,32 @@ const TowTruckDriversHelper = (props) => {
                         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={styles.scrollViewTwo} contentContainerStyle={styles.contentContainerTwo}>
                             {data.slice(0, 9).map((driver, index) => {
                                 console.log("driver ACCOUNT", driver);
-                                return (
-                                    <TouchableOpacity key={index} onPress={() => {
-                                        props.props.navigation.push("tow-truck-drivers-request", { driver });
-                                    }}>
-                                        <ImageBackground key={index} source={{ uri: driver.profilePics.length > 0 ? driver.profilePics[driver.profilePics.length - 1].full_url : "https://s3.wasabisys.com/mechanic2day/not-availiable.jpg" }} style={styles.innerContainerTwo}>
-                                            <View style={styles.innerBox}>
-                                            <View style={styles.centered}>
-                                                    <Text style={styles.mainTextTwo}>Driver Name - <Text style={{ color: "#FDE2FF" }}>{driver.fullName}</Text></Text>
-                                                    <Text style={styles.mainTextTwo}>Associated Co. - <Text style={{ color: "#FDE2FF" }}>{driver.company_name}</Text></Text>
-                                                    <Text style={styles.mainTextTwo}>Gender - <Text style={{ color: "#FDE2FF" }}>{driver.gender}</Text></Text>
-                                            </View>
-                                                {/* <AirbnbRating
-                                                    count={5}
-                                                    defaultRating={Math.floor(Math.random() * 5) + 1}
-                                                    size={20} 
-                                                    isDisabled={true} 
-                                                    selectedColor={"gold"} 
-                                                    showRating={false}
-                                                /> */}
-                                            </View>
-                                        </ImageBackground>
-                                    </TouchableOpacity>
-                                );
+
+                                if (driver.completed_stripe_onboarding === true) {
+                                    return (
+                                        <TouchableOpacity key={index} onPress={() => {
+                                            props.props.navigation.push("tow-truck-drivers-request", { driver });
+                                        }}>
+                                            <ImageBackground key={index} source={{ uri: driver.profilePics.length > 0 ? driver.profilePics[driver.profilePics.length - 1].full_url : "https://s3.wasabisys.com/mechanic2day/not-availiable.jpg" }} style={styles.innerContainerTwo}>
+                                                <View style={styles.innerBox}>
+                                                <View style={styles.centered}>
+                                                        <Text style={styles.mainTextTwo}>Driver Name - <Text style={{ color: "#FDE2FF" }}>{driver.fullName}</Text></Text>
+                                                        <Text style={styles.mainTextTwo}>Associated Co. - <Text style={{ color: "#FDE2FF" }}>{driver.company_name}</Text></Text>
+                                                        <Text style={styles.mainTextTwo}>Gender - <Text style={{ color: "#FDE2FF" }}>{driver.gender}</Text></Text>
+                                                </View>
+                                                    {/* <AirbnbRating
+                                                        count={5}
+                                                        defaultRating={Math.floor(Math.random() * 5) + 1}
+                                                        size={20} 
+                                                        isDisabled={true} 
+                                                        selectedColor={"gold"} 
+                                                        showRating={false}
+                                                    /> */}
+                                                </View>
+                                            </ImageBackground>
+                                        </TouchableOpacity>
+                                    );
+                                }
                             })}
                         </ScrollView>
                     </View>
@@ -79,29 +82,32 @@ const TowTruckDriversHelper = (props) => {
                         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={styles.scrollViewTwo} contentContainerStyle={styles.contentContainerTwo}>
                             {data.slice(0, 10).map((driver, index) => {
                                 console.log("driver ACCOUNT", driver);
-                                return (
-                                    <TouchableOpacity key={index} onPress={() => {
-                                        props.props.navigation.push("tow-truck-drivers-request", { driver });
-                                    }}> 
-                                        <ImageBackground key={index} source={{ uri: driver.profilePics.length > 0 ? driver.profilePics[driver.profilePics.length - 1].full_url : "https://s3.wasabisys.com/mechanic2day/not-availiable.jpg" }} style={styles.innerContainerTwo}>
-                                            <View style={styles.innerBox}>
-                                                <View style={styles.centered}>
-                                                        <Text style={styles.mainTextTwo}>Driver Name - <Text style={{ color: "#FDE2FF" }}>{driver.fullName}</Text></Text>
-                                                        <Text style={styles.mainTextTwo}>Associated Co. - <Text style={{ color: "#FDE2FF" }}>{driver.company_name}</Text></Text>
-                                                        <Text style={styles.mainTextTwo}>Gender - <Text style={{ color: "#FDE2FF" }}>{driver.gender}</Text></Text>
+
+                                if (driver.completed_stripe_onboarding === true) {
+                                    return (
+                                        <TouchableOpacity key={index} onPress={() => {
+                                            props.props.navigation.push("tow-truck-drivers-request", { driver });
+                                        }}> 
+                                            <ImageBackground key={index} source={{ uri: driver.profilePics.length > 0 ? driver.profilePics[driver.profilePics.length - 1].full_url : "https://s3.wasabisys.com/mechanic2day/not-availiable.jpg" }} style={styles.innerContainerTwo}>
+                                                <View style={styles.innerBox}>
+                                                    <View style={styles.centered}>
+                                                            <Text style={styles.mainTextTwo}>Driver Name - <Text style={{ color: "#FDE2FF" }}>{driver.fullName}</Text></Text>
+                                                            <Text style={styles.mainTextTwo}>Associated Co. - <Text style={{ color: "#FDE2FF" }}>{driver.company_name}</Text></Text>
+                                                            <Text style={styles.mainTextTwo}>Gender - <Text style={{ color: "#FDE2FF" }}>{driver.gender}</Text></Text>
+                                                    </View>
+                                                    {/* <AirbnbRating
+                                                        count={5}
+                                                        defaultRating={Math.floor(Math.random() * 5) + 1}
+                                                        size={20} 
+                                                        isDisabled={true} 
+                                                        selectedColor={"gold"} 
+                                                        showRating={false}
+                                                    /> */}
                                                 </View>
-                                                {/* <AirbnbRating
-                                                    count={5}
-                                                    defaultRating={Math.floor(Math.random() * 5) + 1}
-                                                    size={20} 
-                                                    isDisabled={true} 
-                                                    selectedColor={"gold"} 
-                                                    showRating={false}
-                                                /> */}
-                                            </View>
-                                        </ImageBackground>
-                                    </TouchableOpacity>
-                                );
+                                            </ImageBackground>
+                                        </TouchableOpacity>
+                                    );
+                                }
                             })}
                         </ScrollView>
                     </View>

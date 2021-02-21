@@ -17,7 +17,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         const { current_location } = req.body;
 
         // { "broken_vehicles_listings.live": true }
-        collection.createIndex({
+        collection.ensureIndex({
             "broken_vehicles_listings.lookup_coordinates.loc": "2dsphere"
         });
 

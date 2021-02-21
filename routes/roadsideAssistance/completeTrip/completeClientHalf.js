@@ -95,7 +95,11 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                                                 responseee.json({
                                                                     message: "Both users have agreed the job is complete!"
                                                                 });
-                                                            } 
+                                                            } else if (err.raw.message === "This PaymentIntent could not be captured because it has already been captured.") {
+                                                                responseee.json({
+                                                                    message: "Both users have agreed the job is complete!"
+                                                                });
+                                                            }
                                                         } else {
                                                             try {
                                                                 const paymentIntent = await stripe.paymentIntents.capture(
