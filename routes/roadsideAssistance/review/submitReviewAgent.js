@@ -102,13 +102,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             if (user.review_categories) {
                                 user.review_categories = {
-                                    pickup_times_rating: (Number(user.review_categories.pickup_times_rating + pickup_times_rating)) / user.review_count,
-                                    communication_rating: (Number(user.review_categories.communication_rating + communication_rating)) / user.review_count,
-                                    drove_safely_rating: (Number(user.review_categories.drove_safely_rating + drove_safely_rating)) / user.review_count,
-                                    informational_rating: (Number(user.review_categories.informational_rating + informational_rating)) / user.review_count,
-                                    honest_polite_rating: (Number(user.review_categories.honest_polite_rating + honest_polite_rating)) / user.review_count,
-                                    overall_interaction_rating: (Number(user.review_categories.overall_interaction_rating + overall_interaction_rating)) / user.review_count,
-                                    proper_vehicle_condition_rating: (Number(user.review_categories.proper_vehicle_condition_rating + proper_vehicle_condition_rating)) / user.review_count
+                                    pickup_times_rating: (Number(user.review_categories.pickup_times_rating + pickup_times_rating)),
+                                    communication_rating: (Number(user.review_categories.communication_rating + communication_rating)),
+                                    drove_safely_rating: (Number(user.review_categories.drove_safely_rating + drove_safely_rating)),
+                                    informational_rating: (Number(user.review_categories.informational_rating + informational_rating)),
+                                    honest_polite_rating: (Number(user.review_categories.honest_polite_rating + honest_polite_rating)),
+                                    overall_interaction_rating: (Number(user.review_categories.overall_interaction_rating + overall_interaction_rating)),
+                                    proper_vehicle_condition_rating: (Number(user.review_categories.proper_vehicle_condition_rating + proper_vehicle_condition_rating))
                                 }
                             } else {
                                 user["review_categories"] = {
@@ -181,37 +181,44 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 link: "notifications"
                             }
 
-                            collection.save(user);
-            
-                            axios.post("https://fcm.googleapis.com/fcm/send", {
-                                "to": user.firebasePushNotificationToken,
-                                "notification": {
-                                    "title": `Your client ${fullName} left you a review!`,
-                                    "body": `Your client ${fullName} left you a review, head over to your profile to check it out now!`,
-                                    "mutable_content": true,
-                                    "sound": "Tri-tone"
-                                },
-                            "data": {
-                                    // use company logo 
-                                    "url": profilePic !== null ? profilePic : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
-                                    "dl": "notifications"
-                                    // use company logo ^^^^^^^^^^^^^^^^^^^^^^^^^
-                                }
-                            }, configgg).then((res) => {
-            
-                                if (user.notifications) {
-                                    user.notifications.push(nofitication_addition);
+                            collection.save(user, (err, data) => {
+                                if (err) {
+                                    console.log(err);
                                 } else {
-                                    user["notifications"] = [nofitication_addition];
+                                    axios.post("https://fcm.googleapis.com/fcm/send", {
+                                        "to": user.firebasePushNotificationToken,
+                                        "notification": {
+                                            "title": `Your client ${fullName} left you a review!`,
+                                            "body": `Your client ${fullName} left you a review, head over to your profile to check it out now!`,
+                                            "mutable_content": true,
+                                            "sound": "Tri-tone"
+                                        },
+                                    "data": {
+                                            // use company logo 
+                                            "url": profilePic !== null ? profilePic : "https://s3.us-west-1.wasabisys.com/mechanic-mobile-app/not-availiable.jpg",
+                                            "dl": "notifications"
+                                            // use company logo ^^^^^^^^^^^^^^^^^^^^^^^^^
+                                        }
+                                    }, configgg).then((res) => {
+                    
+                                        if (user.notifications) {
+                                            user.notifications.push(nofitication_addition);
+                                        } else {
+                                            user["notifications"] = [nofitication_addition];
+                                        }
+                                        
+                                        collection.save(user, (err, data) => {
+                                            if (err) {
+                                                console.log(err);
+                                            } else {
+                                                resolve();
+                                            }
+                                        });
+                                    }).catch((err) => {
+                                        console.log(err);
+                                    })
                                 }
-                                
-                                collection.save(user);
-            
-                                resolve();
-
-                            }).catch((err) => {
-                                console.log(err);
-                            })
+                            });
                         }
                     }
                 })  
@@ -224,14 +231,18 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             user.towing_services_start = {};
 
-                            collection.save(user);
+                            collection.save(user, (err, data) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    console.log("USER AFTER  CLEARING", user);
 
-                            console.log("USER AFTER  CLEARING", user);
-
-                            res.json({
-                                message: "Successfully submitted review and completed job!",
-                                user
-                            })
+                                    res.json({
+                                        message: "Successfully submitted review and completed job!",
+                                        user
+                                    })
+                                }
+                            });
                         }
                     }
                 })

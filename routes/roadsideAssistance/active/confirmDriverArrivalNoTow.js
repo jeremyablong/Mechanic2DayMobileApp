@@ -51,14 +51,19 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         
                                 user.towing_services_start.arrived = true;
                                 user.towing_services_start.page = "complete-trip-no-tow";
+                                user["agree_job_completed"] = false;
         
                                 console.log("signed-in ------------ :", user);
 
-                                collection.save(user);
-
-                                responseee.json({
-                                    message: "Both users have confirmed the arrival!"
-                                })
+                                collection.save(user, (err, data) => {
+                                    if (err) {
+                                        console.log(err);
+                                    } else {
+                                        responseee.json({
+                                            message: "Both users have confirmed the arrival!"
+                                        })
+                                    }
+                                });
                             }
                         }
                     } else {
@@ -72,11 +77,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         
                                 console.log("signed-in ------------ :", user);
 
-                                collection.save(user);
-
-                                responseee.json({
-                                    message: "User has NOT yet marked that they've arrived..."
-                                })
+                                collection.save(user, (err, data) => {
+                                    if (err) {
+                                        console.log(err);
+                                    } else {
+                                        responseee.json({
+                                            message: "Both users have confirmed the arrival!"
+                                        })
+                                    }
+                                });
                             }
                         }
                     }

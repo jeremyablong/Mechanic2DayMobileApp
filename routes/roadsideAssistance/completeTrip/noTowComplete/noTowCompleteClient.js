@@ -36,9 +36,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                             
                             user.towing_services_start.agree_job_completed = true;
 
-                            collection.save(user);
-
-                            resolve(true);
+                            collection.save(user, (err, data) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            });
                         }
                     }
                 })

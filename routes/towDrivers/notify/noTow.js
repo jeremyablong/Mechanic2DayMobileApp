@@ -32,25 +32,29 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     if (res.data.message === "Notified!") {
                         console.log("success!", res.data.other_user);
 
-                        user.active_roadside_assistance_job.arrived = true;
-                        user.active_roadside_assistance_job.completed_job = false;
+                        user.active_roadside_assistance_job["arrived"] = true;
+                        user.active_roadside_assistance_job["completed_job"] = false;
                         user.active_roadside_assistance_job.payment_recieved = false;
                         user.active_roadside_assistance_job.confirmed_onsite = true;
-                        user.active_roadside_assistance_job.agree_job_completed = false;
-                        user.active_roadside_assistance_job.current_page = "complete-trip-no-tow";
+                        user.active_roadside_assistance_job["agree_job_completed"] = false;
+                        user.active_roadside_assistance_job["current_page"] = "complete-trip-no-tow";
 
-                        collection.save(user);
-
-                        if (_.has(res.data.other_user.towing_services_start, "arrived") && res.data.other_user.towing_services_start.arrived === true && user.active_roadside_assistance_job.arrived === true) {
-                            responseeeeee.json({
-                                message: "Notified other user successfully and both users have agreed the driver has arrived!",
-                                user
-                            })
-                        } else {
-                            responseeeeee.json({
-                                message: "Only ONE user has agreed that the driver has arrived."
-                            })
-                        }
+                        collection.save(user, (err, data) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                if (_.has(res.data.other_user.towing_services_start, "arrived") && res.data.other_user.towing_services_start.arrived === true && user.active_roadside_assistance_job.arrived === true) {
+                                    responseeeeee.json({
+                                        message: "Notified other user successfully and both users have agreed the driver has arrived!",
+                                        user
+                                    })
+                                } else {
+                                    responseeeeee.json({
+                                        message: "Only ONE user has agreed that the driver has arrived."
+                                    })
+                                }
+                            }
+                        });
                     } else {
                         console.log("Err", res.data);
                     }

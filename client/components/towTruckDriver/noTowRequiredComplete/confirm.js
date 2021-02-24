@@ -180,6 +180,22 @@ constructor(props) {
         }).then((res) => {
             if (res.data.message === "Both users have agreed the job is complete!") {
                 console.log(res.data);
+
+                socket.emit("handle-redirection-agent", {
+                    redirect: true,
+                    user_id: user.towing_services_start.tow_driver_infomation.unique_id
+                })
+                setTimeout(() => {
+                    this.props.props.navigation.replace("review-roadside-assistance-agent");
+                }, 750);
+            } else if (res.data.message === "Marked as complete!") {
+                Toast.show({
+                    text1: "Successfully marked job as complete!",
+                    text2: "We have notified the other user of your marking of completion. Please wait for them to respond.",
+                    type: "success",
+                    visibilityTime: 4500,
+                    position: "top"
+                })
             } else {
                 console.log("Err", res.data);
             }
@@ -196,8 +212,25 @@ constructor(props) {
             id: this.props.unique_id,
             requestee_id: user.active_roadside_assistance_job.requestee_id
         }).then((res) => {
-            if (res.data.message === "") {
+            if (res.data.message === "Both users have agreed the job is complete!") {
                 console.log(res.data);
+
+                socket.emit("handle-redirection", {
+                    redirect: true,
+                    user_id: user.active_roadside_assistance_job.requestee_id
+                })
+
+                setTimeout(() => {
+                    this.props.props.navigation.replace("review-roadside-assistance-client");
+                }, 750)
+            } else if (res.data.message === "Marked as complete!") {
+                Toast.show({
+                    text1: "Successfully marked job as complete!",
+                    text2: "We have notified the other user of your marking of completion. Please wait for them to respond.",
+                    type: "success",
+                    visibilityTime: 4500,
+                    position: "top"
+                })
             } else {
                 console.log("Err", res.data);
             }
@@ -228,7 +261,7 @@ constructor(props) {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Drop-off</Title>
+                        <Title>Complete Trip</Title>
                         <Subtitle>Manage & more...!</Subtitle>
                     </Body>
                     <Right>

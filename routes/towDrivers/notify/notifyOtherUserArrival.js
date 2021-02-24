@@ -23,6 +23,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                 console.log("This is my user....:", user); 
 
+                user.active_roadside_assistance_job.arrived = true;
+                user.active_roadside_assistance_job.completed_job = false;
+                user.active_roadside_assistance_job.payment_recieved = false;
+                user.active_roadside_assistance_job.confirmed_onsite = true;
+                user.active_roadside_assistance_job.agree_job_completed = false;
+                user.active_roadside_assistance_job.current_page = "actively-on-site";
+
+                collection.save(user);
+
                 axios.post(`${config.get("ngrok_url")}/notify/other/user/arrival/tow`, {
                     id: user.active_roadside_assistance_job.requestee_id,
                     fullName: user.fullName,
@@ -31,15 +40,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                 }).then((res) => {
                     if (res.data.message === "Notified!") {
                         console.log("success!", res.data.other_user);
-
-                        user.active_roadside_assistance_job.arrived = true;
-                        user.active_roadside_assistance_job.completed_job = false;
-                        user.active_roadside_assistance_job.payment_recieved = false;
-                        user.active_roadside_assistance_job.confirmed_onsite = true;
-                        user.active_roadside_assistance_job.agree_job_completed = false;
-                        user.active_roadside_assistance_job.current_page = "actively-on-site";
-
-                        collection.save(user);
 
                         if (_.has(res.data.other_user.towing_services_start, "arrived") && res.data.other_user.towing_services_start.arrived === true && user.active_roadside_assistance_job.arrived === true) {
                             responseeeeee.json({

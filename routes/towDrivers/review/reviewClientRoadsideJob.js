@@ -56,6 +56,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         // CLIENT user
                         if (user.unique_id === other_user_id) {
 
+                            console.log("BOOYAH RAN....!!!! -------------------------------- ");
+
                             if (user.review_count) {
                                 user.review_count = user.review_count + 1;
                             } else {
@@ -102,13 +104,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             if (user.review_categories) {
                                 user.review_categories = {
-                                    pickup_accurate_rating: (Number(user.review_categories.pickup_accurate_rating + pickup_accurate_rating)) / user.review_count,
-                                    communication_rating: (Number(user.review_categories.communication_rating + communication_rating)) / user.review_count,
-                                    informational_rating: (Number(user.review_categories.informational_rating + informational_rating)) / user.review_count,
-                                    safe_during_interaction: (Number(user.review_categories.safe_during_interaction + safe_during_interaction)) / user.review_count,
-                                    overall_interaction_rating: (Number(user.review_categories.overall_interaction_rating + overall_interaction_rating)) / user.review_count,
-                                    honest_polite_rating: (Number(user.review_categories.honest_polite_rating + honest_polite_rating)) / user.review_count,
-                                    as_described: (Number(user.review_categories.as_described + as_described)) / user.review_count
+                                    pickup_accurate_rating: (Number(user.review_categories.pickup_accurate_rating + pickup_accurate_rating)),
+                                    communication_rating: (Number(user.review_categories.communication_rating + communication_rating)),
+                                    informational_rating: (Number(user.review_categories.informational_rating + informational_rating)),
+                                    safe_during_interaction: (Number(user.review_categories.safe_during_interaction + safe_during_interaction)),
+                                    overall_interaction_rating: (Number(user.review_categories.overall_interaction_rating + overall_interaction_rating)),
+                                    honest_polite_rating: (Number(user.review_categories.honest_polite_rating + honest_polite_rating)),
+                                    as_described: (Number(user.review_categories.as_described + as_described))
                                 }
                             } else {
                                 user["review_categories"] = {
@@ -162,56 +164,63 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                                 user["review_overviews_list"] = [review_overview];
                             }
 
-                            collection.save(user);
-
-                            const configgg = {
-                                headers: {
-                                    "Authorization": `key=${config.get("firebaseCloudMessagingServerKey")}`,
-                                    "Content-Type": "application/json"
-                                }
-                            }
-            
-                            const nofitication_addition = {
-                                id: uuidv4(),
-                                system_date: Date.now(),
-                                date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-                                data: {
-                                    title: `Your roadside agent ${fullName} left you a review!`,
-                                    body: `Your roadside agent ${fullName} left you a review, head over to your profile to check it out now!`
-                                },
-                                from: id,
-                                link: "notifications"
-                            }
-            
-                            axios.post("https://fcm.googleapis.com/fcm/send", {
-                                "to": user.firebasePushNotificationToken,
-                                "notification": {
-                                    "title": `Your roadside agent ${fullName} left you a review!`,
-                                    "body": `Your roadside agent ${fullName} left you a review, head over to your profile to check it out now!`,
-                                    "mutable_content": true,
-                                    "sound": "Tri-tone"
-                                },
-                            "data": {
-                                    // use company logo 
-                                    "url": profilePic !== null ? profilePic : `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/not-availiable.jpg`,
-                                    "dl": "notifications"
-                                    // use company logo ^^^^^^^^^^^^^^^^^^^^^^^^^
-                                }
-                            }, configgg).then((res) => {
-            
-                                if (user.notifications) {
-                                    user.notifications.push(nofitication_addition);
+                            collection.save(user, (err, data) => {
+                                if (err) {
+                                    console.log(err);
                                 } else {
-                                    user["notifications"] = [nofitication_addition];
+                                    const configgg = {
+                                        headers: {
+                                            "Authorization": `key=${config.get("firebaseCloudMessagingServerKey")}`,
+                                            "Content-Type": "application/json"
+                                        }
+                                    }
+                    
+                                    const nofitication_addition = {
+                                        id: uuidv4(),
+                                        system_date: Date.now(),
+                                        date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                                        data: {
+                                            title: `Your roadside agent ${fullName} left you a review!`,
+                                            body: `Your roadside agent ${fullName} left you a review, head over to your profile to check it out now!`
+                                        },
+                                        from: id,
+                                        link: "notifications"
+                                    }
+                    
+                                    axios.post("https://fcm.googleapis.com/fcm/send", {
+                                        "to": user.firebasePushNotificationToken,
+                                        "notification": {
+                                            "title": `Your roadside agent ${fullName} left you a review!`,
+                                            "body": `Your roadside agent ${fullName} left you a review, head over to your profile to check it out now!`,
+                                            "mutable_content": true,
+                                            "sound": "Tri-tone"
+                                        },
+                                    "data": {
+                                            // use company logo 
+                                            "url": profilePic !== null ? profilePic : `https://s3.us-west-1.wasabisys.com/${config.get("wasabiBucket")}/not-availiable.jpg`,
+                                            "dl": "notifications"
+                                            // use company logo ^^^^^^^^^^^^^^^^^^^^^^^^^
+                                        }
+                                    }, configgg).then((res) => {
+                    
+                                        if (user.notifications) {
+                                            user.notifications.push(nofitication_addition);
+                                        } else {
+                                            user["notifications"] = [nofitication_addition];
+                                        }
+                                        
+                                        collection.save(user, (err, data) => {
+                                            if (err) {
+                                                console.log(err);
+                                            } else {
+                                                resolve();
+                                            }
+                                        });
+                                    }).catch((err) => {
+                                        console.log(err);
+                                    })
                                 }
-                                
-                                collection.save(user);
-            
-                                resolve();
-
-                            }).catch((err) => {
-                                console.log(err);
-                            })
+                            });
                         }
                     }
                 })  
@@ -224,14 +233,18 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
                             user.active_roadside_assistance_job = {};
 
-                            collection.save(user);
+                            collection.save(user, (err, data) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    console.log("USER AFTER  CLEARING", user);
 
-                            console.log("USER AFTER  CLEARING", user);
-
-                            res.json({
-                                message: "Successfully submitted review and completed job!",
-                                user
-                            })
+                                    res.json({
+                                        message: "Successfully submitted review and completed job!",
+                                        user
+                                    })
+                                }
+                            });
                         }
                     }
                 })
