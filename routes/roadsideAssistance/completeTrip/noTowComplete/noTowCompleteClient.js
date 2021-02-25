@@ -56,6 +56,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === tow_driver_id) {
                             if (passedData === true && user.active_roadside_assistance_job.agree_job_completed === true) {
 
+                                user.active_roadside_assistance_job.page = "review-roadside-assistance-client";
+
                                 for (let idxxxxxx = 0; idxxxxxx < users.length; idxxxxxx++) {
                                     const usa = users[idxxxxxx];
 

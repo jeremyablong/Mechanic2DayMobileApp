@@ -66,14 +66,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                     // user.towing_services_start.order_status = "on-site";
                     // user.towing_services_start.payment_recieved = false;
                     // user.towing_services_start.confirmed_onsite = false;
-                    // user.towing_services_start.agree_job_completed = false;
+                    user.towing_services_start.agree_job_completed = false;
                     
-                    collection.save(user);
-
-                    responseeeeeeeeee.json({
-                        message: "Notified!",
-                        other_user: user
-                    })
+                    collection.save(user, (err, data) => {
+                        responseeeeeeeeee.json({
+                            message: "Notified!",
+                            other_user: user
+                        })
+                    });
                 }).catch((err) => {
                     console.log(err);
                 })

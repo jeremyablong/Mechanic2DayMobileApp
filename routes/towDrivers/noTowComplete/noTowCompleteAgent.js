@@ -57,6 +57,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
                         if (user.unique_id === requestee_id) {
                             if (passedData === true && user.towing_services_start.agree_job_completed === true) {
 
+                                user.towing_services_start.page = "review-roadside-assistance-agent";
+
                                 for (let iiiii = 0; iiiii < user.card_payment_methods.length; iiiii++) {
                                     const cardddd = user.card_payment_methods[iiiii];
                                     if (cardddd.primary === true) {

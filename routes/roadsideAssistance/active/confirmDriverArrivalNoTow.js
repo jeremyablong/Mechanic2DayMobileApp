@@ -51,7 +51,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         
                                 user.towing_services_start.arrived = true;
                                 user.towing_services_start.page = "complete-trip-no-tow";
-                                user["agree_job_completed"] = false;
+                                user.towing_services_start["agree_job_completed"] = false;
         
                                 console.log("signed-in ------------ :", user);
 
