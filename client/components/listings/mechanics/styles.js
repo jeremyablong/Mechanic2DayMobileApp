@@ -24,6 +24,12 @@ export default StyleSheet.create({
     row: {
         flexDirection: 'row'
     },
+    bottomRowAbsolute: {
+        position: "absolute",
+        bottom: 0,
+        width,
+        height: 70
+    },
     cardText: {
         fontSize: 18
     },  

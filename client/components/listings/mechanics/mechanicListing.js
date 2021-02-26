@@ -8,6 +8,8 @@ import { Config } from 'react-native-config';
 import axios from "axios";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import _ from "lodash";
+import AwesomeButtonBlue from 'react-native-really-awesome-button/src/themes/blue';
+
 
 const { height, width } = Dimensions.get("window");
 
@@ -104,6 +106,22 @@ constructor(props) {
         })
     
     }
+    calculateReviewRating = () => {
+        const { user } = this.state;
+
+        let total = 0;
+
+        if (_.has(user, "review_categories")) {
+            for (const key in user.review_categories) {
+                const num = user.review_categories[key];
+
+                total = total + (num / user.review_count);
+            }
+            return (total / 7).toFixed(1);
+        } else {
+            return "5.0";
+        }
+    }
     renderContent = () => {
         const { ready, user } = this.state;
 
@@ -115,7 +133,7 @@ constructor(props) {
                     <Text style={styles.heading1}>{title.slice(0, 40)}{title.length > 40 ? "..." : ""}</Text>
                     <View style={[styles.row, { marginTop: 10 }]}>
                         <Image style={styles.starSmall} source={require("../../../assets/icons/small-star.png")} />
-                        <Text>5.0 ({user.review_count}) Review(s)  ~</Text>
+                        <Text>{this.calculateReviewRating(user.review_count)} ({user.review_count}) Review(s)  ~</Text>
                         <Text style={styles.location}>{this.state.location}</Text>
                     </View>
                     <View style={[styles.row, { marginTop: 10 }]}>
@@ -141,6 +159,9 @@ constructor(props) {
                                     {user !== null && _.has(user, "general_information") ? user.general_information.about_me : "-----------------------"}
                                 </Text>
                         </ReadMore>
+                    </View>
+                    <View style={{ marginTop: 15 }}>
+
                     </View>
                 </View>
             );
@@ -214,6 +235,9 @@ constructor(props) {
             );
         }
     }
+    handleBooking = () => {
+        console.log("handleBooking clicked.");
+    }
     render() {
         const { ready } = this.state;
         return (
@@ -235,6 +259,9 @@ constructor(props) {
                     /> : null}
                     {this.renderContent()}
                 </ScrollView>
+                <View style={styles.bottomRowAbsolute}>
+                    <AwesomeButtonBlue stretch={true} onPress={this.handleBooking} type={"secondary"}>Book this mechanic</AwesomeButtonBlue>
+                </View>
             </Fragment>
         )
     }

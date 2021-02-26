@@ -165,6 +165,11 @@ constructor(props) {
                             }} style={styles.listItem}>
                             <Left><NativeText>List your vehicle for repair</NativeText></Left><Right><Image source={require("../../../assets/icons/go.png")} style={styles.inlineIcon} /></Right>
                             </ListItem> : null}
+                            {user.accountType === "mechanic" ? <ListItem button={true} onPress={() => {
+                                this.props.props.navigation.push("create-mechanic-profile-info-main");
+                            }} style={styles.listItem}>
+                            <Left><NativeText>Add additional listing information</NativeText></Left><Right><Image source={require("../../../assets/icons/info.png")} style={styles.inlineIcon} /></Right>
+                            </ListItem> : null}
                             <ListItem button={true} onPress={() => {
                                 this.props.props.navigation.push("active-jobs");
                             }} style={styles.listItem}>

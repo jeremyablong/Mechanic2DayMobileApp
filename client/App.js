@@ -109,6 +109,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { saveUsersLocation } from "./actions/location/location.js";
 import geodist from "geodist";
 import NoTowConfirmOnSitePage from "./pages/towTruckDriver/noTowRequiredComplete/confirm.js";
+import AdditionalMechanicInformationMainPage from "./pages/account/additionalMechanicInfo/main.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -1123,6 +1124,7 @@ constructor(props) {
               <Stack.Screen name="promotions-homepage-main" component={PromotionsMainHomepagePage} />
               <Stack.Screen name="tow-truck-drivers-request" component={DriversHomepagePage} />
               <Stack.Screen name="complete-trip-no-tow" component={NoTowConfirmOnSitePage} />
+              <Stack.Screen name="create-mechanic-profile-info-main" component={AdditionalMechanicInformationMainPage} />
             </Stack.Navigator>
           </NavigationContainer>
           {this.calculateReadiness() ? <Modal isVisible={this.state.showProposalModal}>
